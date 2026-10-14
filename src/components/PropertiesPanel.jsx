@@ -10,7 +10,7 @@ export default function PropertiesPanel({ selected, elements, onSelect, onMoveEl
   const parent = findNode(elements, selected?.parentId)
   const siblings = parent?.children ?? elements
   return (
-    <aside aria-labelledby="properties-heading" className="min-w-0 rounded-2xl border-2 border-violet-100 bg-white p-4 shadow-sm md:col-start-2 xl:col-start-auto">
+    <aside aria-labelledby="properties-heading" className="min-w-0 rounded-2xl border-2 border-violet-100 bg-white p-4 shadow-sm md:col-start-2 xl:col-start-auto xl:sticky xl:top-3 xl:max-h-[calc(100dvh-8rem)] xl:overflow-y-auto">
       <h2 id="properties-heading" className="flex items-center gap-2 text-base font-extrabold text-violet-900"><SlidersHorizontal aria-hidden="true" size={22} />Propriedades</h2>
       <p className="mt-1 text-sm text-slate-500">Dê seu toque a cada elemento.</p>
       {view === 'visual' && flat.length > 0 && <nav aria-label="Estrutura da página" className="mt-4 max-h-64 overflow-auto rounded-xl border-2 border-violet-100 p-2">

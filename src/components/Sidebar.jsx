@@ -42,7 +42,7 @@ function ElementCard({ element, category, disabled, onAddElement }) {
 
 export default function Sidebar({ disabled, onAddElement }) {
   return (
-    <aside aria-labelledby="elements-heading" className="flex min-w-0 flex-col rounded-2xl border-2 border-violet-100 bg-white p-4 shadow-sm">
+    <aside aria-labelledby="elements-heading" className="flex min-w-0 flex-col rounded-2xl border-2 border-violet-100 bg-white p-4 shadow-sm md:sticky md:top-3 md:max-h-[calc(100dvh-8rem)] md:overflow-y-auto">
       <h2 id="elements-heading" className="flex items-center gap-2 text-base font-extrabold text-violet-900"><Shapes aria-hidden="true" size={22} />Paleta de elementos</h2>
       <p className="mt-1 text-sm leading-6 text-slate-500">Arraste ou clique para adicionar.</p>
       <div className="mt-5 grid gap-5 sm:grid-cols-3 md:grid-cols-1">

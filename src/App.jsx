@@ -139,11 +139,11 @@ export default function App() {
         onDragOver: ({ over }) => over ? 'Destino disponível.' : 'Fora da página.',
         onDragEnd: ({ over }) => over ? 'Movimento concluído.' : 'Movimento cancelado.', onDragCancel: () => 'Movimento cancelado.',
       } }}>
-      <div className="flex min-h-dvh flex-col">
+      <div className="flex h-dvh flex-col overflow-hidden">
         <Header view={view} onViewChange={setView} onExport={exportSite} exporting={exporting} exportDisabled={Boolean(codeError)} stageOpen={stageOpen} onToggleStage={() => setStageOpen((current) => !current)} />
         {exportMessage && <p role="status" className="bg-emerald-50 px-6 py-3 text-sm text-emerald-800">{exportMessage}</p>}
         {exportError && <p role="alert" className="bg-red-50 px-6 py-3 text-sm text-red-800">{exportError}</p>}
-        {stageOpen ? <Stage code={code} codeError={codeError} device={device} viewportWidth={viewportWidth} /> : <div className="grid flex-1 grid-cols-1 items-start gap-3 p-3 md:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[248px_minmax(0,1fr)_288px]">
+        {stageOpen ? <Stage code={code} codeError={codeError} device={device} viewportWidth={viewportWidth} /> : <div className="grid min-h-0 flex-1 grid-cols-1 items-start gap-3 overflow-y-auto p-3 md:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[248px_minmax(0,1fr)_288px]">
           <Sidebar disabled={view !== 'visual' || Boolean(codeError)} onAddElement={addElement} />
           <Workspace view={view} elements={visibleElements} selectedId={selectedId} onSelect={setSelectedId} dropPreview={dropPreview} message={message}
             device={device} onDeviceChange={setDevice} viewportWidth={viewportWidth} onMobileWidthChange={setMobileWidth}
