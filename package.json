@@ -1,0 +1,38 @@
+{
+  "name": "cna-site-creator",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "oxlint",
+    "test": "node --test src/lib/*.test.js",
+    "test:e2e": "playwright test --project=chromium",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@monaco-editor/react": "^4.7.0",
+    "blockly": "^13.4.0",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.2",
+    "lucide-react": "^1.57.0",
+    "monaco-editor": "^0.57.0",
+    "postcss": "^8.5.30",
+    "react": "^19.2.8",
+    "react-blockly": "^9.0.0",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "^1.81.0",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.3.0"
+  }
+}
