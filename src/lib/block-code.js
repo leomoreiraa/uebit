@@ -1,5 +1,5 @@
-const START = '// CNA-BLOCKLY:START'
-const END = '// CNA-BLOCKLY:END'
+const START = '// UEBIT-BLOCKLY:START'
+const END = '// UEBIT-BLOCKLY:END'
 
 export function applyBlockCode(js, generated, previous) {
   const start = js.indexOf(START)

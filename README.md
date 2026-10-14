@@ -1,4 +1,4 @@
-# CNA Studio
+# Uebit
 
 Construtor de sites educacional com React, Vite e Tailwind CSS.
 
@@ -54,7 +54,7 @@ O bloco de mudar texto oferece títulos, parágrafos e botões, evitando substit
 
 Clique em **Aplicar blocos ao site** para atualizar a prévia, o Palco e o `script.js` exportado. Alterações ainda não aplicadas são indicadas na interface. **Ver JavaScript gerado** mostra o resultado da montagem. As abas HTML, CSS e JS permanecem editáveis; JavaScript escrito à mão não é convertido automaticamente para blocos.
 
-O workspace é preservado ao alternar abas, Visual e Palco durante a sessão. O código gerado fica entre os marcadores `CNA-BLOCKLY:START` e `CNA-BLOCKLY:END`. Escreva código manual fora desse trecho: se ele for alterado manualmente, a aplicação dos blocos informa o conflito, sem sobrescrever as alterações. Apagar todos os blocos e aplicar remove apenas o trecho gerado. Loops gerados têm limite de 10.000 passos por execução/evento.
+O workspace é preservado ao alternar abas, Visual e Palco durante a sessão. O código gerado fica entre os marcadores `UEBIT-BLOCKLY:START` e `UEBIT-BLOCKLY:END`. Escreva código manual fora desse trecho: se ele for alterado manualmente, a aplicação dos blocos informa o conflito, sem sobrescrever as alterações. Apagar todos os blocos e aplicar remove apenas o trecho gerado. Loops gerados têm limite de 10.000 passos por execução/evento.
 
 Blockly e react-blockly são carregados sob demanda. `react-blockly@9` declara peer dependency até React 18; `.npmrc` configura `legacy-peer-deps` para a instalação com React 19. A integração é coberta por testes no navegador, incluindo arrastar blocos e executar o ZIP exportado.
 

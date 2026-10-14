@@ -34,8 +34,8 @@ export function validateContent(type, content) {
   if (content.action === 'scroll' && !content.actionValue.startsWith('#')) throw new Error('Escolha uma seção da página para o botão.')
 }
 
-const START = '// CNA-ACTIONS:START'
-const END = '// CNA-ACTIONS:END'
+const START = '// UEBIT-ACTIONS:START'
+const END = '// UEBIT-ACTIONS:END'
 
 export const ACTION_SCRIPT = `${START}
 // Ações configuradas no editor visual. Seu código pode ficar acima ou abaixo.

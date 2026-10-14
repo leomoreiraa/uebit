@@ -60,7 +60,7 @@ export default function Canvas({ elements, selectedId, onSelect, dropPreview, me
       {!testMode && <button type="button" onClick={() => onSelect(null)} className="rounded-xl bg-white px-3">Selecionar página</button>}
     </div>
     <p className="px-4 py-3 text-xs leading-5 text-slate-600">{testMode ? 'Clique nos botões para testar suas ações.' : 'Arraste pelo botão Mover. A linha roxa mostra a ordem; o destaque verde coloca o bloco dentro do container. Clique no conteúdo para editar.'}</p>
-    <div ref={frameRef} className="studio-dot-backdrop min-w-0 overflow-hidden p-4">
+    <div ref={frameRef} className="uebit-dot-backdrop min-w-0 overflow-hidden p-4">
       <div className="mx-auto" style={{ width: viewportWidth * scale, height: (height + 80) * scale }}>
         <div ref={setNodeRef} aria-label="Página: solte os elementos aqui" data-device={device} className="relative rounded-2xl bg-white shadow-sm" style={{ width: viewportWidth, height: height + 80, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
           <SitePreview code={code} onLayout={receiveLayout} onSelect={onSelect} onError={setRuntimeError} interactive={!isDragging} editing={!testMode} className="absolute inset-x-0 top-0 w-full rounded-xl bg-white" style={{ height }} />

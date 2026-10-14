@@ -13,7 +13,7 @@ export default function Workspace({ view, elements, selectedId, onSelect, dropPr
         </div>
         <span className="rounded-xl bg-emerald-100 px-3 py-2 text-xs font-bold text-emerald-800">{view === 'visual' ? 'Modo de criação' : 'Código escrito'}</span>
       </div>
-      <section aria-label={view === 'visual' ? 'Canvas da página' : 'Área de código'} className="studio-workspace flex min-h-110 flex-1 flex-col overflow-hidden rounded-2xl border-2 border-violet-200 bg-white shadow-sm">
+      <section aria-label={view === 'visual' ? 'Canvas da página' : 'Área de código'} className="uebit-workspace flex min-h-110 flex-1 flex-col overflow-hidden rounded-2xl border-2 border-violet-200 bg-white shadow-sm">
         {view === 'visual' ? (
           <>
             {codeError && <p role="alert" aria-label="Erro no código" className="bg-amber-50 p-4 text-sm text-amber-900">{codeError} Corrija o código para continuar editando visualmente. A última prévia válida está preservada.</p>}

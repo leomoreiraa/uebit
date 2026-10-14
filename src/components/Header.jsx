@@ -6,7 +6,7 @@ export default function Header({ view, onViewChange, onExport, exporting, export
       <div className="flex items-center gap-3">
         <span className="grid size-12 place-items-center rounded-2xl border-2 border-white/30 bg-white/15"><Blocks aria-hidden="true" size={28} /></span>
         <div>
-          <h1 className="text-xl font-extrabold tracking-tight">CNA Studio</h1>
+          <h1 className="text-xl font-extrabold tracking-tight">Uebit</h1>
           <p className="text-xs font-medium text-violet-100">Imagine. Monte. Crie seu site!</p>
         </div>
       </div>

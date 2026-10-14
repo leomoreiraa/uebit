@@ -10,7 +10,7 @@ test('block updates preserve hand-written code and remove only their own section
   assert.equal(next.js.includes('console.log(1)'), false)
   const cleared = applyBlockCode(next.js, '', next.applied)
   assert.ok(cleared.js.includes('window.manual = true;'))
-  assert.equal(cleared.js.includes('CNA-BLOCKLY'), false)
+  assert.equal(cleared.js.includes('UEBIT-BLOCKLY'), false)
 })
 
 test('manual changes to generated code are never silently overwritten', () => {

@@ -43,7 +43,7 @@ test('Blockly coexists with written JS, persists across views and exports workin
   const js = await zip.file('script.js').async('string')
   expect(js).toContain('window.manualCode = 42;')
   expect(js).toContain('Criei com blocos!')
-  expect(js.match(/CNA-BLOCKLY:START/g)).toHaveLength(1)
+  expect(js.match(/UEBIT-BLOCKLY:START/g)).toHaveLength(1)
   const folder = testInfo.outputPath('block-site')
   await mkdir(folder, { recursive: true })
   for (const name of ['index.html', 'style.css', 'script.js']) await writeFile(`${folder}/${name}`, await zip.file(name).async('string'))

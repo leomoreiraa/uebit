@@ -27,11 +27,11 @@
 }
 
 @layer components {
-  .studio-workspace button, .studio-workspace select, .studio-workspace input,
+  .uebit-workspace button, .uebit-workspace select, .uebit-workspace input,
   aside input, aside textarea, aside select, aside button {
     border-radius: var(--radius-xl);
   }
-  .studio-workspace button, aside form button {
+  .uebit-workspace button, aside form button {
     min-height: 2.75rem;
     font-weight: 700;
   }
@@ -39,7 +39,7 @@
     border-bottom-width: 3px;
     box-shadow: 0 2px 0 rgb(76 29 149 / 10%);
   }
-  .studio-dot-backdrop {
+  .uebit-dot-backdrop {
     background-color: #f0edfa;
     background-image: radial-gradient(#c4b5df 1px, transparent 1px);
     background-size: 16px 16px;

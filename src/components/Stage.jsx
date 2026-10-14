@@ -6,7 +6,7 @@ export default function Stage({ code, codeError, device, viewportWidth }) {
   const [runtimeError, setRuntimeError] = useState('')
 
   return (
-    <main id="stage" aria-labelledby="stage-heading" className="studio-dot-backdrop flex flex-1 flex-col p-3 sm:p-6">
+    <main id="stage" aria-labelledby="stage-heading" className="uebit-dot-backdrop flex flex-1 flex-col p-3 sm:p-6">
       <div className="mx-auto mb-4 flex w-full max-w-7xl flex-wrap items-center justify-between gap-3">
         <div>
           <h2 id="stage-heading" className="text-xl font-extrabold text-violet-900">Palco do seu site</h2>

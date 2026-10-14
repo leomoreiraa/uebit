@@ -8,7 +8,7 @@ test('button actions retain manually authored JavaScript without duplicate handl
   const first = syncActionScript(original, document)
   const second = syncActionScript(first, document)
   assert.ok(second.startsWith(original))
-  assert.equal((second.match(/CNA-ACTIONS:START/g) ?? []).length, 1)
+  assert.equal((second.match(/UEBIT-ACTIONS:START/g) ?? []).length, 1)
   assert.equal(second, first)
   const cleared = syncActionScript(second, { querySelector: () => null })
   assert.equal(cleared.trim(), original)
