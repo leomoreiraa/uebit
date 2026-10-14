@@ -68,7 +68,7 @@ test('content editing updates text, images and button actions in a three-file of
   expect(html).toContain('data:image/svg+xml;base64,')
   expect(html).toContain('href="style.css"')
   expect(html).toContain('src="script.js"')
-  expect(html).not.toContain('cna-preview')
+  expect(html).not.toContain('uebit-preview')
   const folder = testInfo.outputPath('exported-site')
   await mkdir(folder, { recursive: true })
   for (const name of Object.keys(zip.files)) await writeFile(`${folder}/${name}`, await zip.file(name).async('string'))

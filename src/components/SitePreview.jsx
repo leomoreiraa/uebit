@@ -10,7 +10,7 @@ export default function SitePreview({ code, onLayout, onSelect, onError, classNa
   const [readyToken, setReadyToken] = useState(null)
   useEffect(() => {
     function receive(event) {
-      if (event.source !== frameRef.current?.contentWindow || event.data?.source !== 'cna-preview' || event.data.token !== token) return
+      if (event.source !== frameRef.current?.contentWindow || event.data?.source !== 'uebit-preview' || event.data.token !== token) return
       if (event.data.type === 'ready') setReadyToken(token)
       if (event.data.type === 'layout') onLayout?.(event.data)
       if (event.data.type === 'select') onSelect?.(event.data.id)

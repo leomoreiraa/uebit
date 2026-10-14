@@ -49,10 +49,10 @@ function targetSelector(block) {
   }
   return `[data-block-id="${CSS.escape(id)}"]`
 }
-javascriptGenerator.forBlock.site_click_element = (block, generator) => `document.addEventListener('click', (event) => {\nif (event.target.closest(${JSON.stringify(targetSelector(block))})) {\n__cnaLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}\n});\n`
+javascriptGenerator.forBlock.site_click_element = (block, generator) => `document.addEventListener('click', (event) => {\nif (event.target.closest(${JSON.stringify(targetSelector(block))})) {\n__uebitLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}\n});\n`
 javascriptGenerator.forBlock.site_text_element = (block, generator) => `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => { node.textContent = ${generator.valueToCode(block, 'TEXT', Order.NONE) || "''"}; });\n`
 javascriptGenerator.forBlock.site_background_element = (block) => `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => { node.style.backgroundColor = ${JSON.stringify(block.getFieldValue('COLOR'))}; });\n`
-javascriptGenerator.forBlock.site_click = (block, generator) => `document.addEventListener('click', (event) => {\nif (event.target.closest(${JSON.stringify(block.getFieldValue('SELECTOR'))})) {\n__cnaLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}\n});\n`
+javascriptGenerator.forBlock.site_click = (block, generator) => `document.addEventListener('click', (event) => {\nif (event.target.closest(${JSON.stringify(block.getFieldValue('SELECTOR'))})) {\n__uebitLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}\n});\n`
 javascriptGenerator.forBlock.site_text = (block, generator) => `document.querySelectorAll(${JSON.stringify(block.getFieldValue('SELECTOR'))}).forEach(node => { node.textContent = ${generator.valueToCode(block, 'TEXT', Order.NONE) || "''"}; });\n`
 javascriptGenerator.forBlock.site_background = (block) => `document.querySelectorAll(${JSON.stringify(block.getFieldValue('SELECTOR'))}).forEach(node => { node.style.backgroundColor = ${JSON.stringify(block.getFieldValue('COLOR'))}; });\n`
 javascriptGenerator.forBlock.site_message = (block, generator) => `{
@@ -66,7 +66,7 @@ if (!notice) {
 }
 notice.textContent = ${generator.valueToCode(block, 'TEXT', Order.NONE) || "''"};
 }\n`
-javascriptGenerator.INFINITE_LOOP_TRAP = 'if (--__cnaLoopBudget < 0) throw new Error("Muitas repetições. Diminua o número de passos dos blocos.");\n'
+javascriptGenerator.INFINITE_LOOP_TRAP = 'if (--__uebitLoopBudget < 0) throw new Error("Muitas repetições. Diminua o número de passos dos blocos.");\n'
 
 const block = (type, extra = {}) => ({ kind: 'block', type, ...extra })
 const textInput = { TEXT: { shadow: { type: 'text', fields: { TEXT: 'Olá, mundo!' } } } }

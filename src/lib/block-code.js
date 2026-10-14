@@ -4,7 +4,7 @@ const END = '// UEBIT-BLOCKLY:END'
 export function applyBlockCode(js, generated, previous) {
   const start = js.indexOf(START)
   const end = js.indexOf(END)
-  const section = generated.trim() ? `${START}\n(() => {\nlet __cnaLoopBudget = 10000;\n${generated}\n})();\n${END}` : ''
+  const section = generated.trim() ? `${START}\n(() => {\nlet __uebitLoopBudget = 10000;\n${generated}\n})();\n${END}` : ''
   if (start < 0 && end < 0) {
     if (previous) throw new Error('O trecho dos blocos foi removido no JS. Restaure-o antes de reaplicar os blocos.')
     return { js: section ? `${js.trimEnd()}\n\n${section}\n` : js, applied: section }

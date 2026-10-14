@@ -7,7 +7,7 @@ export function createPreviewDocument(code, token, editing = false) {
   const bridge = document.createElement('script')
   bridge.textContent = `(() => {
     const token = ${JSON.stringify(token)};
-    const send = (type, data) => parent.postMessage({ source: 'cna-preview', token, type, ...data }, '*');
+    const send = (type, data) => parent.postMessage({ source: 'uebit-preview', token, type, ...data }, '*');
     const root = () => document.querySelector('[data-site-root], .site') || document.body;
     const nodes = () => {
       const collect = parent => [...parent.children].filter(n => !['SCRIPT','STYLE','LINK','META','TITLE','BASE'].includes(n.tagName)).flatMap(n => [n, ...(['DIV','SECTION','ARTICLE','HEADER','FOOTER','NAV','ASIDE','MAIN'].includes(n.tagName) ? collect(n) : [])]);
