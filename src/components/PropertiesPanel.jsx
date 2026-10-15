@@ -41,7 +41,7 @@ export default function PropertiesPanel({
   return (
     <aside
       aria-labelledby="panel-tab-heading"
-      className="flex min-w-0 flex-col rounded-3xl border-2 border-purple-200 bg-white p-3.5 shadow-sm md:col-start-2 xl:col-start-auto xl:sticky xl:top-3 xl:max-h-[calc(100dvh-7.5rem)] xl:overflow-y-auto"
+      className="flex min-w-0 flex-col rounded-3xl border-2 border-purple-200 bg-white p-3.5 shadow-sm md:col-start-2 xl:col-start-auto xl:sticky xl:top-3 xl:max-h-[calc(100dvh-6rem)] xl:overflow-y-auto"
     >
       {/* Tab Navigation */}
       <div

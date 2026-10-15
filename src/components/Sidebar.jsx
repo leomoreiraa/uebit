@@ -124,9 +124,9 @@ export default function Sidebar({ disabled, onAddElement }) {
   return (
     <aside
       aria-labelledby="elements-heading"
-      className="flex min-w-0 flex-col rounded-3xl border-2 border-purple-200 bg-white p-3.5 shadow-sm md:sticky md:top-3 md:max-h-[calc(100dvh-1.5rem)] md:overflow-y-auto md:overscroll-y-contain"
+      className="flex min-w-0 flex-col rounded-3xl border-2 border-purple-200 bg-white p-3.5 shadow-sm max-md:max-h-[520px] md:sticky md:top-3 md:h-[calc(100dvh-6rem)] md:max-h-[calc(100dvh-6rem)] overflow-hidden"
     >
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex shrink-0 items-center justify-between gap-2">
         <h2 id="elements-heading" className="flex items-center gap-2 text-base font-black text-slate-900">
           <span className="grid size-8 place-items-center rounded-xl bg-purple-100 text-purple-700 shadow-xs">
             <Shapes aria-hidden="true" size={18} />
@@ -137,10 +137,10 @@ export default function Sidebar({ disabled, onAddElement }) {
           Peças
         </span>
       </div>
-      <p className="mt-1 text-xs font-medium text-slate-500">Arraste ou clique para adicionar à página.</p>
+      <p className="mt-1 shrink-0 text-xs font-medium text-slate-500">Arraste ou clique para adicionar à página.</p>
 
       {/* Conjuntos de elementos coloridos nas 4 cores */}
-      <div className="mt-3 space-y-3">
+      <div className="mt-3 flex-1 min-h-0 space-y-3 overflow-y-auto overscroll-contain pr-1">
         {categories.map((category) => {
           const isCollapsed = Boolean(collapsed[category.id])
           const items = elementTypes.filter((element) => category.types.includes(element.type))

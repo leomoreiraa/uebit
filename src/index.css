@@ -177,3 +177,22 @@
   fill: #fff;
   font-family: var(--uebit-blocks-font);
 }
+
+/* Barra de rolagem discreta e suave para painéis laterais */
+aside, aside * {
+  scrollbar-width: thin;
+  scrollbar-color: #ddd6fe transparent;
+}
+aside *::-webkit-scrollbar {
+  width: 5px;
+}
+aside *::-webkit-scrollbar-track {
+  background: transparent;
+}
+aside *::-webkit-scrollbar-thumb {
+  background: #ddd6fe;
+  border-radius: 9999px;
+}
+aside *::-webkit-scrollbar-thumb:hover {
+  background: #a78bfa;
+}
