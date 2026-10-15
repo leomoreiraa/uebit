@@ -14,6 +14,12 @@
     <img src="https://img.shields.io/badge/Licen%C3%A7a-MIT-22C55E?style=flat-square" alt="Licença MIT" />
   </p>
 
+  <p>
+    <a href="https://leomoreiraa.github.io/uebit/">
+      <img src="https://img.shields.io/badge/Acessar%20o%20Uebit-Online%20no%20GitHub%20Pages-22C55E?style=for-the-badge&logo=githubpages&logoColor=white" alt="Acessar o Uebit Online" />
+    </a>
+  </p>
+
   <br />
 
   <img src="./public/brand/uebit-mascot.svg" alt="Bit, o sapinho criador do Uebit" width="420" />
@@ -73,25 +79,11 @@ Pronto para postar no GitHub Pages, Vercel, Netlify ou enviar para os colegas.
 
 ---
 
-## 💻 Como Rodar o Projeto
+## 🌐 Acesse o Uebit Online
 
-Se você quiser testar ou rodar o Uebit no seu computador:
+Você não precisa baixar nem instalar nada! Crie, experimente e publique seus sites diretamente no navegador:
 
-```bash
-# 1. Clone o repositório
-git clone https://github.com/leomoreiraa/uebit.git
-
-# 2. Acesse a pasta
-cd uebit
-
-# 3. Instale as dependências
-npm install
-
-# 4. Inicie o servidor
-npm run dev
-```
-
-Abra `http://localhost:5173` no navegador e divirta-se criando!
+👉 **[https://leomoreiraa.github.io/uebit](https://leomoreiraa.github.io/uebit)**
 
 ---
 
