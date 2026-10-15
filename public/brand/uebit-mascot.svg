@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 440" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Bit, o sapinho criador do Uebit</title>
+  <desc id="desc">Um sapinho com olhos de pixel cria uma página em seu computador, sobre uma vitória-régia. Ao redor, blocos viram ideias.</desc>
+  <ellipse cx="280" cy="220" rx="215" ry="189" fill="#EEE8FC"/>
+  <path d="M85 294c-64-90-1-187 87-168M409 99c102 32 136 119 61 202" stroke="#D2C2F2" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 10"/>
+  <ellipse cx="280" cy="379" rx="180" ry="17" fill="#DBEAE1"/>
+  <path d="M115 346c0-33 74-56 162-56 94 0 169 23 169 56 0 28-68 47-155 48l30-41-54 40c-85-1-152-20-152-47Z" fill="#21824F"/>
+  <path d="M130 341c0-24 67-44 150-44s150 20 150 44-67 44-150 44l29-33-50 32c-73-3-129-20-129-43Z" fill="#78E59B"/>
+  <ellipse cx="279" cy="340" rx="100" ry="16" fill="#21824F" opacity=".2"/>
+  <path d="M202 271c-57-9-75 44-47 60 17 9 38-4 55-17m143-43c57-9 75 44 47 60-17 9-38-4-55-17" fill="#21824F" stroke="#24203D" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M193 234c0-60 37-95 87-95s87 35 87 95v53c0 41-39 60-87 60s-87-19-87-60v-53Z" fill="#78E59B" stroke="#24203D" stroke-width="4"/>
+  <ellipse cx="280" cy="280" rx="57" ry="59" fill="#C7F5D5"/>
+  <path d="M177 180c0-25 12-46 30-58v-18c0-25 16-42 38-42s35 17 35 38c0-21 14-38 36-38s37 17 37 42v18c18 12 30 33 30 58 0 42-42 65-103 65s-103-23-103-65Z" fill="#78E59B" stroke="#24203D" stroke-width="4"/>
+  <rect x="220" y="86" width="43" height="57" rx="21" fill="#FAF9F3"/>
+  <rect x="297" y="86" width="43" height="57" rx="21" fill="#FAF9F3"/>
+  <rect x="240" y="106" width="17" height="23" rx="4" fill="#24203D"/>
+  <rect x="303" y="106" width="17" height="23" rx="4" fill="#24203D"/>
+  <rect x="244" y="109" width="5" height="5" rx="1" fill="#FAF9F3"/>
+  <rect x="307" y="109" width="5" height="5" rx="1" fill="#FAF9F3"/>
+  <path d="m211 170-10 10 10 10m138-20 10 10-10 10" stroke="#21824F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M245 181c8 24 61 24 70 0" fill="#24203D" stroke="#24203D" stroke-width="5" stroke-linecap="round"/>
+  <path d="M263 197q17-13 34 0" fill="#D84062"/>
+  <g transform="rotate(-4 280 280)">
+    <rect x="172" y="237" width="216" height="106" rx="13" fill="#452580" stroke="#24203D" stroke-width="4"/>
+    <rect x="172" y="229" width="216" height="106" rx="13" fill="#7145D6" stroke="#24203D" stroke-width="4"/>
+    <path d="M172 255h216" stroke="#24203D" stroke-width="3"/>
+    <circle cx="188" cy="243" r="4" fill="#D84062"/><circle cx="202" cy="243" r="4" fill="#FFD56A"/><circle cx="216" cy="243" r="4" fill="#78E59B"/>
+    <path d="m251 276-17 15 17 15m58-30 17 15-17 15m-21-33-15 36" stroke="#FAF9F3" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <path d="M183 246c-25-12-37 18-19 26l19 7m194-33c25-12 37 18 19 26l-19 7" fill="#78E59B" stroke="#24203D" stroke-width="4" stroke-linecap="round"/>
+  <g transform="rotate(-12 101 181)"><rect x="65" y="144" width="66" height="66" rx="17" fill="#FFD56A" stroke="#24203D" stroke-width="3"/><path d="M83 166h30m-30 11h21m-21 11h26" stroke="#24203D" stroke-width="4" stroke-linecap="round"/></g>
+  <g transform="rotate(12 446 183)"><rect x="413" y="146" width="66" height="66" rx="17" fill="#FAF9F3" stroke="#24203D" stroke-width="3"/><rect x="428" y="162" width="16" height="16" rx="4" fill="#7145D6"/><rect x="449" y="162" width="16" height="16" rx="4" fill="#78E59B"/><rect x="428" y="183" width="16" height="16" rx="4" fill="#D84062"/></g>
+  <path d="M376 76q18 0 18 18m-15-32q29 0 29 29" stroke="#7145D6" stroke-width="4" stroke-linecap="round"/>
+  <rect x="157" y="84" width="17" height="17" rx="4" transform="rotate(-12 157 84)" fill="#D84062"/>
+  <rect x="396" y="254" width="12" height="12" rx="3" fill="#FFD56A"/><rect x="139" y="257" width="10" height="10" rx="3" fill="#7145D6"/>
+</svg>

@@ -125,9 +125,10 @@ export default function Canvas({ elements, selectedId, onSelect, dropPreview, me
             </SortableContext>
             {selectedRect && !disabled && !isDragging && <ResizeHandles key={`${device}-${selectedId}`} id={selectedId} rect={selectedRect} scale={scale} onPreview={setResizePreview} onCommit={onUpdateLayout} />}
             {elements.length === 0 && (
-              <div className="pointer-events-none absolute inset-x-8 top-20 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/80 p-8 text-center text-slate-500">
-                <h3 className="text-lg font-bold text-slate-700">Sua página começa aqui</h3>
-                <p className="mt-1 text-xs text-slate-400">Arraste um elemento ou container da paleta.</p>
+              <div className="pointer-events-none absolute inset-x-8 top-20 rounded-3xl border-2 border-dashed border-purple-200 bg-purple-50/50 p-8 text-center text-slate-600 shadow-xs">
+                <span className="inline-block text-4xl mb-2 select-none">🐸</span>
+                <h3 className="text-lg font-black text-purple-950">Sua página começa aqui</h3>
+                <p className="mt-1 text-xs font-semibold text-slate-500">Arraste um elemento ou container da paleta para começar a criar.</p>
               </div>
             )}
             <div

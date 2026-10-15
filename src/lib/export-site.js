@@ -1,5 +1,7 @@
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
+import { formatCode } from './format-code.js'
+import { createSiteDocument, serializeSiteDocument } from './site-document.js'
 
 function blobDataURL(blob) {
   return new Promise((resolve, reject) => {
@@ -11,7 +13,7 @@ function blobDataURL(blob) {
 }
 
 export async function buildExportFiles(code) {
-  const document = new DOMParser().parseFromString(code.html, 'text/html')
+  const document = createSiteDocument(code.html)
   const cache = new Map()
   async function embedLocalAsset(source) {
     if (!source || /^(data:|#)/i.test(source)) return source
@@ -47,38 +49,12 @@ export async function buildExportFiles(code) {
   for (const style of document.querySelectorAll('style')) style.textContent = await embedCSS(style.textContent)
   for (const node of document.querySelectorAll('[style]')) node.setAttribute('style', await embedCSS(node.getAttribute('style')))
 
-  const styles = [...document.querySelectorAll('link[rel="stylesheet"]')].filter((node) => /^\.?\/?style\.css$/.test(node.getAttribute('href') ?? ''))
-  const stylesheet = styles.shift() ?? document.createElement('link')
-  stylesheet.setAttribute('rel', 'stylesheet')
-  stylesheet.setAttribute('href', 'style.css')
-  if (!stylesheet.parentNode) document.head.append(stylesheet)
-  styles.forEach((node) => node.remove())
-
-  const scripts = [...document.querySelectorAll('script[src]')].filter((node) => /^\.?\/?script\.js$/.test(node.getAttribute('src') ?? ''))
-  const script = scripts.shift() ?? document.createElement('script')
-  script.setAttribute('src', 'script.js')
-  script.setAttribute('defer', '')
-  if (!script.parentNode) document.head.append(script)
-  scripts.forEach((node) => node.remove())
-
-  if (!document.querySelector('meta[charset]')) {
-    const charset = document.createElement('meta')
-    charset.setAttribute('charset', 'UTF-8')
-    document.head.prepend(charset)
-  }
-  if (!document.querySelector('meta[name="viewport"]')) {
-    const viewport = document.createElement('meta')
-    viewport.name = 'viewport'
-    viewport.content = 'width=device-width, initial-scale=1.0'
-    document.head.append(viewport)
-  }
-  document.querySelectorAll('[data-mobile-custom]').forEach((node) => node.removeAttribute('data-mobile-custom'))
-
-  return {
-    'index.html': '<!doctype html>\n' + document.documentElement.outerHTML,
-    'style.css': await embedCSS(code.css),
-    'script.js': code.js,
-  }
+  const formatted = await formatCode({
+    html: serializeSiteDocument(document),
+    css: await embedCSS(code.css),
+    js: code.js,
+  })
+  return { 'index.html': formatted.html, 'style.css': formatted.css, 'script.js': formatted.js }
 }
 
 export async function createSiteZip(code) {

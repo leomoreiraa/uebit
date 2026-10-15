@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useRef } from 'react'
-import { Blocks, CodeXml, Download, LayoutTemplate, Play, Square, Home, Save, Upload, Sparkles } from 'lucide-react'
+import { CodeXml, Download, LayoutTemplate, Play, Square, Save, Upload, Sparkles, Blocks } from 'lucide-react'
+import UebitLogo from './UebitLogo'
 
 export default function Header({
   name,
@@ -19,26 +20,16 @@ export default function Header({
   onOpenTemplates,
 }) {
   const fileInput = useRef(null)
+
   return (
-    <header className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-b-4 border-purple-400 bg-white/95 px-4 py-2.5 shadow-sm lg:px-6">
+    <header className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-b-4 border-purple-300 bg-white/95 px-4 py-2.5 shadow-sm lg:px-6">
       <div className="flex items-center gap-3">
         <Link
           to="/"
           title="Ir para a página inicial"
-          className="group flex items-center gap-2.5 rounded-2xl p-1 transition-transform hover:scale-102"
+          className="group flex items-center gap-2 rounded-2xl p-1 transition-transform hover:scale-102"
         >
-          <span className="grid size-11 place-items-center rounded-2xl border-2 border-purple-300 bg-purple-600 text-white shadow-md transition-transform group-hover:rotate-6">
-            <Blocks aria-hidden="true" size={24} />
-          </span>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-black tracking-tight text-slate-900">Uebit</h1>
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 border border-amber-300 px-2 py-0.5 text-[10px] font-black text-amber-900">
-                <Home size={10} aria-hidden="true" /> Início
-              </span>
-            </div>
-            <p className="text-[11px] font-bold text-purple-700 hidden sm:block">Web Builder em Blocos</p>
-          </div>
+          <UebitLogo size={38} variant="full" animated />
         </Link>
       </div>
 
@@ -62,32 +53,34 @@ export default function Header({
             onClick={onOpenTemplates}
             title="Escolha um modelo pronto de projeto"
             aria-label="Modelos de Projeto"
-            className="flex h-10 items-center gap-1.5 rounded-full border-b-3 border-pink-700 bg-pink-500 px-3.5 text-xs font-black text-white shadow-md transition-all hover:scale-105 hover:bg-pink-400 active:scale-95 active:translate-y-0.5"
+            className="flex h-10 items-center gap-1.5 rounded-full border-b-4 border-amber-600 bg-amber-400 px-3.5 text-xs font-black text-amber-950 shadow-md transition-all hover:scale-105 hover:bg-amber-300 active:scale-95 active:translate-y-0.5"
           >
             <Sparkles aria-hidden="true" size={16} />
             <span>Modelos</span>
           </button>
         )}
 
+        {/* Salvar Projeto - Roxo Vibrante */}
         <button
           type="button"
           onClick={onSaveProject}
           disabled={importing}
           title="Salvar Projeto"
           aria-label="Salvar Projeto"
-          className="flex h-10 items-center gap-1.5 rounded-full border-b-3 border-violet-800 bg-violet-600 px-4 text-xs font-black text-white shadow-md transition-all hover:scale-105 hover:bg-violet-500 active:scale-95 active:translate-y-0.5 disabled:opacity-50"
+          className="flex h-10 items-center gap-1.5 rounded-full border-b-4 border-purple-800 bg-purple-600 px-4 text-xs font-black text-white shadow-md transition-all hover:scale-105 hover:bg-purple-500 active:scale-95 active:translate-y-0.5 disabled:opacity-50"
         >
           <Save aria-hidden="true" size={16} />
           <span>Salvar Projeto</span>
         </button>
 
+        {/* Importar Projeto - Vermelho/Rose */}
         <button
           type="button"
           onClick={() => fileInput.current.click()}
           disabled={importing}
           title="Importar Projeto"
           aria-label="Importar Projeto"
-          className="flex h-10 items-center gap-1.5 rounded-full border-b-3 border-indigo-800 bg-indigo-600 px-4 text-xs font-black text-white shadow-md transition-all hover:scale-105 hover:bg-indigo-500 active:scale-95 active:translate-y-0.5 disabled:opacity-50"
+          className="flex h-10 items-center gap-1.5 rounded-full border-b-4 border-rose-700 bg-rose-500 px-4 text-xs font-black text-white shadow-md transition-all hover:scale-105 hover:bg-rose-400 active:scale-95 active:translate-y-0.5 disabled:opacity-50"
         >
           <Upload aria-hidden="true" size={16} />
           <span>{importing ? 'Importando…' : 'Importar Projeto'}</span>
@@ -121,7 +114,7 @@ export default function Header({
                 onClick={() => onViewChange(value)}
                 className={`flex h-9 items-center gap-1.5 rounded-full px-3.5 text-xs font-black transition-all ${
                   view === value
-                    ? 'border border-purple-400 bg-purple-600 text-white shadow-sm'
+                    ? 'border-2 border-purple-400 bg-purple-600 text-white shadow-sm'
                     : 'text-purple-800 hover:bg-purple-100 hover:text-purple-950'
                 }`}
               >
@@ -132,24 +125,30 @@ export default function Header({
           </div>
         )}
 
+        {/* Botão Play (Palco) - Verde Sapo */}
         <button
           type="button"
           onClick={onToggleStage}
           aria-pressed={stageOpen}
           aria-controls={stageOpen ? 'stage' : undefined}
           title={stageOpen ? 'Voltar ao editor' : 'Play · Abrir palco'}
-          className="flex h-10 items-center gap-2 rounded-full border-b-4 border-emerald-700 bg-emerald-500 px-5 text-xs font-black text-white shadow-md transition-all hover:scale-105 hover:bg-emerald-400 active:scale-95 active:translate-y-0.5"
+          className={`flex h-10 items-center gap-2 rounded-full border-b-4 px-5 text-xs font-black shadow-md transition-all hover:scale-105 active:scale-95 active:translate-y-0.5 ${
+            stageOpen
+              ? 'border-slate-800 bg-slate-700 text-white hover:bg-slate-600'
+              : 'border-emerald-700 bg-emerald-500 text-white hover:bg-emerald-400'
+          }`}
         >
           {stageOpen ? <Square aria-hidden="true" size={16} className="fill-white" /> : <Play aria-hidden="true" size={16} className="fill-white" />}
           <span>{stageOpen ? 'Voltar ao editor' : 'Play · Abrir palco'}</span>
         </button>
 
+        {/* Botão Exportar Site - Verde Intenso */}
         <button
           type="button"
           onClick={onExport}
           disabled={exporting || exportDisabled}
           title={exportDisabled ? 'Corrija o erro de código antes de exportar' : 'Baixar HTML, CSS e JavaScript em um arquivo ZIP'}
-          className="flex h-10 items-center gap-2 rounded-full border-b-4 border-amber-600 bg-amber-400 px-5 text-xs font-black text-amber-950 shadow-md transition-all enabled:hover:scale-105 enabled:hover:bg-amber-300 enabled:active:scale-95 enabled:active:translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-10 items-center gap-2 rounded-full border-b-4 border-green-800 bg-green-600 px-5 text-xs font-black text-white shadow-md transition-all enabled:hover:scale-105 enabled:hover:bg-green-500 enabled:active:scale-95 enabled:active:translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Download aria-hidden="true" size={16} />
           <span>{exporting ? 'Exportando…' : 'Exportar Site'}</span>

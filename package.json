@@ -8,7 +8,6 @@
     "build": "vite build",
     "lint": "oxlint",
     "test": "node --test src/lib/*.test.js",
-    "test:e2e": "playwright test --project=chromium",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -21,13 +20,13 @@
     "lucide-react": "^1.57.0",
     "monaco-editor": "^0.57.0",
     "postcss": "^8.5.30",
+    "prettier": "^3.9.10",
     "react": "^19.2.8",
     "react-blockly": "^9.0.0",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
-    "@playwright/test": "^1.64.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
