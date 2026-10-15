@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Uebit — Carregando...</title>
+    <script>
+      (function() {
+        var path = window.location.pathname;
+        var parts = path.split('/').filter(Boolean);
+        var isGitHubPagesRepo = parts.length > 0 && window.location.hostname.endsWith('github.io');
+        var base = isGitHubPagesRepo ? '/' + parts[0] : '';
+        var subPath = isGitHubPagesRepo ? parts.slice(1).join('/') : parts.join('/');
+        var search = window.location.search || '';
+        var hash = window.location.hash || '';
+        var redirectUrl = window.location.origin + base + '/#' + (subPath ? '/' + subPath : '') + search + hash;
+        window.location.replace(redirectUrl);
+      })();
+    </script>
+  </head>
+  <body style="font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; color: #1e1b4b; display: grid; min-height: 100vh; place-items: center; margin: 0; text-align: center;">
+    <div>
+      <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">🐸 Uebit</h1>
+      <p style="color: #64748b;">Carregando página no editor...</p>
+      <p style="margin-top: 1.5rem;">
+        <a href="./" style="color: #7c3aed; font-weight: bold; text-decoration: underline;">
+          Clique aqui se não for redirecionado automaticamente
+        </a>
+      </p>
+    </div>
+  </body>
+</html>
