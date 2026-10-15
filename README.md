@@ -1,152 +1,202 @@
-# Uebit
+<div align="center">
 
-Construtor de sites educacional com React, Vite e Tailwind CSS.
+  <img src="./public/brand/uebit-logo.svg" alt="Uebit Logo" width="320" />
 
-## Executar
+  <p><strong>Web &middot; Bit &middot; Ribbit &mdash; O construtor visual de sites educacional em blocos</strong></p>
 
-```sh
-npm install
-npm run dev
-```
+  <p>
+    <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19" /></a>
+    <a href="https://vite.dev/"><img src="https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" /></a>
+    <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" /></a>
+    <a href="https://developers.google.com/blockly"><img src="https://img.shields.io/badge/Blockly-Google-FBBC05?style=for-the-badge&logo=google&logoColor=black" alt="Blockly" /></a>
+    <a href="https://microsoft.github.io/monaco-editor/"><img src="https://img.shields.io/badge/Monaco_Editor-VS_Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Monaco Editor" /></a>
+    <img src="https://img.shields.io/badge/Licen%C3%A7a-MIT-22C55E?style=for-the-badge" alt="Licença MIT" />
+  </p>
 
-## Verificar
+  <br />
 
-```sh
-npm run lint
-npm test
-npm run build
-```
+  <img src="./public/brand/uebit-mascot.svg" alt="Bit, o mascote do Uebit" width="460" />
 
-`npm run preview` serve o build de produção localmente.
+  <p>
+    <em>Crie seu primeiro site brincando com blocos! Uma plataforma livre e divertida para aprender desenvolvimento web na prática.</em>
+  </p>
 
-Testes de integração no navegador:
+  <p>
+    <a href="#-sobre-o-uebit">Sobre</a> &bull;
+    <a href="#-recursos-principais">Recursos</a> &bull;
+    <a href="#-como-funciona">Como Funciona</a> &bull;
+    <a href="#-como-executar-localmente">Como Executar</a> &bull;
+    <a href="#-estrutura-do-projeto">Estrutura</a> &bull;
+    <a href="#-marca-e-identidade">Identidade Visual</a>
+  </p>
 
-```sh
-npx playwright install chromium
-npm run test:e2e
-```
+</div>
 
-No Windows com Microsoft Edge instalado, também é possível usar `npx playwright test --project=edge`.
+---
 
-## Fases
+## 🐸 Sobre o Uebit
 
-1. **Concluída — Estrutura:** layout responsivo com header, sidebar e área de trabalho. Alternância Visual/Código e seletores HTML/CSS/JS apresentam os espaços de cada modo.
-2. **Concluída — Visual Builder:** arrastar e soltar títulos, parágrafos, imagens e botões usando `@dnd-kit/core`, com feedback visual e adição alternativa por clique ou teclado.
-3. **Concluída — Code Engine:** Monaco com HTML, CSS e JavaScript puros, prévia ao vivo e sincronização entre código e elementos visuais.
-4. **Concluída — Exportação:** download de `index.html`, `style.css` e `script.js` em ZIP com JSZip e FileSaver, incluindo imagens locais e enviadas.
+O **Uebit** é um ambiente educacional e lúdico de criação web inspirado no design do **Scratch** e **Micro:bit MakeCode**, mas focado em ensinar a construir a **web real**.
 
-As quatro fases iniciais estão implementadas.
+Com o Uebit, estudantes e iniciantes não precisam decorar sintaxes complexas no primeiro dia: eles montam o layout arrastando blocos visuais, programam interações encaixando bloquinhos de código e, a qualquer momento, podem abrir o editor para ver como o **HTML5**, **CSS3** e **JavaScript** legítimos são gerados por trás dos panos.
 
-### Expansão Scratch / MakeCode
+> [!NOTE]
+> **Código 100% puro e sem dependências:** Ao exportar seu site, você recebe um arquivo ZIP com apenas `index.html`, `style.css` e `script.js`. Nada de React ou bibliotecas pesadas no resultado final — seu site roda em qualquer navegador e pode ser hospedado em qualquer servidor gratuito!
 
-5. **Concluída — Refatoração visual:** navbar violeta, botões arredondados e espessos, ícones Lucide, paleta categorizada (texto azul, imagens roxas e ações laranja), área central com fundo pontilhado e edição existente em um painel à direita. Em telas menores, os painéis se reorganizam verticalmente.
-6. **Concluída — Palco:** botão verde Play na navbar abre uma prévia interativa sem ferramentas de edição. “Voltar ao editor” retorna ao modo anterior com o código e a seleção preservados. A versão mobile mantém a largura escolhida; desktop se adapta ao espaço disponível. A exportação continua acessível no palco.
-7. **Concluída — Propriedades lúdicas:** paletas de cor de texto/fundo, tamanhos de texto P/M/G e opções visuais de largura e altura mínima. Cores e fonte são compartilhadas; dimensões respeitam a versão desktop/mobile selecionada.
-8. **Concluída — Blockly:** aba adicional de blocos com geração de JavaScript e integração à exportação. O editor escrito HTML/CSS/JS com Monaco continua disponível.
+---
 
-## Programar com blocos
+## ✨ Recursos Principais
 
-Em **Código → Blocos**, arraste e encaixe blocos das categorias Eventos, Minha página, Lógica, Repetições, Matemática, Texto e Variáveis. Os blocos de página permitem responder a cliques, trocar textos, mudar fundos e mostrar mensagens.
+### 🧩 1. Construtor Visual Drag & Drop
+- **Blocos essenciais**: Cabeçalhos (H1–H6), Parágrafos, Imagens, Botões interativos e Containers flexíveis.
+- **Motor Flexbox inteligente**: Organize elementos lado a lado ou empilhados com alinhamento, espaçamento (`gap`) e quebras automáticas.
+- **Aninhamento intuitivo**: Arraste elementos para dentro ou fora de containers com guia de cores em tempo real (destaque roxo para inserção e verde para aninhamento).
 
-Nos blocos de **Eventos** e **Minha página**, escolha o destino por nome em uma lista. O caminho completo (por exemplo, `Container 1 › Container 1 › Botão 1: Saiba mais`) identifica elementos em qualquer nível. Os vínculos usam IDs estáveis: mover o bloco entre containers não quebra sua ação. Ao aplicar, HTML escrito manualmente também recebe `data-block-id`, sem alteração do layout.
+### ⚡ 2. Lógica com Blocos (Google Blockly)
+- Encaixe blocos visuais das categorias:
+  - **Eventos**: Responda a cliques em qualquer botão, imagem ou container.
+  - **Minha Página**: Altere textos na tela, troque cores de fundo, mostre alertas ou role até seções.
+  - **Lógica e Repetições**: Condicionais `se / senão`, laços de repetição protegidos contra travamentos.
+  - **Variáveis e Matemática**: Crie pontuações para joguinhos, contadores e cálculos.
+- **Identificadores estáveis**: Mova blocos na tela sem quebrar a programação já feita.
 
-O bloco de mudar texto oferece títulos, parágrafos e botões, evitando substituir os filhos de um container. Eventos e mudanças de fundo também podem escolher containers e imagens. Destinos vazios ou removidos pedem uma nova seleção antes de aplicar; a última versão aplicada é mantida. A categoria **Seletores CSS** preserva os blocos avançados com seletores como `.button`, `h1` ou `#meu-id` e os programas anteriores continuam compatíveis.
+### 💻 3. Editor de Código Profissional (Monaco Editor)
+- Alternância instantânea para as abas **HTML**, **CSS** e **JavaScript**.
+- Baseado no motor do VS Code, com realce de sintaxe, auto-complete e validação.
+- Sincronização bidirecional: edições visuais atualizam o código e alterações no código refletem no visual.
+- **Formatação automática**: Código limpo e identado com suporte integrado do Prettier.
 
-Clique em **Aplicar blocos ao site** para atualizar a prévia, o Palco e o `script.js` exportado. Alterações ainda não aplicadas são indicadas na interface. **Ver JavaScript gerado** mostra o resultado da montagem. As abas HTML, CSS e JS permanecem editáveis; JavaScript escrito à mão não é convertido automaticamente para blocos.
+### 📱 4. Design Responsivo (Desktop & Mobile)
+- Alterne entre visão **Desktop (1280px)** e **Mobile (320px, 390px, 430px)**.
+- O layout mobile empilha automaticamente blocos mantendo a responsividade do Flexbox.
+- Botão **Regerar Mobile** para restaurar o fluxo automático a qualquer momento.
 
-O workspace é preservado ao alternar abas, Visual e Palco durante a sessão. O código gerado fica entre os marcadores `UEBIT-BLOCKLY:START` e `UEBIT-BLOCKLY:END`. Escreva código manual fora desse trecho: se ele for alterado manualmente, a aplicação dos blocos informa o conflito, sem sobrescrever as alterações. Apagar todos os blocos e aplicar remove apenas o trecho gerado. Loops gerados têm limite de 10.000 passos por execução/evento.
+### 🎭 5. Palco Interativo (Modo Play)
+- Oculte barras laterais e controles com um clique no botão verde **Play**.
+- Experimente seu site exatamente como um visitante real, testando links, botões e scripts em um ambiente isolado.
 
-Blockly e react-blockly são carregados sob demanda. `react-blockly@9` declara peer dependency até React 18; `.npmrc` configura `legacy-peer-deps` para a instalação com React 19. A integração é coberta por testes no navegador, incluindo arrastar blocos e executar o ZIP exportado.
+### 📦 6. Exportação Instantânea em ZIP
+- Baixe seu projeto completo com um clique:
+  ```text
+  meu-site.zip
+  ├── index.html   (HTML5 semântico com meta viewport)
+  ├── style.css    (Estilos modernos e media-queries)
+  └── script.js    (Suas interações e scripts)
+  ```
+- Todas as imagens locais e enviadas do seu computador são automaticamente embutidas como base64, garantindo que o site funcione sem caminhos quebrados.
 
-## Motor Flexbox e containers aninhados
+---
 
-O Canvas usa **Flexbox** e uma árvore de elementos com `children`. A página organiza seus filhos em fluxo vertical; containers podem conter textos, imagens, botões e outros containers. A ordem da árvore corresponde à ordem do HTML e à ordem de leitura. O motor anterior de posições por células foi substituído.
+## 🎨 Marca e Identidade
 
-- Arraste um **Container** verde da paleta. Ao arrastar outros blocos, a **linha roxa** indica inserção antes/depois; o **destaque verde** indica inserção dentro do container.
-- Os alvos de drop priorizam o nível mais profundo. A árvore impede inserir um container dentro de si mesmo ou de seus descendentes.
-- Arraste pela alça **Mover** para ordenar irmãos ou transferir elementos entre containers. A área no final da página retira elementos dos containers e os coloca na raiz.
-- Clicar na paleta adiciona ao container selecionado. Use **Selecionar página** para adicionar na raiz.
-- O painel **Sua página por dentro** permite selecionar qualquer nível. **Mover antes**, **Mover depois** e **Sair do container** também funcionam por teclado.
-- Containers oferecem **Lado a lado**, **Empilhado**, **Centralizar tudo**, distribuição, alinhamento e espaçamento. Essas opções geram `flex-direction`, `justify-content`, `align-items` e `gap`. `flex-wrap: wrap` permite quebrar a linha quando necessário.
-- Largura: **Natural**, **Metade** ou **Toda**. Altura mínima: **Natural**, **Média** ou **Grande**; o bloco pode crescer conforme seu conteúdo.
-- A prévia continua renderizando o HTML/CSS real em iframe. Somente as alças do editor usam sobreposições posicionadas; o conteúdo exportado permanece em fluxo Flexbox.
+O Uebit foi pensado para transmitir alegria, energia e tecnologia amigável para crianças e jovens:
 
-### Desktop e mobile
+<div align="center">
+  <img src="./public/brand/uebit-symbol.svg" alt="Símbolo Uebit" width="100" />
+</div>
 
-- A prévia **Desktop** usa uma página de 1280 px, reduzida visualmente para caber no editor.
-- A versão **Mobile** empilha os containers automaticamente e usa a largura disponível, inclusive em níveis aninhados.
-- Teste larguras de **320, 390 e 430 px**; as larguras são fluidas.
-- Ajustes no mobile são independentes do desktop e preservados quando o desktop muda. **Regerar mobile** restaura a organização automática.
-- O arraste considera o zoom da prévia. A estrutura e a ordem dos elementos são compartilhadas entre desktop e mobile.
+| Cor | Hex | Significado no Uebit |
+| :--- | :--- | :--- |
+| **Roxo Criativo** | `#7C3AED` | Curiosidade, imaginação, blocos de código e tecnologia. |
+| **Verde Sapo** | `#22C55E` | Energia, o rostinho do Bit, botões de ação e sucesso. |
+| **Amarelo Bit** | `#FACC15` | Brilho dos bits, botões de modelos e ideias iluminadas. |
+| **Vermelho Entusiasmo** | `#EF4444` | Bochechas simpáticas do Bit, botões de importação e alertas. |
 
-Pelo teclado, use Tab e Enter para adicionar ou acionar os controles de organização. A alça Mover também oferece Espaço para iniciar/soltar e setas para navegar entre destinos. Soltar fora do Canvas ou pressionar Escape cancela o movimento. Elementos e configurações são preservados ao alternar entre Visual, Código e Palco durante a sessão.
+---
 
-Containers voltaram à paleta com aninhamento funcional. A imagem inicial usa um SVG local, sem depender de serviços externos.
+## 🚀 Como Executar Localmente
 
-## Editar elementos
+### Pré-requisitos
+- [Node.js](https://nodejs.org/) versão 18 ou superior
+- Gerenciador de pacotes `npm`
 
-1. Clique em um elemento do Canvas para abrir **Editar** no painel de propriedades à direita (abaixo da área de trabalho em telas menores).
-2. Altere os campos e clique em **Aplicar alterações**.
-3. Use **Testar página** para executar as ações dos botões; **Voltar a editar** retorna à seleção de elementos.
+### Instalação
 
-- **Cabeçalho:** texto e nível H1–H6.
-- **Parágrafo:** texto, incluindo quebras de linha.
-- **Imagem:** endereço, upload do computador, descrição alternativa e ajuste para preencher a área ou mostrar a imagem inteira.
-- **Botão:** texto e ação — abrir link (com opção de nova aba), ir para um elemento da página ou mostrar uma mensagem.
-- **Container:** configura o fluxo dos seus filhos; pode conter outros containers.
-- **Excluir elemento:** remove o bloco, seus descendentes e suas regras específicas. O conteúdo é compartilhado entre desktop/mobile; cada versão mantém seu layout.
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/leomoreiraa/uebit.git
+   cd uebit
+   ```
 
-As ações são gravadas como atributos HTML e JavaScript puro em `script.js`. Código escrito manualmente é preservado ao reorganizar a árvore.
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
 
-## Exportar o site
+3. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
 
-Clique em **Exportar Site** para baixar `meu-site.zip`, contendo somente:
+4. Abra no seu navegador o endereço indicado no terminal (normalmente `http://localhost:5173/`).
+
+---
+
+## 🛠️ Comandos Disponíveis
+
+| Comando | Descrição |
+| :--- | :--- |
+| `npm run dev` | Inicia o servidor local de desenvolvimento com Hot Reload. |
+| `npm run build` | Compila o projeto otimizado para produção na pasta `dist/`. |
+| `npm run preview` | Visualiza localmente o build de produção compilado. |
+| `npm test` | Executa os testes unitários do motor de sincronização e formatação via Node.js. |
+| `npm run lint` | Executa o linter ultra-rápido Oxlint para garantir padrões de qualidade do código. |
+
+---
+
+## 📂 Estrutura do Projeto
 
 ```text
-index.html
-style.css
-script.js
+uebit/
+├── public/                 # Favicon, imagens e assets SVG oficiais da marca
+│   ├── brand/              # Logotipos, mascote Bit e símbolos em vetor
+│   └── images/             # Imagens ilustrativas padrão do construtor
+├── src/
+│   ├── assets/             # Imagens e ícones estáticos
+│   ├── components/         # Componentes da interface React
+│   │   ├── Canvas.jsx          # Área de edição e drop de blocos
+│   │   ├── CodeEditor.jsx      # Editor Monaco integrado (HTML/CSS/JS)
+│   │   ├── BlocksEditor.jsx    # Workspace do Blockly para programação visual
+│   │   ├── Header.jsx          # Topbar com ações de Palco, Salvar e Exportar
+│   │   ├── Sidebar.jsx         # Catálogo lateral de elementos
+│   │   ├── PropertiesPanel.jsx # Painel lateral de estilos e flexbox
+│   │   ├── Stage.jsx           # Palco de teste em tela limpa
+│   │   └── UebitLogo.jsx       # Componente com o sapinho vetorizado
+│   ├── data/               # Modelos prontos de projetos e definições de elementos
+│   ├── lib/                # Motores de sincronização, Blockly, AST e exportação
+│   │   ├── code-engine.js      # Parser e sincronizador de HTML/CSS
+│   │   ├── export-site.js      # Montagem do ZIP empacotado para download
+│   │   ├── format-code.js      # Formatador Prettier de código
+│   │   └── tree.js             # Gerenciamento da árvore de nós Flexbox
+│   ├── pages/
+│   │   ├── LandingPage.jsx     # Página inicial interativa com apresentação
+│   │   └── EditorPage.jsx      # Tela principal do aplicativo e estúdio
+│   ├── App.jsx             # Roteador principal
+│   └── main.jsx            # Ponto de entrada React 19
+├── .gitignore              # Regras limpas para ignorar artefatos e temporários
+├── package.json            # Dependências e scripts do projeto
+├── README.md               # Esta documentação
+└── vite.config.js          # Configuração do Vite com Tailwind CSS
 ```
 
-Extraia os três arquivos na mesma pasta e abra `index.html` no navegador. As referências ao CSS/JS e a configuração de viewport são incluídas automaticamente. O site exportado mantém a versão responsiva e as ações dos botões, sem depender de React ou do construtor.
+---
 
-Imagens enviadas ficam incorporadas no HTML; a imagem padrão e recursos locais referenciados em imagens/CSS também são incorporados durante a exportação. Imagens de URLs externas continuam usando esses endereços. Se um arquivo local não existir, a interface informa qual recurso precisa ser corrigido.
+## 🤝 Contribuindo
 
-## Editar código
+Contribuições para tornar o aprendizado de programação web ainda mais acessível são super bem-vindas!
 
-- Clique em **Código** para abrir as abas `index.html`, `style.css` e `script.js` no Monaco. O editor e seus workers são carregados localmente pelo Vite, sem CDN.
-- A prévia ao vivo executa o HTML/CSS/JS da página. Alterações de texto, elementos, estilos e interações também aparecem no Canvas ao voltar para **Visual**.
-- Adicionar, mover ou dimensionar um bloco atualiza a hierarquia HTML e suas regras Flexbox. O motor move nós existentes, preservando atributos, conteúdo personalizado, outras declarações CSS e JavaScript manual.
-- Os controles visuais percorrem os filhos de `.site` / `[data-site-root]` recursivamente. Divs e elementos estruturais como `section` e `article` são containers; marcação interna de texto, como `em` e `strong`, permanece no próprio bloco. `data-block-id` identifica os elementos na sincronização, com validação de IDs duplicados em toda a árvore.
-- Ao atualizar visualmente um projeto antigo, regras de posicionamento Grid dos elementos gerenciados são migradas para Flexbox; a ordem usada é a do HTML.
-- O CSS gerado contém uma media query em `767px` para a versão mobile. A prévia usa a largura real de cada dispositivo, incluindo suas regras CSS.
-- Erros de sintaxe CSS mostram uma mensagem com a linha e mantêm a última prévia válida. Corrija o código para voltar a editar visualmente. Erros de execução JavaScript são apresentados junto à prévia.
-- O site roda em um iframe isolado: seu JavaScript não acessa a interface do construtor. As alças do editor acompanham as dimensões reais dos elementos renderizados.
+1. Faça um Fork do projeto.
+2. Crie uma branch para a sua feature (`git checkout -b feature/minha-ideia-incrivel`).
+3. Faça commit das suas alterações (`git commit -m 'feat: adiciona bloco de som interativo'`).
+4. Envie para o GitHub (`git push origin feature/minha-ideia-incrivel`).
+5. Abra um **Pull Request**.
 
-## Estrutura
+---
 
-- `src/App.jsx`: estado dos elementos, contexto de arraste e modo de visualização.
-- `src/components/Header.jsx`: marca, alternância de modo e botão de exportação.
-- `src/components/Sidebar.jsx`: paleta dos cinco tipos de elementos, incluindo Container.
-- `src/components/PropertiesPanel.jsx`: hierarquia, seleção e controles de organização.
-- `src/components/FlexControls.jsx`: controles amigáveis de direção, alinhamento e espaçamento.
-- `src/components/ElementInspector.jsx`: edição de textos, imagens, ações e remoção de blocos.
-- `src/components/Workspace.jsx`: alternância do Canvas e Monaco carregado sob demanda.
-- `src/components/Canvas.jsx`: área de soltar e alças de edição sobre a página renderizada.
-- `src/components/CodeEditor.jsx`: abas HTML/CSS/JS e prévia ao vivo.
-- `src/components/SitePreview.jsx`: iframe e comunicação das medidas dos elementos.
-- `src/data/elements.js`: catálogo e criação dos dados de cada bloco.
-- `src/lib/tree.js`: inserção, remoção, movimentação, proteção contra ciclos e layouts responsivos recursivos.
-- `src/lib/block-targets.js`: nomes e caminhos da hierarquia para seleção nos blocos.
-- `src/lib/responsive.js`: dimensões de prévia desktop/mobile.
-- `src/lib/code-engine.js`: leitura do HTML/CSS e atualização do código a partir dos blocos.
-- `src/lib/element-content.js`: propriedades editáveis, validação e ações dos botões.
-- `src/lib/export-site.js`: incorporação de recursos, criação do ZIP e download.
-- `src/lib/preview.js`: documento de prévia e execução do JavaScript.
-- `src/lib/monaco.js`: configuração local do Monaco e workers.
-- `tests/code-engine.spec.js`: testes de integração do editor, Canvas e sincronização.
-- `tests/site-export.spec.js`: edição visual, ações e abertura do site exportado fora do construtor.
-- `tests/nesting.spec.js`: arrastes reais entre níveis, ordenação, cancelamento, Flexbox responsivo e exportação de containers.
-- `tests/block-targets.spec.js`: seleção visual de destinos aninhados, vínculos após movimentação, remoção de destinos e execução do ZIP exportado.
-- `src/index.css`: Tailwind e estilos globais.
-- `vite.config.js`: plugins React e Tailwind.
+## 📄 Licença
+
+Este projeto é distribuído sob a licença **MIT**. Consulte o arquivo de licença para mais detalhes.
+
+<div align="center">
+  <p>Feito com 💚 para pequenos e grandes criadores da web.</p>
+</div>
