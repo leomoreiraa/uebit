@@ -20,10 +20,40 @@ export function createPreviewDocument(code, token, editing = false) {
       const host = root(); const rect = host.getBoundingClientRect();
       send('layout', {
         height: Math.max(480, rect.bottom + scrollY),
-        blocks: nodes().map((node, index) => { const r = node.getBoundingClientRect(); return { id: id(node,index), x:r.x+scrollX, y:r.y+scrollY, width:r.width, height:r.height }; })
+        blocks: nodes().map((node, index) => {
+          const r = node.getBoundingClientRect();
+          const style = getComputedStyle(node);
+          const parentStyle = getComputedStyle(node.parentElement);
+          const cssWidth = parseFloat(style.width), cssHeight = parseFloat(style.height);
+          return { id: id(node,index), x:r.x+scrollX, y:r.y+scrollY, width:r.width, height:r.height,
+            cssWidth: Number.isFinite(cssWidth) ? cssWidth : r.width, cssHeight: Number.isFinite(cssHeight) ? cssHeight : r.height,
+            maxWidth: Math.max(24, node.parentElement.clientWidth - (parseFloat(parentStyle.paddingLeft) || 0) - (parseFloat(parentStyle.paddingRight) || 0)) };
+        })
       });
     }
     function schedule() { if (!queued) { queued=true; requestAnimationFrame(report); } }
+    let resizing = null;
+    function restoreResize() {
+      if (!resizing) return;
+      if (resizing.style === null) resizing.node.removeAttribute('style');
+      else resizing.node.setAttribute('style', resizing.style);
+      resizing = null;
+    }
+    addEventListener('message', event => {
+      if (!${JSON.stringify(editing)} || event.source !== parent || event.data?.source !== 'uebit-editor' || event.data.token !== token || event.data.type !== 'resize') return;
+      const preview = event.data.preview;
+      if (!preview) { restoreResize(); schedule(); return; }
+      if (!resizing || resizing.id !== preview.id) {
+        restoreResize();
+        const node = nodes().find((node, index) => id(node, index) === preview.id);
+        if (!node) return;
+        resizing = { node, id: preview.id, style: node.getAttribute('style') };
+      }
+      for (const property of ['width', 'height', 'minHeight', 'maxHeight', 'flexShrink']) {
+        if (typeof preview.changes?.[property] === 'string') resizing.node.style[property] = preview.changes[property];
+      }
+      schedule();
+    });
     new ResizeObserver(schedule).observe(document.body);
     new MutationObserver(schedule).observe(document.body, {subtree:true,childList:true,attributes:true,characterData:true});
     addEventListener('resize', schedule);

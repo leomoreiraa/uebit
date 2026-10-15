@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import JSZip from 'jszip'
+import { importCodeProject } from './helpers/project.js'
 
 test('named nested Blockly targets survive reparenting and export; removed targets require reselection', async ({ page }, testInfo) => {
   const errors = []
@@ -16,8 +17,7 @@ test('named nested Blockly targets survive reparenting and export; removed targe
   await page.locator(`[data-tree-id="${nested}"]`).click()
   await page.getByRole('button', { name: 'Adicionar cabeçalho', exact: true }).click()
   const heading = await preview.getByRole('heading').getAttribute('data-block-id')
-  await page.getByRole('button', { name: 'Código', exact: true }).click()
-  await page.getByRole('button', { name: 'Blocos', exact: true }).click()
+  await page.getByRole('button', { name: 'Programação', exact: true }).click()
   await expect(page.locator('.blocklySvg').first()).toBeVisible()
   await page.evaluate(async ({ heading }) => {
     const { Blockly } = await import('/src/lib/blockly.js')
@@ -38,16 +38,18 @@ test('named nested Blockly targets survive reparenting and export; removed targe
   })
   expect(textOptions.some(([, id]) => id === nested)).toBe(false)
   await page.getByRole('button', { name: 'Aplicar blocos ao site', exact: true }).click()
+  await page.getByRole('button', { name: 'Play · Abrir palco', exact: true }).click()
   await preview.getByRole('button', { name: 'Saiba mais' }).click()
   await expect(preview.getByRole('heading')).toHaveText('Ação dentro do container!')
-  await page.getByRole('button', { name: 'Visual', exact: true }).click()
+  await page.getByRole('button', { name: 'Voltar ao editor', exact: true }).click()
+  await page.getByRole('button', { name: 'Design Visual', exact: true }).click()
   await page.locator(`[data-tree-id="${button}"]`).click()
   await page.getByRole('button', { name: 'Sair do container', exact: true }).click()
   await page.getByRole('button', { name: 'Sair do container', exact: true }).click()
-  await page.getByRole('button', { name: 'Código', exact: true }).click()
-  await page.getByRole('button', { name: 'Blocos', exact: true }).click()
+  await page.getByRole('button', { name: 'Programação', exact: true }).click()
   await expect(page.locator('.blocklySvg').first()).toBeVisible()
   await expect(page.getByRole('button', { name: 'Aplicar blocos ao site', exact: true })).toBeEnabled()
+  await page.getByRole('button', { name: 'Play · Abrir palco', exact: true }).click()
   await preview.getByRole('button', { name: 'Saiba mais' }).click()
   await expect(preview.getByRole('heading')).toHaveText('Ação dentro do container!')
   const downloadPromise = page.waitForEvent('download')
@@ -61,11 +63,11 @@ test('named nested Blockly targets survive reparenting and export; removed targe
   await exported.goto(pathToFileURL(`${folder}/index.html`).href)
   await exported.getByRole('button', { name: 'Saiba mais' }).click()
   await expect(exported.getByRole('heading')).toHaveText('Ação dentro do container!')
-  await page.getByRole('button', { name: 'Visual', exact: true }).click()
+  await page.getByRole('button', { name: 'Voltar ao editor', exact: true }).click()
+  await page.getByRole('button', { name: 'Design Visual', exact: true }).click()
   await page.locator(`[data-tree-id="${button}"]`).click()
   await page.getByRole('button', { name: 'Excluir elemento', exact: true }).click()
-  await page.getByRole('button', { name: 'Código', exact: true }).click()
-  await page.getByRole('button', { name: 'Blocos', exact: true }).click()
+  await page.getByRole('button', { name: 'Programação', exact: true }).click()
   await expect(page.getByRole('alert', { name: 'Erro nos blocos' })).toContainText('destino está vazio ou foi removido')
   await expect(page.getByRole('button', { name: 'Aplicar blocos ao site', exact: true })).toBeDisabled()
   expect(errors).toEqual([])
@@ -73,18 +75,12 @@ test('named nested Blockly targets survive reparenting and export; removed targe
 
 test('manual HTML receives stable targets without replacing written CSS or JS', async ({ page }) => {
   await page.goto('/')
-  await page.getByRole('button', { name: 'Código', exact: true }).click()
-  for (const [label, value] of [
-    ['HTML', '<main class="site"><section><button>Manual</button></section></main>'],
-    ['CSS', '.site { display: flex; padding: 37px; } button { color: rgb(190, 18, 60); }'],
-    ['JS', 'window.manualLesson = 123;'],
-  ]) {
-    await page.getByRole('button', { name: label, exact: true }).click()
-    await page.getByRole('textbox', { name: `Editor de ${label}`, exact: true }).focus()
-    await page.keyboard.press('ControlOrMeta+A')
-    await page.keyboard.insertText(value)
-  }
-  await page.getByRole('button', { name: 'Blocos', exact: true }).click()
+  await importCodeProject(page, {
+    html: '<main class="site"><section><button>Manual</button></section></main>',
+    css: '.site { display: flex; padding: 37px; } button { color: rgb(190, 18, 60); }',
+    js: 'window.manualLesson = 123;',
+  })
+  await page.getByRole('button', { name: 'Programação', exact: true }).click()
   await expect(page.locator('.blocklySvg').first()).toBeVisible()
   await page.evaluate(async () => {
     const { Blockly } = await import('/src/lib/blockly.js')
@@ -93,6 +89,7 @@ test('manual HTML receives stable targets without replacing written CSS or JS', 
   await expect(page.getByText('Há alterações nos blocos.', { exact: false })).toBeVisible()
   await page.getByRole('button', { name: 'Aplicar blocos ao site', exact: true }).click()
   const preview = page.frameLocator('iframe')
+  await page.getByRole('button', { name: 'Play · Abrir palco', exact: true }).click()
   await expect(preview.getByRole('button')).toHaveAttribute('data-block-id', 'import-2')
   await expect(preview.locator('main')).toHaveCSS('padding', '37px')
   await expect(preview.getByRole('button')).toHaveCSS('color', 'rgb(190, 18, 60)')

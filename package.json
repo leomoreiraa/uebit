@@ -23,7 +23,8 @@
     "postcss": "^8.5.30",
     "react": "^19.2.8",
     "react-blockly": "^9.0.0",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.0",

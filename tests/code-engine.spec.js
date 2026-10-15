@@ -1,11 +1,5 @@
 import { test, expect } from '@playwright/test'
-
-async function replaceCode(page, label, value) {
-  await page.getByRole('button', { name: label, exact: true }).click()
-  await page.getByRole('textbox', { name: `Editor de ${label}`, exact: true }).focus()
-  await page.keyboard.press('ControlOrMeta+A')
-  await page.keyboard.insertText(value)
-}
+import { importCodeProject } from './helpers/project.js'
 test.beforeEach(async ({ page }) => { await page.goto('/') })
 
 test('nested source round-trips, migrates old grid rules and preserves custom content, CSS and JS', async ({ page }) => {
@@ -36,22 +30,23 @@ test('nested source round-trips, migrates old grid rules and preserves custom co
   expect(result.css).toContain('border: 3px solid teal')
 })
 
-test('manual nested HTML and JS remain editable; CSS errors preserve the last valid page', async ({ page }) => {
-  await page.getByRole('button', { name: 'Código', exact: true }).click()
-  await replaceCode(page, 'HTML', '<main class="site"><div id="box"><h1 id="title">Meu título</h1><button id="action">Testar JS</button></div></main>')
-  await replaceCode(page, 'CSS', '.site, #box { display: flex; flex-direction: column; gap: 16px; } #title { color: rgb(190,18,60); }')
-  await replaceCode(page, 'JS', "document.querySelector('#action').onclick = () => document.querySelector('#title').textContent = 'Funcionou!';")
+test('imported nested HTML and JS survive visual edits; invalid drafts preserve the last valid page', async ({ page }) => {
+  const project = await importCodeProject(page, {
+    html: '<main class="site"><div id="box"><h1 id="title">Meu título</h1><button id="action">Testar JS</button></div></main>',
+    css: '.site, #box { display: flex; flex-direction: column; gap: 16px; } #title { color: rgb(190,18,60); }',
+    js: "document.querySelector('#action').onclick = () => document.querySelector('#title').textContent = 'Funcionou!';",
+  })
+  await page.getByRole('button', { name: 'Testar página', exact: true }).click()
   await page.frameLocator('iframe').getByRole('button', { name: 'Testar JS' }).click()
   await expect(page.frameLocator('iframe').getByRole('heading')).toHaveText('Funcionou!')
-  await page.getByRole('button', { name: 'Visual', exact: true }).click()
+  await page.getByRole('button', { name: 'Voltar a editar', exact: true }).click()
   await page.locator('[data-tree-id="title"]').click()
   await page.getByRole('button', { name: 'Largura: Metade', exact: true }).click()
   await expect(page.frameLocator('iframe').getByRole('heading')).toHaveCSS('color', 'rgb(190, 18, 60)')
-  await page.getByRole('button', { name: 'Código', exact: true }).click()
-  await replaceCode(page, 'CSS', 'body { color: red; invalid-declaration }')
+  project.draft = { ...project.code, css: 'body { color: red; invalid-declaration }' }
+  await page.getByLabel('Arquivo do projeto .frog', { exact: true }).setInputFiles({ name: 'rascunho.frog', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(project)) })
   await expect(page.getByRole('alert', { name: 'Erro no código' })).toBeVisible()
   await expect(page.frameLocator('iframe').getByRole('heading')).toHaveText('Meu título')
-  await page.getByRole('button', { name: 'Visual', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Adicionar container', exact: true })).toBeDisabled()
 })
 

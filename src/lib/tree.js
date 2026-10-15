@@ -30,9 +30,9 @@ export function moveNode(nodes, id, parentId, index = Infinity) {
   return insertNode(removeNode(nodes, id), node, parentId, destinationIndex)
 }
 
-export const DEFAULT_LAYOUT = { direction: 'column', justify: 'flex-start', align: 'stretch', gap: '16px', width: 'auto', minHeight: '0px' }
+export const DEFAULT_LAYOUT = { direction: 'column', justify: 'flex-start', align: 'stretch', gap: '16px', width: 'auto', height: 'auto', minHeight: '0px', maxHeight: 'none', flexShrink: '1' }
 export function mobileLayout(element) {
-  return element.mobileCustomized ? element.mobileLayout : { ...element.layout, direction: 'column', width: '100%' }
+  return element.mobileCustomized ? element.mobileLayout : { ...element.layout, direction: 'column', width: '100%', height: 'auto' }
 }
 
 export function activeTree(nodes, device) {

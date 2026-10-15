@@ -1,4 +1,5 @@
 import { Paintbrush, Maximize2 } from 'lucide-react'
+import BoxModelControls from './BoxModelControls'
 
 const colors = [
   ['Azul', '#2563eb'], ['Roxo', '#9333ea'], ['Verde', '#15803d'], ['Laranja', '#ea580c'],
@@ -23,7 +24,7 @@ function ColorPicker({ label, property, value, onChange }) {
 
 export default function AppearanceControls({ element, layout, device, disabled, onAppearanceChange, onUpdateLayout }) {
   const appearance = element.appearance ?? {}
-  const hasText = ['heading', 'paragraph', 'button', 'custom'].includes(element.type)
+  const hasText = ['heading', 'paragraph', 'button', 'quote', 'list', 'input', 'custom'].includes(element.type)
   const change = (property, value) => onAppearanceChange(element.id, property, value)
   return <fieldset disabled={disabled} aria-label="Aparência do elemento" className="mt-5 space-y-5 rounded-2xl border-2 border-violet-100 bg-violet-50/50 p-3 disabled:opacity-50">
     <legend className="flex items-center gap-2 px-1 text-sm font-extrabold text-violet-900"><Paintbrush aria-hidden="true" size={18} />Deixe com a sua cara</legend>
@@ -40,8 +41,9 @@ export default function AppearanceControls({ element, layout, device, disabled, 
       <p className="text-xs text-slate-600">Ajustando {device === 'mobile' ? 'mobile' : 'desktop'}. O conteúdo flui e cresce naturalmente.</p>
       <div role="group" aria-label="Largura do bloco" className="flex flex-wrap gap-2">{[['Natural', 'auto'], ['Metade', 'calc(50% - 8px)'], ['Toda', '100%']].map(([label, width]) => <button key={width} type="button" aria-label={`Largura: ${label}`} aria-pressed={layout.width === width} onClick={() => onUpdateLayout(element.id, { width })} className={`${buttonClass} ${layout.width === width ? 'ring-2 ring-violet-500' : ''}`}>{label}</button>)}</div>
       <p className="text-xs font-bold text-slate-600">Altura mínima</p>
-      <div className="flex flex-wrap gap-2">{[['Natural', '0px'], ['Média', '160px'], ['Grande', '320px']].map(([label, minHeight]) => <button key={minHeight} type="button" aria-label={`Altura: ${label}`} aria-pressed={layout.minHeight === minHeight} onClick={() => onUpdateLayout(element.id, { minHeight })} className={buttonClass}>{label}</button>)}</div>
+      <div className="flex flex-wrap gap-2">{[['Natural', '0px'], ['Média', '160px'], ['Grande', '320px']].map(([label, minHeight]) => <button key={minHeight} type="button" aria-label={`Altura: ${label}`} aria-pressed={layout.minHeight === minHeight && (!layout.height || layout.height === 'auto')} onClick={() => onUpdateLayout(element.id, { height: 'auto', minHeight })} className={buttonClass}>{label}</button>)}</div>
     </div>
-    <p className="text-xs text-slate-500">Cores e texto valem para desktop e mobile. Alterações aplicadas na hora!</p>
+    <BoxModelControls key={element.id} values={appearance} onChange={change} />
+    <p className="text-xs text-slate-500">Cores, texto, margens, paddings e bordas valem para desktop e mobile.</p>
   </fieldset>
 }

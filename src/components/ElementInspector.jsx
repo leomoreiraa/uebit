@@ -4,7 +4,20 @@ import { elementTypes } from '../data/elements'
 const fieldClass = 'min-h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-2 focus:outline-indigo-500'
 
 export default function ElementInspector({ element, elements, onUpdate, onRemove, disabled }) {
-  const [content, setContent] = useState(() => ({ text: '', src: '', alt: '', fit: 'cover', headingLevel: 'h1', action: 'none', actionValue: '', newTab: false, ...element }))
+  const [content, setContent] = useState(() => ({
+    name: element.name ?? '',
+    htmlId: element.htmlId ?? '',
+    text: '',
+    src: '',
+    alt: '',
+    placeholder: '',
+    fit: 'cover',
+    headingLevel: 'h1',
+    action: 'none',
+    actionValue: '',
+    newTab: false,
+    ...element,
+  }))
   const [error, setError] = useState('')
   const [saved, setSaved] = useState(false)
   const [loadingImage, setLoadingImage] = useState(false)
@@ -35,16 +48,83 @@ export default function ElementInspector({ element, elements, onUpdate, onRemove
   }
 
   return (
-    <form onSubmit={submit} aria-label={`Editar ${name.toLowerCase()}`} className="mt-6 border-t border-slate-200 pt-5">
-      <div className="mb-4 flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold">Editar {name.toLowerCase()}</h2>
-        <span className="rounded-md bg-indigo-50 px-2 py-1 text-xs text-indigo-700">Selecionado</span>
+    <form onSubmit={submit} aria-label={`Editar ${content.name || name.toLowerCase()}`} className="mt-4 border-t-2 border-violet-100 pt-4">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="text-sm font-bold text-violet-900">Editar {content.name ? content.name : name.toLowerCase()}</h2>
+        <span className="rounded-md bg-violet-100 px-2 py-1 text-xs font-bold text-violet-800">{content.htmlId ? `#${content.htmlId}` : 'Selecionado'}</span>
       </div>
       <fieldset disabled={disabled} className="space-y-4 disabled:opacity-50">
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+          <label className="block text-xs font-bold text-slate-700">Nome do item
+            <input type="text" aria-label="Nome do item" placeholder={name} value={content.name} onChange={(event) => change('name', event.target.value)} className={`${fieldClass} mt-1`} />
+          </label>
+          <label className="block text-xs font-bold text-slate-700">ID (HTML)
+            <input type="text" aria-label="ID do item" placeholder="ex: meu-id" value={content.htmlId} onChange={(event) => change('htmlId', event.target.value)} className={`${fieldClass} mt-1`} />
+          </label>
+        </div>
         {element.type === 'container' && <p className="text-xs leading-5 text-emerald-900">Este container agrupa {element.children.length} elementos. Excluí-lo também remove todo o conteúdo dentro dele.</p>}
-        {['heading', 'paragraph', 'button'].includes(element.type) && (
-          <label className="block text-xs font-medium text-slate-600">{element.type === 'heading' ? 'Texto do título' : element.type === 'paragraph' ? 'Texto do parágrafo' : 'Texto do botão'}
-            <textarea aria-label={element.type === 'heading' ? 'Texto do título' : element.type === 'paragraph' ? 'Texto do parágrafo' : 'Texto do botão'} rows={element.type === 'paragraph' ? 4 : 2} value={content.text} onChange={(event) => change('text', event.target.value)} className={`${fieldClass} mt-1 resize-y`} />
+        {element.type === 'divider' && <p className="rounded-lg bg-slate-50 p-3 text-xs leading-5 text-slate-600">Linha divisória horizontal para separar e organizar seções na página.</p>}
+        {['heading', 'paragraph', 'quote', 'button'].includes(element.type) && (
+          <label className="block text-xs font-medium text-slate-600">
+            {element.type === 'heading' ? 'Texto do título' : element.type === 'paragraph' ? 'Texto do parágrafo' : element.type === 'quote' ? 'Texto da citação' : 'Texto do botão'}
+            <textarea
+              aria-label={element.type === 'heading' ? 'Texto do título' : element.type === 'paragraph' ? 'Texto do parágrafo' : element.type === 'quote' ? 'Texto da citação' : 'Texto do botão'}
+              rows={element.type === 'heading' || element.type === 'button' ? 2 : 4}
+              value={content.text}
+              onChange={(event) => change('text', event.target.value)}
+              className={`${fieldClass} mt-1 resize-y`}
+            />
+          </label>
+        )}
+        {element.type === 'list' && (
+          <label className="block text-xs font-medium text-slate-600">
+            Itens da lista (um por linha)
+            <textarea
+              aria-label="Itens da lista"
+              rows={5}
+              value={content.text}
+              onChange={(event) => change('text', event.target.value)}
+              placeholder="Primeiro item&#10;Segundo item&#10;Terceiro item"
+              className={`${fieldClass} mt-1 resize-y font-sans`}
+            />
+          </label>
+        )}
+        {element.type === 'input' && (
+          <>
+            <label className="block text-xs font-medium text-slate-600">
+              Texto de exemplo (placeholder)
+              <input
+                type="text"
+                aria-label="Texto de exemplo"
+                value={content.placeholder ?? ''}
+                onChange={(event) => change('placeholder', event.target.value)}
+                placeholder="ex: Digite sua resposta..."
+                className={`${fieldClass} mt-1`}
+              />
+            </label>
+            <label className="block text-xs font-medium text-slate-600">
+              Texto inicial preenchido (opcional)
+              <input
+                type="text"
+                aria-label="Texto inicial preenchido"
+                value={content.text ?? ''}
+                onChange={(event) => change('text', event.target.value)}
+                className={`${fieldClass} mt-1`}
+              />
+            </label>
+          </>
+        )}
+        {['video', 'audio'].includes(element.type) && (
+          <label className="block text-xs font-medium text-slate-600">
+            {element.type === 'video' ? 'Endereço do vídeo (URL)' : 'Endereço do áudio (URL)'}
+            <input
+              type="text"
+              aria-label={element.type === 'video' ? 'Endereço do vídeo' : 'Endereço do áudio'}
+              value={content.src ?? ''}
+              onChange={(event) => change('src', event.target.value)}
+              placeholder={element.type === 'video' ? 'https://... (.mp4, WebM)' : 'https://... (.mp3, OGG, WAV)'}
+              className={`${fieldClass} mt-1`}
+            />
           </label>
         )}
         {element.type === 'heading' && <label className="block text-xs font-medium text-slate-600">Nível do título
@@ -83,15 +163,19 @@ export default function ElementInspector({ element, elements, onUpdate, onRemove
           {content.action === 'scroll' && <label className="block text-xs font-medium text-slate-600">Seção de destino
             <select aria-label="Seção de destino" value={content.actionValue} onChange={(event) => change('actionValue', event.target.value)} className={`${fieldClass} mt-1`}>
               <option value="">Escolha um elemento</option>
-              {elements.filter((item) => item.id !== element.id).map((item) => <option key={item.id} value={`#${item.id}`}>{(item.text || item.alt || elementTypes.find((type) => type.type === item.type)?.name || 'Bloco HTML').slice(0, 50)}</option>)}
+              {elements.filter((item) => item.id !== element.id).map((item) => (
+                <option key={item.id} value={`#${item.htmlId || item.id}`}>
+                  {(item.name ? `${item.name}${item.htmlId ? ` (#${item.htmlId})` : ''}` : (item.text || item.alt || elementTypes.find((type) => type.type === item.type)?.name || 'Bloco HTML')).slice(0, 50)}
+                </option>
+              ))}
             </select>
           </label>}
           {content.action === 'message' && <label className="block text-xs font-medium text-slate-600">Mensagem do botão
             <textarea aria-label="Mensagem do botão" rows={3} value={content.actionValue} onChange={(event) => change('actionValue', event.target.value)} className={`${fieldClass} mt-1`} />
           </label>}
-          <p className="text-xs leading-5 text-slate-500">Use “Testar página” no Canvas para experimentar. Seu JavaScript personalizado continua disponível na aba JS.</p>
+          <p className="text-xs leading-5 text-slate-500">Use “Testar página” no Canvas para experimentar. Consulte o JavaScript em Código Gerado → JS.</p>
         </>}
-        {!elementTypes.some((type) => type.type === element.type) && <p className="text-xs leading-5 text-slate-500">Este bloco veio do código. Edite seu conteúdo na aba HTML.</p>}
+        {!elementTypes.some((type) => type.type === element.type) && <p className="text-xs leading-5 text-slate-500">Este bloco veio de um projeto importado. Você pode personalizar sua aparência neste painel.</p>}
         {error && <p role="alert" className="text-xs text-red-700">{error}</p>}
         {saved && <p role="status" className="text-xs text-emerald-700">Alterações aplicadas.</p>}
         {loadingImage && <p role="status" className="text-xs text-slate-500">Carregando imagem…</p>}

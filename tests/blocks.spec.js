@@ -2,18 +2,14 @@ import { test, expect } from '@playwright/test'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import JSZip from 'jszip'
+import { importCodeProject } from './helpers/project.js'
 
 test('Blockly coexists with written JS, persists across views and exports working actions', async ({ page }, testInfo) => {
   const errors = []
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto('/')
-  await page.getByRole('button', { name: 'Adicionar botão', exact: true }).click()
-  await page.getByRole('button', { name: 'Código', exact: true }).click()
-  await page.getByRole('button', { name: 'JS', exact: true }).click()
-  await page.getByRole('textbox', { name: 'Editor de JS', exact: true }).focus()
-  await page.keyboard.press('ControlOrMeta+A')
-  await page.keyboard.insertText('window.manualCode = 42;')
-  await page.getByRole('button', { name: 'Blocos', exact: true }).click()
+  await importCodeProject(page, { html: '<main class="site"><button class="button">Saiba mais</button></main>', js: 'window.manualCode = 42;' })
+  await page.getByRole('button', { name: 'Programação', exact: true }).click()
   await expect(page.locator('.blocklySvg').first()).toBeVisible()
   await page.evaluate(async () => {
     const { Blockly } = await import('/src/lib/blockly.js')
@@ -23,14 +19,14 @@ test('Blockly coexists with written JS, persists across views and exports workin
   await expect(page.getByText('Há alterações nos blocos.', { exact: false })).toBeVisible()
   await page.getByRole('button', { name: 'Aplicar blocos ao site', exact: true }).click()
   await expect(page.getByText('Blocos aplicados ao JS e à exportação.', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Play · Abrir palco', exact: true }).click()
   await page.frameLocator('iframe').getByRole('button', { name: 'Saiba mais' }).click()
   await expect(page.frameLocator('iframe').getByRole('status')).toHaveText('Criei com blocos!')
   await expect.poll(() => page.frameLocator('iframe').locator('body').evaluate(() => window.manualCode)).toBe(42)
-  await page.getByRole('button', { name: 'HTML', exact: true }).click()
-  await expect(page.getByRole('textbox', { name: 'Editor de HTML', exact: true })).toBeVisible()
-  await page.getByRole('button', { name: 'Play · Abrir palco', exact: true }).click()
   await page.getByRole('button', { name: 'Voltar ao editor', exact: true }).click()
-  await page.getByRole('button', { name: 'Blocos', exact: true }).click()
+  await page.getByRole('button', { name: 'Código Gerado', exact: true }).click()
+  await expect(page.getByRole('textbox', { name: 'Código HTML — somente leitura', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Programação', exact: true }).click()
   await expect(page.locator('.blocklySvg').first()).toBeVisible()
   await expect.poll(() => page.evaluate(async () => {
     const { Blockly } = await import('/src/lib/blockly.js')
@@ -57,8 +53,7 @@ test('Blockly coexists with written JS, persists across views and exports workin
 
 test('a logic block can be dragged from the toolbox into the workspace', async ({ page }) => {
   await page.goto('/')
-  await page.getByRole('button', { name: 'Código', exact: true }).click()
-  await page.getByRole('button', { name: 'Blocos', exact: true }).click()
+  await page.getByRole('button', { name: 'Programação', exact: true }).click()
   await page.locator('.blocklyToolboxCategory').filter({ hasText: 'Seletores CSS' }).click()
   const block = page.locator('.blocklyFlyout .blocklyDraggable').first()
   await expect(block).toBeVisible()

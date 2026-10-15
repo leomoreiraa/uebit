@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { importCodeProject } from './helpers/project.js'
 
 test('stage hides editing tools, runs actions and returns to the selected block', async ({ page }) => {
   await page.goto('/')
@@ -23,21 +24,19 @@ test('stage hides editing tools, runs actions and returns to the selected block'
   await expect(page.getByRole('button', { name: 'Mobile', exact: true })).toHaveAttribute('aria-pressed', 'true')
 })
 
-test('written code remains available after a stage visit and the stage fits a narrow screen', async ({ page }) => {
+test('generated code remains available after a stage visit and the stage fits a narrow screen', async ({ page }) => {
   await page.goto('/')
-  await page.getByRole('button', { name: 'Código', exact: true }).click()
+  await importCodeProject(page, { html: '<main class="site"><h1>Meu código no palco</h1></main>' })
+  await page.getByRole('button', { name: 'Código Gerado', exact: true }).click()
   await page.getByRole('button', { name: 'HTML', exact: true }).click()
-  const editor = page.getByRole('textbox', { name: 'Editor de HTML', exact: true })
-  await editor.focus()
-  await page.keyboard.press('ControlOrMeta+A')
-  await page.keyboard.insertText('<main class="site"><h1>Meu código no palco</h1></main>')
-  await expect(page.frameLocator('iframe').getByRole('heading')).toHaveText('Meu código no palco')
+  const editor = page.getByRole('textbox', { name: 'Código HTML — somente leitura', exact: true })
+  await expect(editor).toBeVisible()
   await page.getByRole('button', { name: 'Play · Abrir palco', exact: true }).click()
   await page.setViewportSize({ width: 390, height: 844 })
   await expect(page.frameLocator('iframe').getByRole('heading')).toHaveText('Meu código no palco')
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   await page.getByRole('button', { name: 'Voltar ao editor', exact: true }).click()
-  await expect(page.getByRole('button', { name: 'Código', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('button', { name: 'Código Gerado', exact: true })).toHaveAttribute('aria-pressed', 'true')
   await expect(editor).toBeVisible()
-  await expect(page.frameLocator('iframe').getByRole('heading')).toHaveText('Meu código no palco')
+  await expect(page.locator('iframe')).toHaveCount(0)
 })
