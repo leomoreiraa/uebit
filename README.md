@@ -73,21 +73,6 @@ Pronto para postar no GitHub Pages, Vercel, Netlify ou enviar para os colegas.
 
 ---
 
-## 🎨 As Cores do Bit
-
-O Uebit foi desenhado com base em quatro cores cheias de personalidade:
-
-<div align="center">
-  <img src="./public/brand/uebit-symbol.svg" alt="Símbolo do Uebit" width="80" />
-</div>
-
-- 💜 **Roxo Criativo:** imaginação, blocos de código e tecnologia.
-- 💚 **Verde Sapo:** energia, o rostinho do Bit e botões de ação principal.
-- 💛 **Amarelo Bit:** ideias iluminadas, modelos prontos e curiosidade.
-- ❤️ **Vermelho Entusiasmo:** simpatia, importação e diversão.
-
----
-
 ## 💻 Como Rodar o Projeto
 
 Se você quiser testar ou rodar o Uebit no seu computador:
