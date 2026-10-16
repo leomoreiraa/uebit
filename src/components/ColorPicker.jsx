@@ -8,7 +8,6 @@ import {
   Copy,
   Check,
   ChevronRight,
-  RotateCcw,
   X,
 } from 'lucide-react'
 import {
@@ -26,8 +25,9 @@ import {
   PREDEFINED_PALETTES,
 } from '../lib/colors'
 
-// Amostras rápidas visíveis no topo para seleção imediata
+// Amostras rápidas visíveis no topo para seleção imediata (incluindo Transparente)
 const QUICK_SWATCHES = [
+  ['Transparente', 'transparent'],
   ['Roxo', '#7145d6'],
   ['Verde', '#21824f'],
   ['Azul', '#2563eb'],
@@ -41,6 +41,11 @@ const QUICK_SWATCHES = [
 const CANVAS_WIDTH = 220
 const CANVAS_HEIGHT = 140
 const PADDING = 12
+
+// Padrão visual clássico de tabuleiro xadrez para representar transparência
+const CHECKERBOARD_STYLE = {
+  background: 'repeating-conic-gradient(#cbd5e1 0% 25%, #ffffff 0% 50%) 50% / 6px 6px',
+}
 
 export default function ColorPicker({
   label,
@@ -63,12 +68,14 @@ export default function ColorPicker({
 
   // Sincroniza rascunho de texto do HEX quando o valor externo mudar
   const [prevNormalizedValue, setPrevNormalizedValue] = useState(normalizedValue)
-  const [hexDraft, setHexDraft] = useState(normalizedValue ? normalizedValue.toUpperCase() : '')
+  const [hexDraft, setHexDraft] = useState(
+    normalizedValue && normalizedValue !== 'transparent' ? normalizedValue.toUpperCase() : ''
+  )
 
   if (normalizedValue !== prevNormalizedValue) {
     setPrevNormalizedValue(normalizedValue)
-    setHexDraft(normalizedValue ? normalizedValue.toUpperCase() : '')
-    if (normalizedValue) {
+    setHexDraft(normalizedValue && normalizedValue !== 'transparent' ? normalizedValue.toUpperCase() : '')
+    if (normalizedValue && normalizedValue !== 'transparent') {
       const rgb = hexToRgb(normalizedValue)
       if (rgb) {
         const { h, s } = rgbToHsv(rgb.r, rgb.g, rgb.b)
@@ -87,7 +94,7 @@ export default function ColorPicker({
     const asideRect = aside ? aside.getBoundingClientRect() : rect
 
     const popoverWidth = 288
-    const popoverHeight = 410
+    const popoverHeight = 420
 
     // Verifica se há espaço para flutuar à esquerda do menu direito
     const availableLeft = asideRect.left
@@ -222,7 +229,7 @@ export default function ColorPicker({
 
     // Posição do cursor / handle
     let handlePoint = { x: A.x, y: (B.y + A.y) / 2 }
-    if (normalizedValue) {
+    if (normalizedValue && normalizedValue !== 'transparent') {
       const bary = colorToBarycentric(normalizedValue, triangleMode)
       handlePoint = barycentricToPoint(bary.wA, bary.wB, bary.wC, A, B, C)
     }
@@ -240,7 +247,7 @@ export default function ColorPicker({
 
     ctx.beginPath()
     ctx.arc(handlePoint.x, handlePoint.y, 6, 0, Math.PI * 2)
-    ctx.fillStyle = normalizedValue || '#7145d6'
+    ctx.fillStyle = normalizedValue === 'transparent' ? '#ffffff' : (normalizedValue || '#7145d6')
     ctx.fill()
     ctx.strokeStyle = '#ffffff'
     ctx.lineWidth = 1.5
@@ -297,7 +304,7 @@ export default function ColorPicker({
     const nextHue = Number(e.target.value)
     setHue(nextHue)
 
-    if (normalizedValue && triangleMode === 'hsv') {
+    if (normalizedValue && normalizedValue !== 'transparent' && triangleMode === 'hsv') {
       const rgb = hexToRgb(normalizedValue)
       if (rgb) {
         const { s, v } = rgbToHsv(rgb.r, rgb.g, rgb.b)
@@ -311,7 +318,10 @@ export default function ColorPicker({
   // Aplicação de código HEX manual
   const handleHexInputChange = (text) => {
     setHexDraft(text)
-    if (isValidHex(text)) {
+    const lower = text.trim().toLowerCase()
+    if (lower === 'transparent') {
+      onChange(property, 'transparent')
+    } else if (isValidHex(text)) {
       const normalized = normalizeColorToHex(text)
       onChange(property, normalized)
     }
@@ -320,13 +330,17 @@ export default function ColorPicker({
   const copyHex = async () => {
     if (!normalizedValue) return
     try {
-      await navigator.clipboard.writeText(normalizedValue.toUpperCase())
+      await navigator.clipboard.writeText(
+        normalizedValue === 'transparent' ? 'transparent' : normalizedValue.toUpperCase()
+      )
       setCopied(true)
       setTimeout(() => setCopied(false), 1800)
     } catch {
       // Falha silenciosa de cópia
     }
   }
+
+  const isTransparent = normalizedValue === 'transparent'
 
   return (
     <div ref={triggerRef} className="w-full min-w-0 rounded-xl border border-purple-100 bg-white p-2.5 shadow-2xs">
@@ -352,32 +366,32 @@ export default function ColorPicker({
             onClick={() => setIsOpen(!isOpen)}
             title={
               normalizedValue
-                ? `Cor atual: ${normalizedValue.toUpperCase()} (clique para abrir o seletor flutuante)`
+                ? `Cor atual: ${isTransparent ? 'Transparente' : normalizedValue.toUpperCase()} (clique para abrir o seletor flutuante)`
                 : 'Padrão (clique para escolher uma cor)'
             }
             className="flex items-center gap-1 rounded-md border border-purple-200 bg-purple-50/70 px-1.5 py-0.5 text-[11px] font-mono font-bold text-purple-900 hover:bg-purple-100 transition-colors"
           >
             <span
-              className="size-3.5 rounded-full border border-slate-300 shadow-2xs"
-              style={{ backgroundColor: normalizedValue || 'transparent' }}
-            />
-            <span>{normalizedValue ? normalizedValue.toUpperCase() : 'Padrão'}</span>
+              className="relative size-3.5 shrink-0 overflow-hidden rounded-full border border-slate-300 shadow-2xs"
+              style={isTransparent ? CHECKERBOARD_STYLE : { backgroundColor: normalizedValue || 'transparent' }}
+            >
+              {isTransparent && (
+                <span className="absolute inset-0 flex items-center justify-center text-[8px] font-black text-rose-500 leading-none">
+                  /
+                </span>
+              )}
+            </span>
+            <span>
+              {normalizedValue
+                ? isTransparent
+                  ? 'Transparente'
+                  : normalizedValue.toUpperCase()
+                : 'Padrão'}
+            </span>
           </button>
         </div>
 
         <div className="flex items-center gap-1">
-          {normalizedValue && (
-            <button
-              type="button"
-              title="Restaurar cor padrão"
-              onClick={() => onChange(property, '')}
-              className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-bold text-purple-700 hover:bg-purple-50 hover:text-purple-900"
-            >
-              <RotateCcw size={11} />
-              Restaurar
-            </button>
-          )}
-
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
@@ -398,6 +412,7 @@ export default function ColorPicker({
       <div className="mt-2 flex flex-wrap items-center gap-1">
         {QUICK_SWATCHES.map(([name, hex]) => {
           const isSelected = normalizedValue === hex
+          const itemIsTransparent = hex === 'transparent'
           return (
             <button
               key={hex}
@@ -406,13 +421,19 @@ export default function ColorPicker({
               title={`${name} (${hex})`}
               aria-pressed={isSelected}
               onClick={() => onChange(property, hex)}
-              className={`size-5.5 rounded-md border shadow-2xs transition-transform hover:scale-110 ${
+              className={`relative size-5.5 overflow-hidden rounded-md border shadow-2xs transition-transform hover:scale-110 ${
                 isSelected
                   ? 'border-transparent ring-2 ring-purple-600 ring-offset-1 scale-105'
                   : 'border-slate-300 hover:border-purple-400'
               }`}
-              style={{ backgroundColor: hex }}
-            />
+              style={itemIsTransparent ? CHECKERBOARD_STYLE : { backgroundColor: hex }}
+            >
+              {itemIsTransparent && (
+                <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-rose-500 leading-none">
+                  /
+                </span>
+              )}
+            </button>
           )
         })}
       </div>
@@ -574,22 +595,34 @@ export default function ColorPicker({
                   <div className="mt-2.5 flex w-full items-center justify-between rounded-lg border border-purple-200 bg-purple-50/50 p-1.5 shadow-2xs">
                     <div className="flex items-center gap-2">
                       <span
-                        className="size-5 rounded-md border border-slate-300 shadow-2xs"
-                        style={{ backgroundColor: normalizedValue || '#ffffff' }}
-                      />
+                        className="relative size-5 shrink-0 overflow-hidden rounded-md border border-slate-300 shadow-2xs"
+                        style={isTransparent ? CHECKERBOARD_STYLE : { backgroundColor: normalizedValue || '#ffffff' }}
+                      >
+                        {isTransparent && (
+                          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-rose-500 leading-none">
+                            /
+                          </span>
+                        )}
+                      </span>
                       <span className="font-mono text-xs font-black text-slate-800">
-                        {normalizedValue ? normalizedValue.toUpperCase() : 'NENHUMA'}
+                        {normalizedValue
+                          ? isTransparent
+                            ? 'TRANSPARENTE'
+                            : normalizedValue.toUpperCase()
+                          : 'NENHUMA'}
                       </span>
                     </div>
-                    <button
-                      type="button"
-                      onClick={copyHex}
-                      title="Copiar código HEX"
-                      className="flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-bold text-purple-700 hover:bg-purple-100"
-                    >
-                      {copied ? <Check size={11} className="text-emerald-600" /> : <Copy size={11} />}
-                      <span>{copied ? 'Copiado!' : 'Copiar'}</span>
-                    </button>
+                    {normalizedValue && !isTransparent && (
+                      <button
+                        type="button"
+                        onClick={copyHex}
+                        title="Copiar código HEX"
+                        className="flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-bold text-purple-700 hover:bg-purple-100"
+                      >
+                        {copied ? <Check size={11} className="text-emerald-600" /> : <Copy size={11} />}
+                        <span>{copied ? 'Copiado!' : 'Copiar'}</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
@@ -608,7 +641,7 @@ export default function ColorPicker({
                           type="text"
                           aria-label="Código HEX"
                           placeholder="7145D6"
-                          value={hexDraft.replace(/^#/, '')}
+                          value={isTransparent ? 'transparent' : hexDraft.replace(/^#/, '')}
                           onChange={(e) => handleHexInputChange(e.target.value)}
                           className="w-full min-w-0 rounded-lg border border-purple-200 bg-white py-1.5 pl-6 pr-2 font-mono text-xs font-bold uppercase text-slate-800 focus:border-purple-500 focus:outline-hidden"
                         />
@@ -616,9 +649,15 @@ export default function ColorPicker({
 
                       {/* Amostra visual */}
                       <span
-                        className="size-7 shrink-0 rounded-lg border border-slate-300 shadow-xs"
-                        style={{ backgroundColor: normalizedValue || '#ffffff' }}
-                      />
+                        className="relative size-7 shrink-0 overflow-hidden rounded-lg border border-slate-300 shadow-xs"
+                        style={isTransparent ? CHECKERBOARD_STYLE : { backgroundColor: normalizedValue || '#ffffff' }}
+                      >
+                        {isTransparent && (
+                          <span className="absolute inset-0 flex items-center justify-center text-xs font-black text-rose-500 leading-none">
+                            /
+                          </span>
+                        )}
+                      </span>
 
                       {/* Seletor nativo do sistema */}
                       <label
@@ -648,7 +687,7 @@ export default function ColorPicker({
                   </label>
 
                   {/* Informações detalhadas do valor RGB */}
-                  {normalizedValue && (
+                  {normalizedValue && !isTransparent && (
                     <div className="flex items-center justify-between rounded-lg border border-purple-100 bg-purple-50/50 px-2.5 py-1.5 text-[11px] text-slate-600 min-w-0">
                       <span className="font-bold">Valores RGB:</span>
                       <span className="font-mono text-purple-950 font-bold truncate">
@@ -664,7 +703,43 @@ export default function ColorPicker({
 
               {/* Conteúdo Aba 3: Pré-definidas */}
               {activeTab === 'presets' && (
-                <div className="mt-2.5 max-h-56 space-y-3 overflow-y-auto pr-1 min-w-0">
+                <div className="mt-2.5 max-h-60 space-y-3 overflow-y-auto pr-1 min-w-0">
+                  {/* Opção dedicada para deixar o fundo transparente */}
+                  <div className="rounded-xl border border-purple-200 bg-purple-50/60 p-2">
+                    <p className="mb-1.5 text-[10px] font-black uppercase tracking-wider text-purple-900">
+                      Transparência
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => onChange(property, 'transparent')}
+                      aria-pressed={isTransparent}
+                      className={`flex w-full items-center justify-between rounded-lg border px-2.5 py-1.5 text-xs font-bold transition-all ${
+                        isTransparent
+                          ? 'border-purple-600 bg-purple-600 text-white shadow-2xs'
+                          : 'border-purple-200 bg-white text-slate-700 hover:border-purple-400 hover:bg-purple-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="relative size-5 shrink-0 overflow-hidden rounded-md border border-slate-300 shadow-2xs"
+                          style={CHECKERBOARD_STYLE}
+                        >
+                          <span className="absolute inset-0 flex items-center justify-center text-rose-500 font-black text-xs leading-none">
+                            /
+                          </span>
+                        </span>
+                        <span>Fundo Transparente</span>
+                      </div>
+                      {isTransparent ? (
+                        <span className="flex items-center gap-1 text-[10px] font-black text-white">
+                          <Check size={12} strokeWidth={3} /> Ativo
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-purple-700">Deixar transparente</span>
+                      )}
+                    </button>
+                  </div>
+
                   {PREDEFINED_PALETTES.map((palette) => (
                     <div key={palette.name}>
                       <p className="text-[10px] font-black uppercase tracking-wider text-purple-900">
@@ -673,6 +748,7 @@ export default function ColorPicker({
                       <div className="mt-1.5 grid grid-cols-7 gap-1">
                         {palette.colors.map((color) => {
                           const isSelected = normalizedValue === color.hex
+                          const itemIsTransparent = color.hex === 'transparent'
                           return (
                             <button
                               key={color.hex}
@@ -681,15 +757,24 @@ export default function ColorPicker({
                               aria-label={`${label}: ${color.name}`}
                               aria-pressed={isSelected}
                               onClick={() => onChange(property, color.hex)}
-                              className={`group relative size-6 rounded-md border shadow-2xs transition-transform hover:scale-110 ${
+                              className={`group relative size-6 overflow-hidden rounded-md border shadow-2xs transition-transform hover:scale-110 ${
                                 isSelected
                                   ? 'border-transparent ring-2 ring-purple-600 ring-offset-1 scale-105'
                                   : 'border-slate-300 hover:border-purple-500'
                               }`}
-                              style={{ backgroundColor: color.hex }}
+                              style={itemIsTransparent ? CHECKERBOARD_STYLE : { backgroundColor: color.hex }}
                             >
+                              {itemIsTransparent && !isSelected && (
+                                <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-rose-500 leading-none">
+                                  /
+                                </span>
+                              )}
                               {isSelected && (
-                                <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow-sm">
+                                <span
+                                  className={`absolute inset-0 flex items-center justify-center drop-shadow-sm ${
+                                    itemIsTransparent ? 'text-purple-800' : 'text-white'
+                                  }`}
+                                >
                                   <Check size={10} strokeWidth={3} />
                                 </span>
                               )}

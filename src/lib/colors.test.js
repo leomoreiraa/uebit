@@ -52,6 +52,7 @@ test('normalizeColorToHex and isValidHex', () => {
   assert.equal(normalizeColorToHex('7145d6'), '#7145d6')
   assert.equal(normalizeColorToHex('rgb(113, 69, 214)'), '#7145d6')
   assert.equal(normalizeColorToHex('white'), '#ffffff')
+  assert.equal(normalizeColorToHex('transparent'), 'transparent')
   assert.equal(normalizeColorToHex(''), '')
 
   assert.equal(isValidHex('#7145d6'), true)

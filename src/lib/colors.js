@@ -248,8 +248,9 @@ export const PREDEFINED_PALETTES = [
     ],
   },
   {
-    name: 'Neutros & Escuros',
+    name: 'Especiais & Neutros',
     colors: [
+      { name: 'Transparente', hex: 'transparent' },
       { name: 'Branco Puro', hex: '#ffffff' },
       { name: 'Papel', hex: '#faf9f3' },
       { name: 'Cinza Claro', hex: '#f1f5f9' },
