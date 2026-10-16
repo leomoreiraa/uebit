@@ -165,6 +165,7 @@
   line-height: 40px;
   color: var(--uebit-category);
   cursor: pointer;
+  pointer-events: auto;
   transition: background-color 120ms ease;
 }
 .uebit-blocks .blocklyToolboxCategory:hover {
@@ -176,6 +177,7 @@
   gap: 10px;
   height: 100%;
   padding-left: 10px;
+  pointer-events: none;
 }
 .uebit-blocks .uebitCategoryIcon {
   width: 22px;
@@ -183,12 +185,13 @@
   font-size: 17px;
   font-weight: 700;
   text-align: center;
+  pointer-events: none;
 }
 .uebit-blocks .blocklyToolboxCategoryLabel {
   padding: 0;
   color: var(--uebit-category);
   font: 600 15px var(--uebit-blocks-font);
-  cursor: pointer;
+  pointer-events: none;
 }
 .uebit-blocks .blocklyToolboxSelected {
   background-color: var(--uebit-category) !important;

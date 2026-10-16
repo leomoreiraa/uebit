@@ -257,6 +257,16 @@ if (!Blockly.registry.hasItem(Blockly.registry.Type.RENDERER, 'uebit-microbit'))
 
 // Linhas da toolbox com faixa, ícone e texto na cor da categoria.
 class MicrobitCategory extends Blockly.ToolboxCategory {
+  createRowContainer_() {
+    const row = super.createRowContainer_()
+    row.id = this.getId()
+    return row
+  }
+  createRowContentsContainer_() {
+    const container = super.createRowContentsContainer_()
+    container.style.pointerEvents = 'none'
+    return container
+  }
   addColourBorder_(colour) {
     super.addColourBorder_(colour)
     this.rowDiv_.style.setProperty('--uebit-category', colour)
@@ -265,8 +275,15 @@ class MicrobitCategory extends Blockly.ToolboxCategory {
     const icon = document.createElement('span')
     icon.className = 'uebitCategoryIcon'
     icon.setAttribute('aria-hidden', 'true')
+    icon.id = this.getId()
+    icon.style.pointerEvents = 'none'
     icon.textContent = this.toolboxItemDef_.icon ?? '●'
     return icon
+  }
+  createLabelDom_(name) {
+    const label = super.createLabelDom_(name)
+    label.style.pointerEvents = 'none'
+    return label
   }
 }
 Blockly.registry.register(Blockly.registry.Type.TOOLBOX_ITEM, Blockly.ToolboxCategory.registrationName, MicrobitCategory, true)
@@ -277,10 +294,18 @@ export function setWorkspaceTargets(workspace, targets) { workspaceTargets.set(w
 const heading = (text) => ({ kind: 'label', text, 'web-class': 'uebitFlyoutHeading' })
 export function prepareWorkspace(workspace, targets) {
   setWorkspaceTargets(workspace, targets)
-  workspace.registerButtonCallback('CREATE_VARIABLE', (button) => Blockly.Variables.createVariableButtonHandler(button.getTargetWorkspace()))
-  workspace.registerToolboxCategoryCallback('UEBIT_VARIABLES', (target) => [heading('Variáveis'), ...Blockly.Variables.flyoutCategory(target)])
-  if (Blockly.Procedures?.flyoutCategory) {
-    workspace.registerToolboxCategoryCallback('UEBIT_FUNCTIONS', (target) => [heading('Funções'), ...Blockly.Procedures.flyoutCategory(target)])
+  const targetWs = workspace.targetWorkspace ?? workspace
+  const regVar = (ws) => {
+    try {
+      ws.registerButtonCallback('CREATE_VARIABLE', (button) => Blockly.Variables.createVariableButtonHandler(button.getTargetWorkspace()))
+    } catch {}
+    try {
+      ws.registerToolboxCategoryCallback('UEBIT_VARIABLES', (target) => [heading('Variáveis'), ...Blockly.Variables.flyoutCategory(target)])
+    } catch {}
+  }
+  regVar(workspace)
+  if (targetWs !== workspace) {
+    regVar(targetWs)
   }
 }
 
@@ -925,7 +950,11 @@ export const toolbox = {
       block('lists_setIndex'),
       block('lists_split', { inputs: { DELIM: { shadow: { type: 'text', fields: { TEXT: ',' } } } } }),
     ]),
-    { kind: 'category', name: 'Funções', categorystyle: 'uebit_functions', icon: 'ƒ', custom: 'UEBIT_FUNCTIONS' },
+    category('Funções', 'uebit_functions', 'ƒ', [
+      block('procedures_defnoreturn'),
+      block('procedures_defreturn'),
+      block('procedures_ifreturn'),
+    ]),
     category('Seletores CSS', 'uebit_advanced', '#', [
       block('site_text', { inputs: textInput('Texto') }),
       block('site_background'),

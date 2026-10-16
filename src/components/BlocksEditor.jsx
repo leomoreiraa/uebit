@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useBlocklyWorkspace } from 'react-blockly'
-import { Blockly, javascriptGenerator, prepareWorkspace, setWorkspaceTargets, toolbox, workspaceConfiguration } from '../lib/blockly'
+import { Blockly, javascriptGenerator, prepareWorkspace, toolbox, workspaceConfiguration } from '../lib/blockly'
 import { Sparkles } from 'lucide-react'
 
 export default function BlocksEditor({ project, targets, onProjectChange, onApply: _onApply, disabled: _disabled, expanded = false }) {
@@ -22,7 +22,7 @@ export default function BlocksEditor({ project, targets, onProjectChange, onAppl
 
   useEffect(() => {
     if (!workspace) return
-    setWorkspaceTargets(workspace, targets)
+    prepareWorkspace(workspace, targets)
     let previous = ''
     const changed = (event) => {
       if (event?.isUiEvent) return
