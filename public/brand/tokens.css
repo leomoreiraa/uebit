@@ -1,0 +1,12 @@
+:root {
+  --uebit-purple: #7145d6;
+  --uebit-frog: #78e59b;
+  --uebit-action: #21824f;
+  --uebit-bit: #ffd56a;
+  --uebit-coral: #d84062;
+  --uebit-ink: #24203d;
+  --uebit-paper: #faf9f3;
+  --uebit-font: ui-rounded, "Aptos", "Segoe UI", system-ui, sans-serif;
+  --uebit-code-font: ui-monospace, "Cascadia Code", Consolas, monospace;
+  --uebit-radius: 24px;
+}

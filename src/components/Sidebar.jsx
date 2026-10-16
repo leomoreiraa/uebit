@@ -1,22 +1,8 @@
 import { useState } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { elementTypes } from '../data/elements'
-import {
-  Heading1,
-  Image,
-  MousePointer2,
-  Text,
-  Shapes,
-  PanelsTopLeft,
-  Quote,
-  List,
-  Video,
-  Music,
-  TextCursorInput,
-  Minus,
-  ChevronDown,
-  ChevronRight,
-} from 'lucide-react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
+import BrandIcon, { Boxes as Shapes } from './BrandIcon'
 
 // O esquema de 4 cores clássico: Amarelo (Texto), Roxo (Mídia), Vermelho (Interação) e Verde (Estrutura)
 const categories = [
@@ -66,23 +52,7 @@ const categories = [
   },
 ]
 
-const icons = {
-  heading: Heading1,
-  paragraph: Text,
-  quote: Quote,
-  list: List,
-  image: Image,
-  video: Video,
-  audio: Music,
-  button: MousePointer2,
-  input: TextCursorInput,
-  container: PanelsTopLeft,
-  section: PanelsTopLeft,
-  divider: Minus,
-}
-
 function ElementCard({ element, category, disabled, onAddElement }) {
-  const Icon = icons[element.type] ?? Shapes
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `palette-${element.type}`,
     data: { type: element.type },
@@ -102,7 +72,7 @@ function ElementCard({ element, category, disabled, onAddElement }) {
       className={`group flex w-full touch-none select-none items-center gap-2.5 rounded-2xl p-2 text-left shadow-xs transition-colors enabled:cursor-grab enabled:hover:brightness-105 active:scale-98 disabled:cursor-not-allowed disabled:opacity-50 ${category.card} ${isDragging ? 'opacity-40' : ''}`}
     >
       <span className={`grid size-8 shrink-0 place-items-center rounded-xl ${category.icon} shadow-xs`}>
-        <Icon aria-hidden="true" size={18} />
+        <BrandIcon name={element.type} size={18} />
       </span>
       <span className="min-w-0 flex-1">
         <span className="flex items-center justify-between gap-1">

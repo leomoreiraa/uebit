@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useRef } from 'react'
-import { CodeXml, Download, LayoutTemplate, Play, Square, Save, Upload, Sparkles, Blocks } from 'lucide-react'
+import { CodeXml, Download, LayoutTemplate, Play, Square, Save, Upload, Sparkles, Blocks } from './BrandIcon'
 import UebitLogo from './UebitLogo'
 
 export default function Header({

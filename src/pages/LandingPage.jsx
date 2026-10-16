@@ -10,8 +10,10 @@ import {
   Sparkles,
   CodeXml,
   Boxes,
-} from 'lucide-react'
+} from '../components/BrandIcon'
 import UebitLogo from '../components/UebitLogo'
+import BrandIcon from '../components/BrandIcon'
+import { brandAsset } from '../lib/brand-assets'
 
 export default function LandingPage() {
   return (
@@ -32,7 +34,7 @@ export default function LandingPage() {
 
       {/* Playful & Clean Navbar com o Sapinho Sorridente */}
       <header className="sticky top-0 z-40 border-b-4 border-purple-200 bg-white/95 px-5 py-3.5 backdrop-blur-md shadow-xs">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
           <Link to="/" className="group flex items-center gap-3 transition-transform hover:scale-102">
             <UebitLogo size={40} variant="full" animated />
             <span className="hidden sm:inline-flex rounded-full bg-purple-100 border border-purple-300 px-3 py-1 text-xs font-black text-purple-900 tracking-tight">
@@ -53,8 +55,10 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-16 sm:py-24">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
+      <section className="uebit-brand-hero relative overflow-hidden py-12 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 text-center">
+          <div className="grid items-center gap-4 lg:grid-cols-[1.05fr_1fr] lg:text-left">
+          <div>
           {/* Playful Pill */}
           <div className="inline-flex items-center gap-2 rounded-full border-2 border-purple-200 bg-purple-50 px-4 py-1.5 text-xs font-black text-purple-900 shadow-xs">
             <Sparkles className="size-4 text-amber-500" />
@@ -62,28 +66,34 @@ export default function LandingPage() {
           </div>
 
           {/* Main Title */}
-          <h1 className="mt-8 text-4xl font-black tracking-tight text-slate-900 sm:text-6xl sm:leading-tight">
-            Construa Sites Reais com a Facilidade de Blocos!
+          <h1 className="mt-6 text-4xl font-black tracking-tight text-slate-900 sm:text-5xl sm:leading-tight">
+            Construa Sites Reais.<br /><span className="text-purple-600">Sua ideia dá um salto.</span>
           </h1>
 
           {/* Punchy Subtitle */}
-          <p className="mx-auto mt-6 max-w-xl text-lg font-medium text-slate-600 sm:text-xl leading-relaxed">
-            Crie páginas incríveis arrastando e programando.
+          <p className="mx-auto mt-5 max-w-xl text-lg font-medium text-slate-600 leading-relaxed">
+            Um pouco de web, um pouco de bit e um “ué-bit!” de descoberta. Crie páginas arrastando peças e programando suas ideias.
           </p>
 
           {/* Giant Animated CTA Button - Verde Sapo com energia das 4 cores */}
-          <div className="mt-10 flex flex-col items-center justify-center">
+          <div className="mt-7 flex flex-col items-center justify-center lg:items-start">
             <Link
               to="/editor"
               className="group relative inline-flex items-center justify-center gap-3.5 rounded-3xl border-b-6 border-emerald-700 bg-emerald-500 px-8 py-5 text-xl font-black text-white shadow-xl transition-all duration-200 hover:-translate-y-1 hover:bg-emerald-400 hover:shadow-2xl active:translate-y-1 active:border-b-2 sm:px-12 sm:text-2xl"
             >
-              <Rocket className="size-7 transition-transform group-hover:-rotate-12 group-hover:scale-110" />
+              <BrandIcon name="frog" className="size-7 transition-transform group-hover:-rotate-12 group-hover:scale-110" />
               <span>Começar a Criar</span>
               <ArrowRight className="size-6 transition-transform group-hover:translate-x-1" />
             </Link>
             <p className="mt-4 text-xs font-bold text-slate-500">
               100% Gratuito · Sem cadastro · Direto no navegador
             </p>
+          </div>
+          </div>
+          <div className="relative mx-auto w-full max-w-lg">
+            <img src={brandAsset('uebit-mascot.svg')} width="560" height="440" alt="Bit, o sapinho do Uebit, criando um site sobre uma vitória-régia" className="uebit-mascot-float w-full" fetchPriority="high" />
+            <p className="text-xs font-bold tracking-widest text-purple-700 uppercase">web · bit · ué-bit!</p>
+          </div>
           </div>
 
           {/* Quick Templates Selector Strip (Amarelo, Vermelho, Roxo, Verde) */}
@@ -148,7 +158,7 @@ export default function LandingPage() {
                   <span className="text-xs font-black">¶ Título & Texto</span>
                 </div>
                 <div className="rounded-xl border-b-3 border-purple-800 bg-purple-600 p-2 text-white shadow-xs">
-                  <span className="text-xs font-black">🖼️ Foto & Mídia</span>
+                  <span className="flex items-center gap-1 text-xs font-black"><BrandIcon name="image" size={14} />Foto & Mídia</span>
                 </div>
                 <div className="rounded-xl border-b-3 border-rose-700 bg-rose-500 p-2 text-white shadow-xs">
                   <span className="text-xs font-black">↗ Botão de Ação</span>
@@ -164,7 +174,7 @@ export default function LandingPage() {
                   <span className="inline-block rounded-full bg-purple-100 px-2.5 py-0.5 text-[10px] font-black text-purple-900">
                     Meu Projeto
                   </span>
-                  <h3 className="text-lg font-black text-slate-900">Olá, mundo! 🐸🌟</h3>
+                  <h3 className="flex items-center gap-2 text-lg font-black text-slate-900">Olá, mundo! <BrandIcon name="frog" size={22} className="text-emerald-600" /></h3>
                   <p className="text-xs text-slate-500 font-medium leading-relaxed">
                     Meu primeiro site feito com peças visuais e o sapinho Uebit.
                   </p>
@@ -345,7 +355,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div>
+            <div className="flex flex-col items-center gap-3">
               <Link
                 to="/editor"
                 className="inline-flex items-center gap-2 rounded-full border-b-4 border-emerald-700 bg-emerald-500 px-5 py-2.5 text-xs font-black text-white shadow-md hover:bg-emerald-400 hover:scale-105 active:scale-95 transition-all"
@@ -353,6 +363,7 @@ export default function LandingPage() {
                 <Play className="size-3.5 fill-white" />
                 <span>Ir para o Editor</span>
               </Link>
+              <Link to="/marca" className="text-sm font-bold text-purple-700 underline decoration-purple-200 underline-offset-4 hover:decoration-purple-600">Conheça a identidade visual</Link>
             </div>
           </div>
         </div>

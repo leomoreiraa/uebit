@@ -1,10 +1,32 @@
 @import "tailwindcss";
 
+@theme {
+  --color-purple-600: #7145d6;
+  --color-purple-700: #5b32b3;
+  --color-purple-800: #452580;
+  --color-emerald-500: #21824f;
+  --color-emerald-600: #17683f;
+  --color-emerald-700: #115030;
+  --color-amber-400: #ffd56a;
+  --color-rose-500: #d84062;
+  --color-slate-900: #24203d;
+  --color-slate-50: #faf9f3;
+}
+
 @layer base {
   :root {
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --uebit-purple: #7145d6;
+    --uebit-frog: #78e59b;
+    --uebit-action: #21824f;
+    --uebit-bit: #ffd56a;
+    --uebit-coral: #d84062;
+    --uebit-ink: #24203d;
+    --uebit-paper: #faf9f3;
+    --uebit-font: ui-rounded, "Aptos", "Segoe UI", system-ui, sans-serif;
+    --uebit-code-font: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-family: var(--uebit-font);
     color: var(--color-slate-800);
-    background: #f8fafc;
+    background: var(--uebit-paper);
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -24,9 +46,16 @@
     outline: 3px solid var(--color-indigo-500);
     outline-offset: 4px;
   }
+  a:focus-visible { outline: 3px solid var(--uebit-purple); outline-offset: 4px; border-radius: 8px; }
 }
 
 @layer components {
+  .uebit-brand-page, .uebit-brand-hero { background-color: var(--uebit-paper); }
+  .uebit-eyebrow { color: var(--uebit-purple); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
+  .uebit-brand-checker { background-image: radial-gradient(#ded5f2 1px, transparent 1px); background-size: 14px 14px; }
+  .uebit-logo-motion { transition: transform 180ms ease; }
+  .uebit-logo-motion:hover { transform: translateY(-2px); }
+  .uebit-mascot-float { animation: uebit-mascot-float 6s ease-in-out infinite; }
   .uebit-workspace button, .uebit-workspace select, .uebit-workspace input,
   aside input, aside textarea, aside select, aside button {
     border-radius: var(--radius-xl);
@@ -87,6 +116,16 @@
   50% {
     transform: translateY(-10px) rotate(3deg);
   }
+}
+
+@keyframes uebit-mascot-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uebit-mascot-float, .animate-uebit-float, .animate-uebit-pulse-glow, .animate-bounce { animation: none !important; }
+  .uebit-logo-motion { transition: none; }
 }
 
 @keyframes uebit-pulse-glow {
