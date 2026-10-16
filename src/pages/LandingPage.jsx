@@ -11,6 +11,7 @@ import {
   CodeXml,
   Boxes,
 } from '../components/BrandIcon'
+import { UtensilsCrossed } from 'lucide-react'
 import UebitLogo from '../components/UebitLogo'
 import BrandIcon from '../components/BrandIcon'
 import { brandAsset } from '../lib/brand-assets'
@@ -96,15 +97,15 @@ export default function LandingPage() {
           </div>
           </div>
 
-          {/* Quick Templates Selector Strip (Amarelo, Vermelho, Roxo, Verde) */}
-          <div className="mt-14 mx-auto max-w-3xl rounded-3xl border-3 border-purple-200 bg-white p-4 shadow-sm sm:p-5">
+          {/* Quick Templates Selector Strip */}
+          <div className="mt-14 mx-auto max-w-4xl rounded-3xl border-3 border-purple-200 bg-white p-4 shadow-sm sm:p-5">
             <p className="text-xs font-black uppercase tracking-wider text-purple-900 mb-3 flex items-center justify-center gap-1.5">
               <span>⚡ Escolha um Modelo Pronto para Começar Já:</span>
             </p>
-            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-5">
               <Link
                 to="/editor?template=quiz-game"
-                className="flex items-center justify-center gap-1.5 rounded-2xl border-b-4 border-amber-600 bg-amber-400 px-3 py-2.5 text-xs font-black text-amber-950 shadow-xs transition-transform hover:scale-105 active:scale-95 hover:bg-amber-300"
+                className="flex items-center justify-center gap-1.5 rounded-2xl border-b-4 border-emerald-700 bg-emerald-500 px-3 py-2.5 text-xs font-black text-white shadow-xs transition-transform hover:scale-105 active:scale-95 hover:bg-emerald-400"
               >
                 <Gamepad2 size={16} />
                 <span>Quiz & Jogo</span>
@@ -124,8 +125,15 @@ export default function LandingPage() {
                 <span>História Espacial</span>
               </Link>
               <Link
+                to="/editor?template=cyber-store"
+                className="flex items-center justify-center gap-1.5 rounded-2xl border-b-4 border-amber-600 bg-amber-400 px-3 py-2.5 text-xs font-black text-amber-950 shadow-xs transition-transform hover:scale-105 active:scale-95 hover:bg-amber-300"
+              >
+                <UtensilsCrossed size={16} />
+                <span>Pizzaria Delivery</span>
+              </Link>
+              <Link
                 to="/editor?template=blank"
-                className="flex items-center justify-center gap-1.5 rounded-2xl border-b-4 border-emerald-700 bg-emerald-600 px-3 py-2.5 text-xs font-black text-white shadow-xs transition-transform hover:scale-105 active:scale-95 hover:bg-emerald-500"
+                className="col-span-2 sm:col-span-1 flex items-center justify-center gap-1.5 rounded-2xl border-b-4 border-slate-600 bg-slate-700 px-3 py-2.5 text-xs font-black text-white shadow-xs transition-transform hover:scale-105 active:scale-95 hover:bg-slate-600"
               >
                 <Sparkles size={16} />
                 <span>Em Branco</span>

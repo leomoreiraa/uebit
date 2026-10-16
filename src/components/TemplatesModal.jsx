@@ -6,6 +6,7 @@ import {
   Rocket,
   Wand2,
   Palette,
+  UtensilsCrossed,
   ArrowRight,
 } from 'lucide-react'
 import { TEMPLATES } from '../data/templates'
@@ -16,6 +17,7 @@ const iconMap = {
   Rocket,
   Wand2,
   Palette,
+  UtensilsCrossed,
 }
 
 export default function TemplatesModal({ isOpen, onClose, onSelectTemplate }) {
