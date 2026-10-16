@@ -9,7 +9,7 @@ const categories = [
   {
     id: 'text',
     name: 'Texto',
-    types: ['heading', 'paragraph', 'quote', 'list'],
+    types: ['heading', 'paragraph', 'break', 'link', 'strong', 'em', 'code', 'span', 'quote', 'list', 'ordered-list'],
     color: 'text-amber-950',
     headerHover: 'hover:bg-amber-100/80',
     sectionBorder: 'border-2 border-amber-200 bg-amber-50/70',
@@ -20,7 +20,7 @@ const categories = [
   {
     id: 'media',
     name: 'Mídia',
-    types: ['image', 'video', 'audio'],
+    types: ['image', 'video', 'audio', 'iframe'],
     color: 'text-purple-950',
     headerHover: 'hover:bg-purple-100/80',
     sectionBorder: 'border-2 border-purple-200 bg-purple-50/70',
@@ -30,8 +30,8 @@ const categories = [
   },
   {
     id: 'interaction',
-    name: 'Interação',
-    types: ['button', 'input'],
+    name: 'Interação & Formulários',
+    types: ['button', 'input', 'textarea', 'select', 'checkbox', 'form'],
     color: 'text-rose-950',
     headerHover: 'hover:bg-rose-100/80',
     sectionBorder: 'border-2 border-rose-200 bg-rose-50/70',
@@ -41,8 +41,8 @@ const categories = [
   },
   {
     id: 'structure',
-    name: 'Estrutura',
-    types: ['container', 'section', 'divider'],
+    name: 'Estrutura & Semântica',
+    types: ['container', 'section', 'header', 'footer', 'nav', 'article', 'aside', 'table', 'divider'],
     color: 'text-emerald-950',
     headerHover: 'hover:bg-emerald-100/80',
     sectionBorder: 'border-2 border-emerald-200 bg-emerald-50/70',
@@ -75,8 +75,13 @@ function ElementCard({ element, category, disabled, onAddElement }) {
         <BrandIcon name={element.type} size={18} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="flex items-center justify-between gap-1">
+        <span className="flex items-center justify-between gap-1.5">
           <span className="block text-xs font-black truncate leading-snug">{element.name}</span>
+          {element.tag && (
+            <span className="shrink-0 rounded-md bg-black/15 px-1.5 py-0.5 font-mono text-[10px] font-bold tracking-tight opacity-90">
+              {element.tag}
+            </span>
+          )}
         </span>
         <span className="block text-[11px] opacity-90 truncate leading-tight font-semibold">{element.description}</span>
       </span>
@@ -103,9 +108,6 @@ export default function Sidebar({ disabled, onAddElement }) {
           </span>
           <span>Paleta de elementos</span>
         </h2>
-        <span className="rounded-full bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 text-[10px] font-black text-emerald-900 uppercase">
-          Peças
-        </span>
       </div>
       <p className="mt-1 shrink-0 text-xs font-medium text-slate-500">Arraste ou clique para adicionar à página.</p>
 

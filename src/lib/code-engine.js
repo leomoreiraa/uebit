@@ -13,12 +13,30 @@ body { margin: 0; font-family: system-ui, sans-serif; color: #1e293b; background
 .quote { padding: 16px 20px; border-left: 4px solid #6366f1; background: #f8fafc; font-style: italic; font-size: 18px; line-height: 1.6; }
 .list { padding: 12px 28px; line-height: 1.7; font-size: 16px; margin: 0; list-style-type: disc; }
 .list li { margin-bottom: 6px; }
+.ordered-list { padding: 12px 28px; line-height: 1.7; font-size: 16px; margin: 0; list-style-type: decimal; }
+.ordered-list li { margin-bottom: 6px; }
+.break { display: block; width: 100%; height: 16px; margin: 2px 0; border: none; }
+.link { color: #4f46e5; text-decoration: underline; font-size: 16px; padding: 4px 8px; font-weight: 600; cursor: pointer; }
+.link:hover { color: #3730a3; }
+.strong { font-weight: 800; font-size: 16px; padding: 4px 8px; }
+.em { font-style: italic; font-size: 16px; padding: 4px 8px; }
+.code { font-family: ui-monospace, monospace; background: #f1f5f9; color: #0f172a; padding: 4px 8px; border-radius: 6px; font-size: 14px; }
+.span { font-size: 16px; padding: 4px 8px; }
 .image { width: 100%; height: auto; max-height: 400px; object-fit: cover; }
 .video { width: 100%; max-height: 380px; object-fit: contain; border-radius: 12px; background: #0f172a; }
 .audio { width: 100%; border-radius: 12px; }
+.iframe { width: 100%; min-height: 320px; border: 2px solid #e2e8f0; border-radius: 12px; }
 .button { border: 0; padding: 12px 16px; background: #4f46e5; color: white; font: inherit; cursor: pointer; }
 .input { width: 100%; padding: 12px 16px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 16px; font-family: inherit; background: #fff; }
+.textarea { width: 100%; min-height: 100px; padding: 12px 16px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 16px; font-family: inherit; background: #fff; resize: vertical; }
+.select { width: 100%; padding: 12px 16px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 16px; font-family: inherit; background: #fff; cursor: pointer; }
+.checkbox { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; cursor: pointer; padding: 8px; }
+.checkbox input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
 .container { display: flex; flex-direction: column; flex-wrap: wrap; gap: 16px; padding: 24px; min-height: 120px; border: 2px dashed #86b89c; background: #f0fdf4; }
+.table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 8px 0; }
+.table th, .table td { border: 1px solid #cbd5e1; padding: 10px 14px; text-align: left; }
+.table th { background: #f8fafc; font-weight: bold; }
+.table tr:nth-child(even) { background: #f8fafc; }
 .divider { width: 100%; border: 0; border-top: 2px solid #e2e8f0; margin: 12px 0; }
 @media (max-width: 767px) {
   .heading { font-size: 28px; }
@@ -38,7 +56,7 @@ export function createInitialCode() {
 }
 
 const excluded = ['SCRIPT', 'STYLE', 'LINK', 'META', 'TITLE', 'BASE']
-export const isContainer = (node) => ['DIV', 'SECTION', 'ARTICLE', 'HEADER', 'FOOTER', 'NAV', 'ASIDE', 'MAIN'].includes(node.tagName)
+export const isContainer = (node) => ['DIV', 'SECTION', 'ARTICLE', 'HEADER', 'FOOTER', 'NAV', 'ASIDE', 'MAIN', 'FORM'].includes(node.tagName)
 const childrenOf = (node) => [...node.children].filter((child) => !excluded.includes(child.tagName))
 
 export function parseHTML(html) {
@@ -105,14 +123,27 @@ export function readCode(code) {
       P: 'paragraph',
       IMG: 'image',
       BUTTON: 'button',
-      A: 'button',
+      A: node.getAttribute('data-site-action') ? 'button' : 'link',
       BLOCKQUOTE: 'quote',
       UL: 'list',
-      OL: 'list',
+      OL: 'ordered-list',
       VIDEO: 'video',
       AUDIO: 'audio',
-      INPUT: 'input',
+      INPUT: node.getAttribute('type') === 'checkbox' ? 'checkbox' : 'input',
+      LABEL: node.querySelector?.('input[type="checkbox"]') ? 'checkbox' : 'custom',
       HR: 'divider',
+      BR: 'break',
+      STRONG: 'strong',
+      B: 'strong',
+      EM: 'em',
+      I: 'em',
+      CODE: 'code',
+      PRE: 'code',
+      SPAN: 'span',
+      TEXTAREA: 'textarea',
+      SELECT: 'select',
+      TABLE: 'table',
+      IFRAME: 'iframe',
     }[node.tagName] ?? 'custom')
     const layout = layoutFor(node, css, 1280)
     const mobile = layoutFor(node, css, 390)
@@ -123,20 +154,35 @@ export function readCode(code) {
 }
 
 function createNode(document, element) {
-  const tag = {
-    heading: 'h1',
-    paragraph: 'p',
-    image: 'img',
-    button: 'button',
-    container: 'div',
-    quote: 'blockquote',
-    list: 'ul',
-    video: 'video',
-    audio: 'audio',
-    input: 'input',
-    divider: 'hr',
-  }[element.type] ?? 'div'
-  const node = document.createElement(element.tagName === 'section' ? 'section' : tag)
+  const containerTags = ['section', 'article', 'header', 'footer', 'nav', 'aside', 'main', 'form']
+  const tag = (element.tagName && containerTags.includes(element.tagName.toLowerCase()))
+    ? element.tagName.toLowerCase()
+    : ({
+        heading: element.headingLevel || 'h1',
+        paragraph: 'p',
+        image: 'img',
+        button: 'button',
+        container: 'div',
+        quote: 'blockquote',
+        list: 'ul',
+        'ordered-list': 'ol',
+        video: 'video',
+        audio: 'audio',
+        input: 'input',
+        textarea: 'textarea',
+        select: 'select',
+        checkbox: 'label',
+        table: 'table',
+        iframe: 'iframe',
+        break: 'br',
+        link: 'a',
+        strong: 'strong',
+        em: 'em',
+        code: 'code',
+        span: 'span',
+        divider: 'hr',
+      }[element.type] ?? 'div')
+  const node = document.createElement(tag)
   node.className = `site-block ${element.type}`
   if (element.type === 'image') {
     node.setAttribute('src', element.src || '')
@@ -147,18 +193,73 @@ function createNode(document, element) {
   } else if (element.type === 'audio') {
     node.setAttribute('src', element.src || '')
     node.setAttribute('controls', '')
+  } else if (element.type === 'iframe') {
+    node.setAttribute('src', element.src || 'https://example.com')
+    node.setAttribute('loading', 'lazy')
   } else if (element.type === 'input') {
     node.setAttribute('type', 'text')
     node.setAttribute('placeholder', element.placeholder || 'Digite aqui...')
     if (element.text) node.setAttribute('value', element.text)
-  } else if (element.type === 'list') {
-    const rawItems = (element.text || 'Item 1\nItem 2\nItem 3').split('\n').filter(Boolean)
+  } else if (element.type === 'textarea') {
+    node.setAttribute('placeholder', element.placeholder || 'Digite aqui...')
+    if (element.text) node.textContent = element.text
+  } else if (element.type === 'select') {
+    const rawOptions = (element.text || 'Opção 1\nOpção 2\nOpção 3').split('\n').filter(Boolean)
+    for (const opt of rawOptions) {
+      const option = document.createElement('option')
+      option.textContent = opt
+      option.value = opt
+      node.append(option)
+    }
+  } else if (element.type === 'checkbox') {
+    const input = document.createElement('input')
+    input.setAttribute('type', 'checkbox')
+    if (element.checked) input.setAttribute('checked', '')
+    const span = document.createElement('span')
+    span.textContent = element.text || 'Concordo com os termos'
+    node.append(input, span)
+  } else if (element.type === 'link') {
+    node.setAttribute('href', element.href || element.actionValue || 'https://')
+    if (element.newTab) {
+      node.setAttribute('target', '_blank')
+      node.setAttribute('rel', 'noopener noreferrer')
+    }
+    node.textContent = element.text || 'Link'
+  } else if (['list', 'ordered-list'].includes(element.type)) {
+    const defaultList = element.type === 'ordered-list' ? 'Passo 1\nPasso 2\nPasso 3' : 'Item 1\nItem 2\nItem 3'
+    const rawItems = (element.text || defaultList).split('\n').filter(Boolean)
     for (const item of rawItems) {
       const li = document.createElement('li')
       li.textContent = item
       node.append(li)
     }
-  } else if (element.type !== 'container' && element.type !== 'divider') {
+  } else if (element.type === 'table') {
+    const lines = (element.text || 'Nome, Função, Nível\nBit, Mascote, Mestre\nDev, Criador, Júnior').split('\n').filter(Boolean)
+    if (lines.length > 0) {
+      const thead = document.createElement('thead')
+      const tr = document.createElement('tr')
+      for (const col of lines[0].split(',').map((s) => s.trim())) {
+        const th = document.createElement('th')
+        th.textContent = col
+        tr.append(th)
+      }
+      thead.append(tr)
+      node.append(thead)
+    }
+    if (lines.length > 1) {
+      const tbody = document.createElement('tbody')
+      for (const line of lines.slice(1)) {
+        const tr = document.createElement('tr')
+        for (const col of line.split(',').map((s) => s.trim())) {
+          const td = document.createElement('td')
+          td.textContent = col
+          tr.append(td)
+        }
+        tbody.append(tr)
+      }
+      node.append(tbody)
+    }
+  } else if (!['container', 'divider', 'break'].includes(element.type)) {
     node.textContent = element.text ?? ''
   }
   if (element.type === 'button') node.setAttribute('type', 'button')
@@ -295,11 +396,28 @@ export function updateElementContent(code, id, content) {
     for (const attribute of node.attributes) replacement.setAttribute(attribute.name, attribute.value)
     replacement.append(...node.childNodes); node.replaceWith(replacement); node = replacement
   }
-  if (['heading', 'paragraph', 'button', 'quote'].includes(element.type) && content.text !== undefined && content.text !== element.text) {
+  if (element.type === 'container' && content.tagName && content.tagName.toLowerCase() !== node.tagName.toLowerCase()) {
+    const replacement = document.createElement(content.tagName.toLowerCase())
+    for (const attribute of node.attributes) replacement.setAttribute(attribute.name, attribute.value)
+    replacement.append(...node.childNodes); node.replaceWith(replacement); node = replacement
+  }
+  if (['heading', 'paragraph', 'button', 'quote', 'strong', 'em', 'code', 'span', 'link'].includes(element.type) && content.text !== undefined && content.text !== element.text) {
     node.textContent = content.text
     if (content.text.includes('\n')) node.style.whiteSpace = 'pre-wrap'
   }
-  if (element.type === 'list' && content.text !== undefined && content.text !== element.text) {
+  if (element.type === 'link') {
+    if (content.href !== undefined) node.setAttribute('href', content.href.trim())
+    if (content.newTab !== undefined) {
+      if (content.newTab) {
+        node.setAttribute('target', '_blank')
+        node.setAttribute('rel', 'noopener noreferrer')
+      } else {
+        node.removeAttribute('target')
+        node.removeAttribute('rel')
+      }
+    }
+  }
+  if (['list', 'ordered-list'].includes(element.type) && content.text !== undefined && content.text !== element.text) {
     node.replaceChildren()
     const items = content.text.split('\n').filter(Boolean)
     for (const item of items) {
@@ -312,7 +430,58 @@ export function updateElementContent(code, id, content) {
     if (content.placeholder !== undefined) node.setAttribute('placeholder', content.placeholder)
     if (content.text !== undefined) node.setAttribute('value', content.text)
   }
-  if (['video', 'audio'].includes(element.type)) {
+  if (element.type === 'textarea') {
+    if (content.placeholder !== undefined) node.setAttribute('placeholder', content.placeholder)
+    if (content.text !== undefined) node.textContent = content.text
+  }
+  if (element.type === 'select' && content.text !== undefined && content.text !== element.text) {
+    node.replaceChildren()
+    const options = content.text.split('\n').filter(Boolean)
+    for (const opt of options) {
+      const option = document.createElement('option')
+      option.textContent = opt
+      option.value = opt
+      node.append(option)
+    }
+  }
+  if (element.type === 'checkbox') {
+    const input = node.querySelector?.('input[type="checkbox"]') || (node.tagName === 'INPUT' ? node : null)
+    if (input && content.checked !== undefined) {
+      if (content.checked) input.setAttribute('checked', '')
+      else input.removeAttribute('checked')
+    }
+    const span = node.querySelector?.('span')
+    if (span && content.text !== undefined) span.textContent = content.text
+  }
+  if (element.type === 'table' && content.text !== undefined && content.text !== element.text) {
+    node.replaceChildren()
+    const lines = content.text.split('\n').filter(Boolean)
+    if (lines.length > 0) {
+      const thead = document.createElement('thead')
+      const tr = document.createElement('tr')
+      for (const col of lines[0].split(',').map((s) => s.trim())) {
+        const th = document.createElement('th')
+        th.textContent = col
+        tr.append(th)
+      }
+      thead.append(tr)
+      node.append(thead)
+    }
+    if (lines.length > 1) {
+      const tbody = document.createElement('tbody')
+      for (const line of lines.slice(1)) {
+        const tr = document.createElement('tr')
+        for (const col of line.split(',').map((s) => s.trim())) {
+          const td = document.createElement('td')
+          td.textContent = col
+          tr.append(td)
+        }
+        tbody.append(tr)
+      }
+      node.append(tbody)
+    }
+  }
+  if (['video', 'audio', 'iframe'].includes(element.type)) {
     if (content.src !== undefined) node.setAttribute('src', content.src.trim())
   }
   if (element.type === 'image') {

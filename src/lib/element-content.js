@@ -1,25 +1,50 @@
 import { BOX_PROPERTIES } from './styles.js'
 
 export function readContent(node) {
-  const isList = node.tagName === 'UL' || node.tagName === 'OL'
-  const listItems = isList
-    ? Array.from(node.querySelectorAll('li')).map((li) => li.textContent ?? '').join('\n')
-    : null
+  const isList = (node.tagName === 'UL' || node.tagName === 'OL') && typeof node.querySelectorAll === 'function'
+  const isSelect = node.tagName === 'SELECT' && typeof node.querySelectorAll === 'function'
+  const isTable = node.tagName === 'TABLE' && typeof node.querySelectorAll === 'function'
+  const isCheckbox = node.tagName === 'LABEL' && typeof node.querySelector === 'function' && Boolean(node.querySelector('input[type="checkbox"]'))
+
+  let listItems = null
+  if (isList) {
+    listItems = Array.from(node.querySelectorAll('li')).map((li) => li.textContent ?? '').join('\n')
+  } else if (isSelect) {
+    listItems = Array.from(node.querySelectorAll('option')).map((opt) => opt.textContent ?? '').join('\n')
+  } else if (isTable) {
+    const rows = Array.from(node.querySelectorAll('tr')).map((tr) =>
+      Array.from(tr.querySelectorAll('th, td')).map((cell) => cell.textContent ?? '').join(', ')
+    )
+    listItems = rows.join('\n')
+  } else if (isCheckbox) {
+    listItems = node.querySelector('span')?.textContent ?? node.textContent ?? ''
+  }
+
+  const text = listItems !== null
+    ? listItems
+    : node.tagName === 'INPUT'
+      ? (typeof node.getAttribute === 'function' ? (node.getAttribute('value') ?? '') : '')
+      : node.tagName === 'TEXTAREA'
+        ? (node.value ?? node.textContent ?? '')
+        : (node.textContent ?? '')
 
   return {
-    name: node.getAttribute('data-name') ?? '',
+    tagName: node.tagName?.toLowerCase() ?? 'div',
+    name: (typeof node.getAttribute === 'function' ? node.getAttribute('data-name') : null) ?? '',
     htmlId: node.id ?? '',
-    text: listItems !== null ? listItems : node.tagName === 'INPUT' ? (node.getAttribute('value') ?? '') : (node.textContent ?? ''),
+    text,
     headingLevel: /^H[1-6]$/.test(node.tagName) ? node.tagName.toLowerCase() : 'h1',
-    src: node.getAttribute('src') ?? '',
-    alt: node.getAttribute('alt') ?? '',
-    placeholder: node.getAttribute('placeholder') ?? '',
-    fit: node.style.objectFit || 'cover',
-    appearance: { color: node.style.color, backgroundColor: node.style.backgroundColor, fontSize: node.style.fontSize,
-      ...Object.fromEntries(BOX_PROPERTIES.filter((property) => node.style[property]).map((property) => [property, node.style[property]])) },
-    action: node.getAttribute('data-site-action') ?? (node.tagName === 'A' ? 'link' : 'none'),
-    actionValue: node.getAttribute('data-site-value') ?? node.getAttribute('href') ?? '',
-    newTab: node.getAttribute('data-site-new-tab') === 'true' || node.getAttribute('target') === '_blank',
+    src: (typeof node.getAttribute === 'function' ? node.getAttribute('src') : null) ?? '',
+    alt: (typeof node.getAttribute === 'function' ? node.getAttribute('alt') : null) ?? '',
+    placeholder: (typeof node.getAttribute === 'function' ? node.getAttribute('placeholder') : null) ?? '',
+    href: (typeof node.getAttribute === 'function' ? node.getAttribute('href') : null) ?? '',
+    checked: isCheckbox ? Boolean(node.querySelector('input[type="checkbox"]')?.hasAttribute?.('checked') || node.querySelector('input[type="checkbox"]')?.checked) : false,
+    fit: node.style?.objectFit || 'cover',
+    appearance: { color: node.style?.color, backgroundColor: node.style?.backgroundColor, fontSize: node.style?.fontSize,
+      ...Object.fromEntries(BOX_PROPERTIES.filter((property) => node.style?.[property]).map((property) => [property, node.style[property]])) },
+    action: (typeof node.getAttribute === 'function' ? node.getAttribute('data-site-action') : null) ?? (node.tagName === 'A' ? 'link' : 'none'),
+    actionValue: (typeof node.getAttribute === 'function' ? (node.getAttribute('data-site-value') ?? node.getAttribute('href')) : null) ?? '',
+    newTab: (typeof node.getAttribute === 'function' ? (node.getAttribute('data-site-new-tab') === 'true' || node.getAttribute('target') === '_blank') : false),
   }
 }
 
@@ -41,8 +66,13 @@ export function validateContent(type, content) {
       throw new Error('Use uma imagem enviada do computador ou um endereço http/https.')
     }
   }
-  if (['video', 'audio'].includes(type)) {
-    if (!content.src || !content.src.trim()) throw new Error('Informe o endereço do arquivo de mídia.')
+  if (['video', 'audio', 'iframe'].includes(type)) {
+    if (!content.src || !content.src.trim()) throw new Error('Informe o endereço do arquivo ou página.')
+  }
+  if (type === 'link') {
+    if (content.href && !['http:', 'https:', 'mailto:', 'tel:', '#'].some((prefix) => content.href.trim().startsWith(prefix))) {
+      throw new Error('Use um endereço http/https, mailto:, tel: ou #seção.')
+    }
   }
   if (type !== 'button' || content.action === 'none') return
   if (!content.actionValue.trim()) throw new Error('Preencha o destino ou a mensagem do botão.')

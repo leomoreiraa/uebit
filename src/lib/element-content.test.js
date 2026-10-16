@@ -79,3 +79,63 @@ test('readContent extracts list items and input placeholders', () => {
   assert.equal(inputContent.placeholder, 'Digite seu nome')
   assert.equal(inputContent.text, 'Carlos')
 })
+
+test('readContent and validateContent support new HTML tags including break, link, textarea, select, checkbox, table and iframe', () => {
+  assert.doesNotThrow(() => validateContent('iframe', { src: 'https://example.com' }))
+  assert.throws(() => validateContent('iframe', { src: '' }))
+  assert.doesNotThrow(() => validateContent('link', { href: 'https://exemplo.com' }))
+  assert.doesNotThrow(() => validateContent('link', { href: '#secao' }))
+  assert.throws(() => validateContent('link', { href: 'javascript:void(0)' }))
+
+  const select = {
+    tagName: 'SELECT',
+    id: 'my-select',
+    style: {},
+    getAttribute: () => null,
+    querySelectorAll: (sel) => (sel === 'option' ? [{ textContent: 'Opção 1' }, { textContent: 'Opção 2' }] : []),
+    textContent: '',
+  }
+  assert.equal(readContent(select).text, 'Opção 1\nOpção 2')
+
+  const table = {
+    tagName: 'TABLE',
+    id: 'my-table',
+    style: {},
+    getAttribute: () => null,
+    querySelectorAll: (sel) => {
+      if (sel === 'tr') {
+        return [
+          { querySelectorAll: () => [{ textContent: 'A' }, { textContent: 'B' }] },
+          { querySelectorAll: () => [{ textContent: '1' }, { textContent: '2' }] },
+        ]
+      }
+      return []
+    },
+    textContent: '',
+  }
+  assert.equal(readContent(table).text, 'A, B\n1, 2')
+
+  const checkbox = {
+    tagName: 'LABEL',
+    id: 'my-check',
+    style: {},
+    getAttribute: () => null,
+    querySelectorAll: () => [],
+    querySelector: (sel) => (sel === 'input[type="checkbox"]' ? { hasAttribute: () => true } : { textContent: 'Concordo' }),
+    textContent: 'Concordo',
+  }
+  const checkContent = readContent(checkbox)
+  assert.equal(checkContent.checked, true)
+  assert.equal(checkContent.text, 'Concordo')
+
+  const br = {
+    tagName: 'BR',
+    id: 'my-break',
+    style: {},
+    getAttribute: () => null,
+    querySelectorAll: () => [],
+    textContent: '',
+  }
+  assert.equal(readContent(br).tagName, 'br')
+})
+

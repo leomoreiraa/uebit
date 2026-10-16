@@ -34,8 +34,18 @@ export default function BrandPage() {
           <p className="uebit-eyebrow">Universo Uebit / guia da marca</p>
           <h1 id="brand-heading" className="mt-4 text-4xl font-black leading-tight tracking-tight sm:text-6xl">Sua ideia<br /><span className="text-purple-600">dá um salto.</span></h1>
           <p className="mt-5 max-w-lg text-lg leading-relaxed text-slate-600">Web para explorar. Bits para construir. Um sapinho para lembrar que aprender também pode ser uma brincadeira.</p>
-          <button type="button" disabled={busy} onClick={() => download(downloadBrandKit, 'Kit de identidade visual')} className="mt-7 inline-flex min-h-12 items-center gap-2 rounded-2xl border-b-4 border-purple-800 bg-purple-600 px-5 py-3 font-bold text-white disabled:opacity-50"><BrandIcon name="export" size={20} />{busy ? 'Preparando arquivos…' : 'Baixar kit de identidade visual'}</button>
           <p className="mt-3 text-xs text-slate-500">ZIP com SVGs, 30 ícones individuais, tokens CSS e guia de uso.</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => download(downloadBrandKit, 'Kit de identidade visual')}
+              className="inline-flex items-center gap-2 rounded-2xl bg-purple-600 px-5 py-3 text-sm font-black text-white shadow-md hover:bg-purple-500 disabled:opacity-50"
+            >
+              <BrandIcon name="export" size={18} />
+              <span>Baixar kit de identidade visual</span>
+            </button>
+          </div>
           {message && <p role="status" className="mt-3 text-sm text-emerald-700">{message}</p>}
           {error && <p role="alert" className="mt-3 text-sm text-rose-700">{error}</p>}
         </div>

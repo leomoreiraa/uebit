@@ -96,7 +96,7 @@ function targetsFor(field) {
 class SiteTargetField extends Blockly.FieldDropdown {
   constructor(textOnly = false) {
     super(function () {
-      const targets = targetsFor(this).filter((target) => !this.textOnly || ['heading', 'paragraph', 'button', 'quote', 'list', 'input'].includes(target.type))
+      const targets = targetsFor(this).filter((target) => !this.textOnly || ['heading', 'paragraph', 'button', 'quote', 'list', 'ordered-list', 'input', 'textarea', 'link', 'strong', 'em', 'code', 'span'].includes(target.type))
       const options = [['Escolha um elemento…', ''], ...targets.map((target) => [target.label, target.id])]
       const selected = this.getValue()
       if (selected && !targets.some((target) => target.id === selected)) options.push(['Elemento indisponível — escolha outro', selected])
@@ -126,7 +126,7 @@ function targetSelector(block) {
   const id = block.getFieldValue('TARGET')
   const field = block.getField('TARGET')
   const target = targetsFor(field).find((item) => item.id === id)
-  if (!target || (field.textOnly && !['heading', 'paragraph', 'button'].includes(target.type))) {
+  if (!target || (field.textOnly && !['heading', 'paragraph', 'button', 'quote', 'list', 'ordered-list', 'input', 'textarea', 'link', 'strong', 'em', 'code', 'span'].includes(target.type))) {
     throw new Error('Escolha um elemento disponível nos blocos de página. Um destino está vazio ou foi removido.')
   }
   return `[data-block-id="${CSS.escape(id)}"]`

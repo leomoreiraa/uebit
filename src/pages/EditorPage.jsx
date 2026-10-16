@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { saveAs } from 'file-saver'
+import TrashButton from '../components/TrashButton'
 import { updateGlobalStyle } from '../lib/code-engine'
 import { DEFAULT_PROJECT_NAME, parseProject, projectFilename, projectName, serializeProject } from '../lib/project'
 import {
@@ -180,6 +181,25 @@ export default function EditorPage() {
     acceptCode(updateElementAppearance(code, id, property, value))
   }
 
+  function handleBlockProjectChange(changes) {
+    if (changes.generated !== undefined && changes.generated !== blockProject.appliedGenerated && !codeError) {
+      try {
+        const result = applyBlockCode(draft.js, changes.generated, blockProject.applied)
+        acceptCode(identifyCodeElements({ ...draft, js: result.js }))
+        setBlockProject((current) => ({
+          ...current,
+          ...changes,
+          applied: result.applied,
+          appliedGenerated: changes.generated,
+        }))
+        return
+      } catch {
+        /* preserve state on transient generation error */
+      }
+    }
+    setBlockProject((current) => ({ ...current, ...changes }))
+  }
+
   function applyBlocks() {
     if (codeError) return
     const result = applyBlockCode(draft.js, blockProject.generated, blockProject.applied)
@@ -248,6 +268,7 @@ export default function EditorPage() {
   function destinationFor(event) {
     const { over, active, activatorEvent, delta } = event
     if (!over) return null
+    if (over.id === 'trash') return { mode: 'trash', overId: 'trash' }
     if (over.id === 'canvas') return { parentId: null, index: elements.length, overId: 'canvas', mode: 'inside' }
     const target = findNode(visibleElements, over.id)
     if (!target) return null
@@ -275,6 +296,16 @@ export default function EditorPage() {
     setDraggedType(null)
     setDropPreview(null)
     if (!destination || codeError) return
+    if (destination.mode === 'trash' || event.over?.id === 'trash') {
+      const id = event.active.data.current?.elementId
+      if (id) {
+        removeElement(id)
+        setMessage('Componente excluído na lixeira.')
+      } else {
+        setMessage('Criação cancelada.')
+      }
+      return
+    }
     const id = event.active.data.current?.elementId
     if (id) moveElement(id, destination.parentId, destination.index)
     else addElement(event.active.data.current?.type, destination)
@@ -308,7 +339,7 @@ export default function EditorPage() {
         },
       }}
     >
-      <div className="flex min-h-dvh flex-col bg-slate-50">
+      <div className="flex min-h-dvh w-full max-w-full flex-col overflow-x-hidden bg-slate-50">
         <Header
           name={name}
           onNameChange={setName}
@@ -332,7 +363,7 @@ export default function EditorPage() {
         {stageOpen ? (
           <Stage key={projectRevision} code={code} codeError={codeError} device={device} viewportWidth={viewportWidth} />
         ) : (
-          <div key={projectRevision} className={view === 'visual' ? 'grid flex-1 grid-cols-1 items-start gap-3 p-3 md:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[248px_minmax(0,1fr)_288px]' : 'flex min-w-0 flex-1 p-3'}>
+          <div key={projectRevision} className={view === 'visual' ? 'grid flex-1 grid-cols-1 items-start gap-3 p-3 md:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[248px_minmax(0,1fr)_minmax(0,288px)]' : 'flex min-w-0 flex-1 p-3'}>
             {view === 'visual' && <Sidebar disabled={Boolean(codeError)} onAddElement={addElement} />}
             <Workspace
               onUpdateLayout={updateLayout}
@@ -355,7 +386,7 @@ export default function EditorPage() {
               isDragging={Boolean(draggedType)}
               blockProject={blockProject}
               blockTargets={blockTargets}
-              onBlockProjectChange={(changes) => setBlockProject((current) => ({ ...current, ...changes }))}
+              onBlockProjectChange={handleBlockProjectChange}
               onApplyBlocks={applyBlocks}
             />
             {view === 'visual' && <PropertiesPanel
@@ -379,6 +410,14 @@ export default function EditorPage() {
           </div>
         )}
       </div>
+      {view === 'visual' && !stageOpen && (
+        <TrashButton
+          selectedElement={selectedElement}
+          onRemove={removeElement}
+          isDragging={Boolean(draggedType)}
+          onNotify={setMessage}
+        />
+      )}
       <DragOverlay dropAnimation={null}>
         {draggedElement && (
           <div className="rounded-2xl border-2 border-violet-300 bg-violet-600 px-5 py-3 font-bold text-white shadow-xl">
