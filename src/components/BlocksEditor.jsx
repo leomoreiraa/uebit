@@ -63,9 +63,9 @@ export default function BlocksEditor({ project, targets, onProjectChange, onAppl
           )}
         </div>
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300 bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-900 shadow-xs">
-            <Sparkles size={13} className="text-emerald-600" />
-            Tempo real
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-100/80 px-3 py-1 text-xs font-bold text-purple-900 shadow-xs">
+            <Sparkles size={13} className="text-purple-600" />
+            Lógica Visual
           </span>
         </div>
       </div>

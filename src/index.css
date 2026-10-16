@@ -190,6 +190,9 @@
   font: 600 15px var(--uebit-blocks-font);
   cursor: pointer;
 }
+.uebit-blocks .blocklyToolboxSelected {
+  background-color: var(--uebit-category) !important;
+}
 .uebit-blocks .blocklyToolboxSelected .uebitCategoryIcon,
 .uebit-blocks .blocklyToolboxSelected .blocklyToolboxCategoryLabel {
   color: #fff;
