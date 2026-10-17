@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useRef } from 'react'
+import { Menu, Settings } from 'lucide-react'
 import { CodeXml, Download, LayoutTemplate, Play, Square, Save, Upload, Sparkles, Blocks } from './BrandIcon'
 import UebitLogo from './UebitLogo'
 
@@ -18,22 +19,30 @@ export default function Header({
   stageOpen,
   onToggleStage,
   onOpenTemplates,
+  mobilePanel,
+  onTogglePanel,
 }) {
   const fileInput = useRef(null)
 
   return (
     <header className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-b-4 border-purple-300 bg-white/95 px-4 py-2.5 shadow-sm lg:px-6">
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-2">
+        {view === 'visual' && !stageOpen && (
+          <button type="button" onClick={(event) => onTogglePanel('palette', event.currentTarget)} aria-label="Abrir paleta de elementos" aria-expanded={mobilePanel === 'palette'} aria-controls="editor-palette" aria-haspopup="dialog" className="grid size-11 shrink-0 place-items-center rounded-xl bg-purple-100 text-purple-900 focus-visible:outline-2 xl:hidden">
+            <Menu size={22} aria-hidden="true" />
+          </button>
+        )}
         <Link
           to="/"
           title="Ir para a página inicial"
           className="group flex items-center gap-2 rounded-2xl p-1 transition-transform hover:scale-102"
         >
-          <UebitLogo size={38} variant="full" animated />
+          <UebitLogo size={38} variant="icon" animated className="sm:hidden" />
+          <UebitLogo size={38} variant="full" animated className="max-sm:hidden" />
         </Link>
       </div>
 
-      <div className="flex items-center">
+      <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-none">
         <input
           aria-label="Nome do projeto"
           title="Nome do projeto"
@@ -42,11 +51,16 @@ export default function Header({
           onChange={(event) => onNameChange(event.target.value)}
           onBlur={onNameBlur}
           maxLength={120}
-          className="h-10 w-44 rounded-full border-2 border-purple-200 bg-purple-50/50 px-4 text-xs font-black text-slate-800 transition-colors focus:border-purple-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-200 sm:w-56"
+          className="h-10 min-w-0 w-full max-w-44 rounded-full border-2 border-purple-200 bg-purple-50/50 px-4 text-xs font-black text-slate-800 transition-colors focus:border-purple-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-200 sm:w-56"
         />
+        {view === 'visual' && !stageOpen && (
+          <button type="button" onClick={(event) => onTogglePanel('properties', event.currentTarget)} aria-label="Abrir propriedades" aria-expanded={mobilePanel === 'properties'} aria-controls="editor-properties" aria-haspopup="dialog" className="grid size-11 shrink-0 place-items-center rounded-xl bg-purple-100 text-purple-900 focus-visible:outline-2 xl:hidden">
+            <Settings size={22} aria-hidden="true" />
+          </button>
+        )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+      <div className="flex max-w-full min-w-0 items-center gap-2 overflow-x-auto overscroll-contain py-1 max-sm:w-full [&>button]:shrink-0 [&>div]:shrink-0 sm:flex-wrap sm:gap-2.5">
         {onOpenTemplates && (
           <button
             type="button"

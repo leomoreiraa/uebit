@@ -33,6 +33,30 @@ coverage/
 .vite-e2e/
 .vite-scaffold/
 
+# Generated knowledge graphs
+/graphify-out/
+
+# Local caches and temporary files
+.cache/
+.npm/
+.pnpm-store/
+/tmp/
+/temp/
+
+# Generated package archives, build metadata, and crash dumps
+*.tgz
+*.tsbuildinfo
+*.stackdump
+
+# Private credentials and certificates
+*.pem
+*.p12
+*.pfx
+
+# Operating system residue
+Desktop.ini
+ehthumbs.db
+
 # AI / IDE tooling configs
 opencode.jsonc
 .opencode/

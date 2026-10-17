@@ -14,14 +14,14 @@ function FlowElement({ element, parentRect, rects, selectedId, onSelect, dropPre
   const selected = selectedId === element.id
   const highlight = dropPreview?.overId === element.id
   if (!rect) return null
-  return <div ref={setNodeRef} data-element-id={element.id} className={`pointer-events-none absolute rounded-xl ${selected ? 'outline-2 outline-violet-500' : ''} ${isDragging ? 'opacity-30' : ''}`}
+  return <div ref={setNodeRef} data-element-id={element.id} className={`pointer-events-none absolute ${selected ? 'outline-2 outline-violet-500' : ''} ${isDragging ? 'opacity-30' : ''}`}
     style={{ left: rect.x - (parentRect?.x ?? 0), top: rect.y - (parentRect?.y ?? 0), width: rect.width, height: rect.height }}>
     <button ref={setActivatorNodeRef} type="button" {...attributes} {...listeners} aria-label={`Mover ${name.toLowerCase()}`} onFocus={() => onSelect(element.id)}
-      className={`pointer-events-auto absolute top-0 left-0 z-20 flex touch-none items-center gap-1 rounded-xl bg-violet-600 px-2 text-xs font-bold text-white shadow-sm focus:opacity-100 ${selected ? '' : 'opacity-0'}`} style={{ pointerEvents: selected ? 'auto' : 'none', transform: 'translateY(-35%)', cursor: 'grab' }}><GripVertical aria-hidden="true" size={16} />Mover{element.name ? `: ${element.name}` : ''}</button>
-    {highlight && <div data-drop-preview="true" className={`absolute z-10 ${dropPreview.mode === 'inside' ? 'inset-0 rounded-xl border-4 border-emerald-500 bg-emerald-200/30' : 'bg-violet-600'}`}
+      className={`pointer-events-auto absolute top-0 left-0 z-20 flex touch-none items-center gap-1 bg-violet-600 px-2 text-xs font-bold text-white shadow-sm focus:opacity-100 ${selected ? '' : 'opacity-0'}`} style={{ pointerEvents: selected ? 'auto' : 'none', transform: 'translateY(-35%)', cursor: 'grab' }}><GripVertical aria-hidden="true" size={16} />Mover{element.name ? `: ${element.name}` : ''}</button>
+    {highlight && <div data-drop-preview="true" className={`absolute z-10 ${dropPreview.mode === 'inside' ? 'inset-0 border-4 border-emerald-500 bg-emerald-200/30' : 'bg-violet-600'}`}
       style={dropPreview.mode === 'inside' ? undefined : dropPreview.horizontal ? { top: 0, bottom: 0, width: 5, [dropPreview.mode === 'before' ? 'left' : 'right']: -4 } : { left: 0, right: 0, height: 5, [dropPreview.mode === 'before' ? 'top' : 'bottom']: -4 }} />}
     {element.type === 'container' && <>
-      {element.children.length === 0 && <span className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm font-bold text-emerald-800">Solte blocos dentro deste container</span>}
+      {element.children.length === 0 && <span className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm font-medium text-slate-400">Solte blocos dentro deste container</span>}
       <SortableContext items={element.children.map((child) => child.id)} strategy={rectSortingStrategy}>
         {element.children.map((child) => <FlowElement key={child.id} element={child} parentRect={rect} rects={rects} selectedId={selectedId} onSelect={onSelect} dropPreview={dropPreview} disabled={disabled} />)}
       </SortableContext>
@@ -115,17 +115,17 @@ export default function Canvas({ elements, selectedId, onSelect, dropPreview, me
       </div>
     </div>
 
-    <div ref={frameRef} className="uebit-dot-backdrop min-w-0 overflow-hidden p-4">
+    <div ref={frameRef} className="uebit-dot-backdrop min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4">
       <div className="mx-auto" style={{ width: viewportWidth * scale, height: (height + 80) * scale }}>
-        <div ref={setNodeRef} aria-label="Página: solte os elementos aqui" data-device={device} className="relative rounded-2xl bg-white shadow-xs" style={{ width: viewportWidth, height: height + 80, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
-          <SitePreview code={code} resizePreview={resizePreview} onLayout={receiveLayout} onSelect={onSelect} onError={setRuntimeError} interactive={!isDragging && !resizePreview} editing={!testMode} className="absolute inset-x-0 top-0 w-full rounded-xl bg-white" style={{ height }} />
+        <div ref={setNodeRef} aria-label="Página: solte os elementos aqui" data-device={device} className="relative bg-white shadow-xs" style={{ width: viewportWidth, height: height + 80, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+          <SitePreview code={code} resizePreview={resizePreview} onLayout={receiveLayout} onSelect={onSelect} onError={setRuntimeError} interactive={!isDragging && !resizePreview} editing={!testMode} className="absolute inset-x-0 top-0 w-full bg-white" style={{ height }} />
           {!testMode && <>
             <SortableContext items={elements.map((element) => element.id)} strategy={rectSortingStrategy}>
               {elements.map((element) => <FlowElement key={element.id} element={element} rects={previewLayout?.blocks ?? []} selectedId={selectedId} onSelect={onSelect} dropPreview={dropPreview} disabled={disabled || Boolean(resizePreview)} />)}
             </SortableContext>
             {selectedRect && !disabled && !isDragging && <ResizeHandles key={`${device}-${selectedId}`} id={selectedId} rect={selectedRect} scale={scale} onPreview={setResizePreview} onCommit={onUpdateLayout} />}
             {elements.length === 0 && (
-              <div className="pointer-events-none absolute inset-x-8 top-20 rounded-3xl border-2 border-dashed border-purple-200 bg-purple-50/50 p-8 text-center text-slate-600 shadow-xs">
+              <div className="pointer-events-none absolute inset-x-8 top-20 border border-slate-200 bg-slate-50/70 p-8 text-center text-slate-600">
                 <span className="inline-block text-4xl mb-2 select-none">🐸</span>
                 <h3 className="text-lg font-black text-purple-950">Sua página começa aqui</h3>
                 <p className="mt-1 text-xs font-semibold text-slate-500">Arraste um elemento ou container da paleta para começar a criar.</p>
@@ -133,7 +133,7 @@ export default function Canvas({ elements, selectedId, onSelect, dropPreview, me
             )}
             <div
               data-page-end
-              className={`absolute inset-x-0 bottom-0 flex h-16 items-center justify-center rounded-xl border-2 border-dashed text-xs font-bold transition-colors ${
+              className={`absolute inset-x-0 bottom-0 flex h-16 items-center justify-center border-t text-xs font-bold transition-colors ${
                 dropPreview?.overId === 'canvas'
                   ? 'border-emerald-500 bg-emerald-100/80 text-emerald-900'
                   : 'border-slate-200 bg-slate-50/60 text-slate-400'

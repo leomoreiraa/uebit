@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { X } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { saveAs } from 'file-saver'
 import TrashButton from '../components/TrashButton'
@@ -29,6 +30,63 @@ import { applyBlockCode } from '../lib/block-code'
 import { buildBlockTargets } from '../lib/block-targets'
 import { createInitialCode, identifyCodeElements, readCode, updateElementAppearance, updateElementContent, writeVisualCode } from '../lib/code-engine'
 
+// Keep the same panel subtree on desktop and mobile (including inspector state).
+function EditorPanel({ id, label, side, open, onClose, triggerRef, children }) {
+  const panelRef = useRef(null)
+  useEffect(() => {
+    if (!open) return
+    const trigger = triggerRef.current ?? document.activeElement
+    const panel = panelRef.current
+    const focusable = 'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex]:not([tabindex="-1"])'
+    const visible = (element) => element.getClientRects().length > 0 && !element.closest('[inert]')
+    panel.querySelector('button')?.focus()
+    function onKeyDown(event) {
+      // ColorPicker renders a dialog into document.body; let its Escape handler close it first.
+      const popovers = [...document.querySelectorAll('body > [role="dialog"]')]
+      if (event.key === 'Escape') {
+        if (popovers.length) return
+        event.preventDefault()
+        onClose()
+      }
+      if (event.key !== 'Tab') return
+      const controls = [panel, ...popovers].flatMap((root) => [...root.querySelectorAll(focusable)]).filter(visible)
+      const first = controls[0]
+      const last = controls.at(-1)
+      if (!first) { event.preventDefault(); panel.focus(); return }
+      if (event.shiftKey && (document.activeElement === first || !controls.includes(document.activeElement))) {
+        event.preventDefault(); last.focus()
+      } else if (!event.shiftKey && (document.activeElement === last || !controls.includes(document.activeElement))) {
+        event.preventDefault(); first.focus()
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      if (trigger instanceof HTMLElement && trigger.isConnected && visible(trigger)) trigger.focus()
+    }
+  }, [open, onClose, triggerRef])
+
+  return (
+    <div
+      id={id}
+      ref={panelRef}
+      role={open ? 'dialog' : undefined}
+      aria-modal={open ? true : undefined}
+      aria-label={label}
+      tabIndex={-1}
+      className={`${open ? 'flex' : 'hidden'} fixed inset-y-0 ${side === 'left' ? 'left-0' : 'right-0'} z-30 w-[min(22rem,calc(100vw-2rem))] min-h-0 min-w-0 flex-col overflow-hidden bg-white p-2 shadow-2xl xl:static xl:z-auto xl:flex xl:w-auto xl:bg-transparent xl:p-0 xl:shadow-none`}
+    >
+      <div className="flex shrink-0 items-center justify-between gap-2 px-2 pb-2 xl:hidden">
+        <span className="font-bold text-purple-950">{label}</span>
+        <button type="button" onClick={onClose} aria-label={`Fechar ${label.toLowerCase()}`} className="grid size-11 place-items-center rounded-xl text-purple-900 hover:bg-purple-100 focus-visible:outline-2">
+          <X size={20} aria-hidden="true" />
+        </button>
+      </div>
+      {children}
+    </div>
+  )
+}
+
 export default function EditorPage() {
   const [searchParams] = useSearchParams()
   const initialTemplateParam = searchParams.get('template')
@@ -44,6 +102,17 @@ export default function EditorPage() {
   const [panelTab, setPanelTab] = useState('styles')
   const [view, setView] = useState('visual')
   const [stageOpen, setStageOpen] = useState(false)
+  const [mobilePanel, setMobilePanel] = useState(null)
+  const panelTriggerRef = useRef(null)
+  const closeMobilePanel = useCallback(() => setMobilePanel(null), [])
+  const panelOpen = view === 'visual' && !stageOpen ? mobilePanel : null
+
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 1280px)')
+    const onResize = () => { if (desktop.matches) closeMobilePanel() }
+    desktop.addEventListener('change', onResize)
+    return () => desktop.removeEventListener('change', onResize)
+  }, [closeMobilePanel])
   const [blockProject, setBlockProject] = useState(() => initialTemplate?.blockProject || { workspace: undefined, generated: '', applied: '', appliedGenerated: '' })
   const [elements, setElements] = useState(() => (initialTemplate && initialTemplate.id !== 'blank' ? readCode(initialTemplate.code) : []))
   const blockTargets = useMemo(() => buildBlockTargets(elements), [elements])
@@ -339,7 +408,8 @@ export default function EditorPage() {
         },
       }}
     >
-      <div className="flex min-h-dvh w-full max-w-full flex-col overflow-x-hidden bg-slate-50">
+      <div className="flex h-dvh min-h-0 w-full max-w-full flex-col overflow-hidden bg-slate-50">
+        <div className="shrink-0" inert={panelOpen ? true : undefined}>
         <Header
           name={name}
           onNameChange={setName}
@@ -348,24 +418,33 @@ export default function EditorPage() {
           onImportProject={importProject}
           importing={importing}
           view={view}
-          onViewChange={setView}
+          onViewChange={(next) => { closeMobilePanel(); setView(next) }}
           onExport={exportSite}
           exporting={exporting}
           exportDisabled={Boolean(codeError)}
           stageOpen={stageOpen}
-          onToggleStage={() => setStageOpen((current) => !current)}
+          onToggleStage={() => { closeMobilePanel(); setStageOpen((current) => !current) }}
+          mobilePanel={panelOpen}
+          onTogglePanel={(panel, trigger) => {
+            panelTriggerRef.current = trigger
+            setMobilePanel((current) => current === panel ? null : panel)
+          }}
           onOpenTemplates={() => setTemplatesModalOpen(true)}
         />
         {exportMessage && <p role="status" className="bg-emerald-50 px-6 py-3 text-sm text-emerald-800">{exportMessage}</p>}
         {projectMessage && <p role="status" className="bg-emerald-50 px-6 py-3 text-sm text-emerald-800">{projectMessage}</p>}
         {projectError && <p role="alert" className="bg-red-50 px-6 py-3 text-sm text-red-800">{projectError}</p>}
         {exportError && <p role="alert" className="bg-red-50 px-6 py-3 text-sm text-red-800">{exportError}</p>}
-        {stageOpen ? (
-          <Stage key={projectRevision} code={code} codeError={codeError} device={device} viewportWidth={viewportWidth} />
-        ) : (
-          <div key={projectRevision} className={view === 'visual' ? 'grid flex-1 grid-cols-1 items-start gap-3 p-3 md:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[248px_minmax(0,1fr)_minmax(0,288px)]' : 'flex min-w-0 flex-1 p-3'}>
-            {view === 'visual' && <Sidebar disabled={Boolean(codeError)} onAddElement={addElement} />}
+        </div>
+        {stageOpen && <Stage key={`stage-${projectRevision}`} code={code} codeError={codeError} device={device} viewportWidth={viewportWidth} />}
+        <div key={projectRevision} className={`${stageOpen ? 'hidden' : 'flex'} min-h-0 min-w-0 flex-1 overflow-hidden p-2 sm:p-3 ${view === 'visual' && !stageOpen ? 'xl:grid xl:grid-cols-[248px_minmax(0,1fr)_288px] xl:gap-3' : ''}`}>
+            {panelOpen && <div aria-hidden="true" onClick={closeMobilePanel} className="fixed inset-0 z-20 bg-slate-950/40 xl:hidden" />}
+            {view === 'visual' && <EditorPanel id="editor-palette" label="Paleta de elementos" side="left" open={panelOpen === 'palette'} onClose={closeMobilePanel} triggerRef={panelTriggerRef}>
+              <Sidebar disabled={Boolean(codeError)} onAddElement={(...args) => { addElement(...args); closeMobilePanel() }} />
+            </EditorPanel>}
+            <div inert={panelOpen ? true : undefined} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             <Workspace
+              active={!stageOpen}
               onUpdateLayout={updateLayout}
               codeTab={codeTab}
               onCodeTabChange={setCodeTab}
@@ -389,7 +468,8 @@ export default function EditorPage() {
               onBlockProjectChange={handleBlockProjectChange}
               onApplyBlocks={applyBlocks}
             />
-            {view === 'visual' && <PropertiesPanel
+            </div>
+            {view === 'visual' && <EditorPanel id="editor-properties" label="Propriedades" side="right" open={panelOpen === 'properties'} onClose={closeMobilePanel} triggerRef={panelTriggerRef}><PropertiesPanel
               activeTab={panelTab}
               onTabChange={setPanelTab}
               selected={selectedElement}
@@ -398,6 +478,7 @@ export default function EditorPage() {
               onMoveElement={moveElement}
               onUpdateElement={updateContent}
               onRemoveElement={removeElement}
+              onOpenProgramming={() => { closeMobilePanel(); setView('programming') }}
               disabled={Boolean(codeError)}
               view={view}
               device={device}
@@ -406,11 +487,10 @@ export default function EditorPage() {
               onGlobalStyleChange={(selector, property, value) => { if (!codeError) acceptCode(updateGlobalStyle(code, selector, property, value)) }}
               onUpdateLayout={updateLayout}
               code={code}
-            />}
+            /></EditorPanel>}
           </div>
-        )}
       </div>
-      {view === 'visual' && !stageOpen && (
+      {view === 'visual' && !stageOpen && !panelOpen && (
         <TrashButton
           selectedElement={selectedElement}
           onRemove={removeElement}

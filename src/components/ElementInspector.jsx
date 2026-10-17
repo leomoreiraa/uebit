@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import { Blocks } from './BrandIcon'
 import { elementTypes } from '../data/elements'
 
 const fieldClass = 'min-h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-2 focus:outline-indigo-500'
 
-export default function ElementInspector({ element, elements, onUpdate, disabled }) {
+export default function ElementInspector({ element, elements, onUpdate, onOpenProgramming, disabled }) {
   const [content, setContent] = useState(() => ({
     name: element.name ?? '',
     htmlId: element.htmlId ?? '',
@@ -122,15 +123,25 @@ export default function ElementInspector({ element, elements, onUpdate, disabled
 
   return (
     <div aria-label={`Editar ${content.name || name.toLowerCase()}`} className="mt-3 border-t-2 border-purple-100 pt-3">
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <h2 className="text-sm font-black text-purple-950">
-          {content.name ? content.name : name}
-        </h2>
-        <div className="flex items-center gap-1.5">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-black text-purple-950">
+            {content.name ? content.name : name}
+          </h2>
           <span className="rounded-md bg-purple-100 px-2 py-0.5 text-[10px] font-mono font-bold text-purple-800">
             {content.htmlId ? `#${content.htmlId}` : element.tag || 'Bloco'}
           </span>
         </div>
+        {onOpenProgramming && (
+          <button
+            type="button"
+            onClick={onOpenProgramming}
+            className="inline-flex h-8 min-h-8 items-center gap-1.5 rounded-xl border-b-2 border-purple-800 bg-purple-600 px-2.5 text-[11px] font-black text-white shadow-2xs transition-all hover:bg-purple-500 active:translate-y-0.5"
+          >
+            <Blocks size={13} aria-hidden="true" />
+            <span>Programar</span>
+          </button>
+        )}
       </div>
 
       <fieldset disabled={disabled} className="space-y-3.5 disabled:opacity-50">

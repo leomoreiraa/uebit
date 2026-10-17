@@ -20,6 +20,7 @@ export default function PropertiesPanel({
   onMoveElement,
   onUpdateElement,
   onRemoveElement,
+  onOpenProgramming,
   disabled,
   view,
   device,
@@ -41,7 +42,7 @@ export default function PropertiesPanel({
   return (
     <aside
       aria-labelledby="panel-tab-heading"
-      className="flex w-full min-w-0 max-w-full flex-col overflow-x-hidden rounded-3xl border-2 border-purple-200 bg-white p-3 shadow-sm md:col-start-2 xl:col-start-auto xl:sticky xl:top-3 xl:max-h-[calc(100dvh-6rem)] xl:overflow-y-auto"
+      className="flex w-full min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-hidden rounded-3xl border-2 border-purple-200 bg-white p-3 shadow-sm"
     >
       {/* Tab Navigation */}
       <div
@@ -88,6 +89,7 @@ export default function PropertiesPanel({
         {activeTab === 'global' ? 'Estilos Globais' : 'Painel de Estilos e Propriedades'}
       </h2>
 
+      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
       {activeTab === 'global' && <div id="panel-global" role="tabpanel" aria-labelledby="tab-global">
         <GlobalStylesPanel code={code} disabled={disabled} onChange={onGlobalStyleChange} />
       </div>}
@@ -155,6 +157,7 @@ export default function PropertiesPanel({
                 elements={flat}
                 onUpdate={onUpdateElement}
                 onRemove={onRemoveElement}
+                onOpenProgramming={onOpenProgramming}
                 disabled={disabled}
               />
               {selected.type === 'container' && (
@@ -220,6 +223,7 @@ export default function PropertiesPanel({
         </div>
       )}
 
+      </div>
     </aside>
   )
 }

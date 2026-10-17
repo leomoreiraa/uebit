@@ -150,6 +150,11 @@
 .uebit-blocks {
   --uebit-blocks-font: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+.uebit-blocks [display="none"],
+svg[display="none"],
+.uebit-blocks .blocklyFlyout[style*="display: none"] ~ .blocklyFlyoutScrollbar {
+  display: none !important;
+}
 .uebit-blocks .blocklyToolbox {
   padding: 0;
   border-right: 1px solid #dcdcdc;

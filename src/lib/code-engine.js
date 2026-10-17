@@ -7,7 +7,7 @@ export const BASE_CSS = `/* Os elementos fluem em Flexbox; containers podem cont
 * { box-sizing: border-box; }
 body { margin: 0; font-family: system-ui, sans-serif; color: #1e293b; background: #fff; }
 .site { display: flex; flex-direction: column; gap: 16px; padding: 24px; min-height: 480px; }
-.site-block { min-width: 0; max-width: 100%; margin: 0; overflow-wrap: anywhere; border-radius: 12px; }
+.site-block { min-width: 0; max-width: 100%; margin: 0; overflow-wrap: anywhere; }
 .heading { padding: 12px; font-size: 36px; line-height: 1.25; }
 .paragraph { padding: 12px; font-size: 16px; line-height: 1.7; }
 .quote { padding: 16px 20px; border-left: 4px solid #6366f1; background: #f8fafc; font-style: italic; font-size: 18px; line-height: 1.6; }
@@ -20,19 +20,19 @@ body { margin: 0; font-family: system-ui, sans-serif; color: #1e293b; background
 .link:hover { color: #3730a3; }
 .strong { font-weight: 800; font-size: 16px; padding: 4px 8px; }
 .em { font-style: italic; font-size: 16px; padding: 4px 8px; }
-.code { font-family: ui-monospace, monospace; background: #f1f5f9; color: #0f172a; padding: 4px 8px; border-radius: 6px; font-size: 14px; }
+.code { font-family: ui-monospace, monospace; background: #f1f5f9; color: #0f172a; padding: 4px 8px; font-size: 14px; }
 .span { font-size: 16px; padding: 4px 8px; }
 .image { width: 100%; height: auto; max-height: 400px; object-fit: cover; }
-.video { width: 100%; max-height: 380px; object-fit: contain; border-radius: 12px; background: #0f172a; }
-.audio { width: 100%; border-radius: 12px; }
-.iframe { width: 100%; min-height: 320px; border: 2px solid #e2e8f0; border-radius: 12px; }
+.video { width: 100%; max-height: 380px; object-fit: contain; background: #0f172a; }
+.audio { width: 100%; }
+.iframe { width: 100%; min-height: 320px; border: 1px solid #cbd5e1; }
 .button { border: 0; padding: 12px 16px; background: #4f46e5; color: white; font: inherit; cursor: pointer; }
-.input { width: 100%; padding: 12px 16px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 16px; font-family: inherit; background: #fff; }
-.textarea { width: 100%; min-height: 100px; padding: 12px 16px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 16px; font-family: inherit; background: #fff; resize: vertical; }
-.select { width: 100%; padding: 12px 16px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 16px; font-family: inherit; background: #fff; cursor: pointer; }
+.input { width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; font-size: 16px; font-family: inherit; background: #fff; }
+.textarea { width: 100%; min-height: 100px; padding: 12px 16px; border: 1px solid #cbd5e1; font-size: 16px; font-family: inherit; background: #fff; resize: vertical; }
+.select { width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; font-size: 16px; font-family: inherit; background: #fff; cursor: pointer; }
 .checkbox { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; cursor: pointer; padding: 8px; }
 .checkbox input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
-.container { display: flex; flex-direction: column; flex-wrap: wrap; gap: 16px; padding: 24px; min-height: 120px; border: 2px dashed #86b89c; background: #f0fdf4; }
+.container { display: flex; flex-direction: column; flex-wrap: wrap; gap: 16px; padding: 24px; min-height: 120px; border: 1px solid #e2e8f0; background: transparent; }
 .table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 8px 0; }
 .table th, .table td { border: 1px solid #cbd5e1; padding: 10px 14px; text-align: left; }
 .table th { background: #f8fafc; font-weight: bold; }

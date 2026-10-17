@@ -173,6 +173,7 @@ if (Blockly.dialog?.setAlert) {
 /* ---------- Aparência MakeCode micro:bit ---------- */
 export const MICROBIT_COLOURS = {
   events: '#D400D4', // Entrada / Eventos (Magenta)
+  games: '#10B981', // Jogos & Placar (Esmeralda)
   page: '#1E90FF', // Básico / Página (Azul)
   sound: '#9333EA', // Sons & Áudio (Violeta)
   time: '#EA580C', // Tempo & Espera (Laranja)
@@ -207,6 +208,7 @@ export const microbitTheme = Blockly.Theme.defineTheme('uebit-microbit', {
     procedure_blocks: blockStyle(C.functions),
     list_blocks: blockStyle(C.arrays),
     uebit_events: blockStyle(C.events),
+    uebit_games: blockStyle(C.games),
     uebit_page: blockStyle(C.page),
     uebit_sound: blockStyle(C.sound),
     uebit_time: blockStyle(C.time),
@@ -214,6 +216,7 @@ export const microbitTheme = Blockly.Theme.defineTheme('uebit-microbit', {
   },
   categoryStyles: {
     uebit_events: { colour: C.events },
+    uebit_games: { colour: C.games },
     uebit_page: { colour: C.page },
     uebit_sound: { colour: C.sound },
     uebit_time: { colour: C.time },
@@ -314,16 +317,20 @@ function targetsFor(field) {
   return workspaceTargets.get(workspace?.targetWorkspace ?? workspace) ?? []
 }
 
+const TEXT_TARGET_TYPES = ['heading', 'paragraph', 'button', 'quote', 'list', 'ordered-list', 'input', 'textarea', 'link', 'strong', 'em', 'code', 'span']
+const INPUT_TARGET_TYPES = ['input', 'textarea', 'select', 'checkbox']
+function acceptsTarget(target, filter) {
+  if (filter === 'text') return TEXT_TARGET_TYPES.includes(target.type)
+  if (filter === 'input') return INPUT_TARGET_TYPES.includes(target.type)
+  return true
+}
+
 class SiteTargetField extends Blockly.FieldDropdown {
   constructor(filterType = 'all') {
     super(function () {
       const allTargets = targetsFor(this)
       const filter = this.filterType ?? 'all'
-      const targets = allTargets.filter((target) => {
-        if (filter === 'text') return ['heading', 'paragraph', 'button', 'quote', 'list', 'ordered-list', 'input', 'textarea', 'link', 'strong', 'em', 'code', 'span'].includes(target.type)
-        if (filter === 'input') return ['input', 'textarea', 'select', 'checkbox'].includes(target.type)
-        return true
-      })
+      const targets = allTargets.filter((target) => acceptsTarget(target, filter))
       const options = [['Escolha um elemento…', ''], ...targets.map((target) => [target.label, target.id])]
       const selected = this.getValue()
       if (selected && !targets.some((target) => target.id === selected)) options.push(['Elemento indisponível — escolha outro', selected])
@@ -500,6 +507,14 @@ Blockly.defineBlocksWithJsonArray([
     tooltip: 'Exibe, esconde ou alterna a visibilidade do elemento na tela.',
   },
   {
+    type: 'site_is_visible',
+    message0: 'o elemento %1 está visível?',
+    args0: [{ type: 'field_site_target', name: 'TARGET' }],
+    output: 'Boolean',
+    style: 'uebit_page',
+    tooltip: 'Verdadeiro quando o elemento e seus pais não estão ocultos. Encaixa no se/senão.',
+  },
+  {
     type: 'site_add_remove_class',
     message0: '%1 a classe CSS %2 em %3',
     args0: [
@@ -595,6 +610,204 @@ Blockly.defineBlocksWithJsonArray([
     tooltip: 'Toca uma frequência musical limpa sintetizada em tempo real.',
   },
 
+  // Jogos & Placar
+  {
+    type: 'site_add_number_element',
+    message0: 'somar %1 ao número em %2',
+    args0: [
+      { type: 'input_value', name: 'AMOUNT', check: 'Number' },
+      { type: 'field_site_target', name: 'TARGET', textOnly: true },
+    ],
+    inputsInline: true,
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_games',
+    tooltip: 'Soma (ou subtrai, se negativo) ao número exibido no elemento, preservando o texto ao redor (ex: "Pontos: 0" vira "Pontos: 1").',
+  },
+  {
+    type: 'site_set_number_element',
+    message0: 'definir número em %1 como %2',
+    args0: [
+      { type: 'field_site_target', name: 'TARGET', textOnly: true },
+      { type: 'input_value', name: 'VALUE', check: 'Number' },
+    ],
+    inputsInline: true,
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_games',
+    tooltip: 'Define o número exibido no elemento, mantendo rótulos como "Pontos: " ou "Vidas: ".',
+  },
+  {
+    type: 'site_get_number_element',
+    message0: 'número em %1',
+    args0: [{ type: 'field_site_target', name: 'TARGET' }],
+    output: 'Number',
+    style: 'uebit_games',
+    tooltip: 'Lê o valor numérico atual dentro do elemento ou campo (ex: "Pontos: 15" retorna 15).',
+  },
+  {
+    type: 'site_move_element',
+    message0: 'mover %1 %2 por %3 pixels',
+    args0: [
+      { type: 'field_site_target', name: 'TARGET' },
+      {
+        type: 'field_dropdown',
+        name: 'DIRECTION',
+        options: [
+          ['para direita ➡️', 'right'],
+          ['para esquerda ⬅️', 'left'],
+          ['para cima ⬆️', 'up'],
+          ['para baixo ⬇️', 'down'],
+        ],
+      },
+      { type: 'input_value', name: 'PIXELS', check: 'Number' },
+    ],
+    inputsInline: true,
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_games',
+    tooltip: 'Move o elemento na direção escolhida (ótimo para controlar personagens ou objetos em jogos).',
+  },
+  {
+    type: 'site_move_random',
+    message0: 'mover %1 para posição aleatória 🎲',
+    args0: [{ type: 'field_site_target', name: 'TARGET' }],
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_games',
+    tooltip: 'Move o elemento para um lugar sortido na tela (perfeito para jogos de clicar no alvo!).',
+  },
+  {
+    type: 'site_scale_element',
+    message0: 'mudar tamanho de %1 para %2 %',
+    args0: [
+      { type: 'field_site_target', name: 'TARGET' },
+      { type: 'input_value', name: 'SCALE', check: 'Number' },
+    ],
+    inputsInline: true,
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_games',
+    tooltip: 'Aumenta ou diminui o tamanho visual do elemento (100% é o tamanho original).',
+  },
+  {
+    type: 'site_reset_transform',
+    message0: 'voltar %1 ao normal (posição e tamanho) ↺',
+    args0: [{ type: 'field_site_target', name: 'TARGET' }],
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_games',
+    tooltip: 'Restaura o elemento para sua posição inicial e tamanho 100%.',
+  },
+  {
+    type: 'site_touching_elements',
+    message0: '%1 está encostando em %2 ?',
+    args0: [
+      { type: 'field_site_target', name: 'TARGET_A' },
+      { type: 'field_site_target', name: 'TARGET_B' },
+    ],
+    inputsInline: true,
+    output: 'Boolean',
+    style: 'uebit_games',
+    tooltip: 'Verdadeiro quando os dois elementos se tocam ou se sobrepõem na tela (colisão para jogos!).',
+  },
+  {
+    type: 'site_confetti',
+    message0: 'lançar chuva de confetes 🎉',
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_games',
+    tooltip: 'Solta uma explosão colorida de confetes na tela para comemorar vitórias!',
+  },
+
+  // Conteúdo & Memória extra
+  {
+    type: 'site_toggle_text_element',
+    message0: 'alternar texto de %1 entre %2 e %3',
+    args0: [
+      { type: 'field_site_target', name: 'TARGET', textOnly: true },
+      { type: 'input_value', name: 'TEXT_A', check: 'String' },
+      { type: 'input_value', name: 'TEXT_B', check: 'String' },
+    ],
+    inputsInline: true,
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_page',
+    tooltip: 'Troca o texto do elemento entre duas opções a cada clique (ex: "Ligar" e "Desligar").',
+  },
+  {
+    type: 'site_append_element',
+    message0: 'adicionar item %1 dentro de %2',
+    args0: [
+      { type: 'input_value', name: 'TEXT', check: 'String' },
+      { type: 'field_site_target', name: 'TARGET' },
+    ],
+    inputsInline: true,
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_page',
+    tooltip: 'Adiciona um novo item dentro de uma lista ou container (ideal para listas de tarefas, chat ou carrinho).',
+  },
+  {
+    type: 'site_clear_element',
+    message0: 'limpar itens de %1',
+    args0: [{ type: 'field_site_target', name: 'TARGET' }],
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_page',
+    tooltip: 'Remove todos os itens adicionados dentro da lista ou container.',
+  },
+  {
+    type: 'site_random_background_element',
+    message0: 'mudar fundo de %1 para cor aleatória 🌈',
+    args0: [{ type: 'field_site_target', name: 'TARGET' }],
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_page',
+    tooltip: 'Pinta o fundo do elemento com uma cor vibrante sorteada na hora.',
+  },
+  {
+    type: 'site_enable_disable_element',
+    message0: '%1 o elemento %2',
+    args0: [
+      {
+        type: 'field_dropdown',
+        name: 'ACTION',
+        options: [
+          ['ativar ✅', 'enable'],
+          ['desativar 🚫', 'disable'],
+        ],
+      },
+      { type: 'field_site_target', name: 'TARGET' },
+    ],
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_page',
+    tooltip: 'Ativa ou desativa um botão ou campo para impedir ou liberar cliques.',
+  },
+  {
+    type: 'site_storage_save',
+    message0: 'salvar %1 na memória como %2',
+    args0: [
+      { type: 'input_value', name: 'VALUE' },
+      { type: 'input_value', name: 'KEY', check: 'String' },
+    ],
+    inputsInline: true,
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_page',
+    tooltip: 'Guarda um valor no navegador (ex: recorde de pontos ou nome) mesmo se recarregar a página.',
+  },
+  {
+    type: 'site_storage_load',
+    message0: 'ler %1 da memória',
+    args0: [{ type: 'input_value', name: 'KEY', check: 'String' }],
+    inputsInline: true,
+    output: null,
+    style: 'uebit_page',
+    tooltip: 'Recupera um valor salvo anteriormente na memória do navegador.',
+  },
+
   // Tempo & Espera
   {
     type: 'site_wait_seconds',
@@ -615,6 +828,14 @@ Blockly.defineBlocksWithJsonArray([
     nextStatement: null,
     style: 'uebit_time',
     tooltip: 'Repete as ações continuamente no intervalo de tempo especificado.',
+  },
+  {
+    type: 'site_stop_timers',
+    message0: 'parar todos os cronômetros ⏹️',
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_time',
+    tooltip: 'Interrompe todas as repetições de tempo ativas (útil para Fim de Jogo / Game Over).',
   },
 
   // Avançado (Seletores CSS manuais)
@@ -648,11 +869,12 @@ function targetSelector(block) {
   const id = block.getFieldValue('TARGET')
   const field = block.getField('TARGET')
   const target = targetsFor(field).find((item) => item.id === id)
-  const isTextFilter = field?.textOnly || field?.filterType === 'text'
-  if (!target || (isTextFilter && !['heading', 'paragraph', 'button', 'quote', 'list', 'ordered-list', 'input', 'textarea', 'link', 'strong', 'em', 'code', 'span'].includes(target.type))) {
-    throw new Error('Escolha um elemento disponível nos blocos de página. Um destino está vazio ou foi removido.')
+  if (!target || !acceptsTarget(target, field?.filterType ?? 'all')) {
+    throw new Error('Escolha um elemento disponível nos blocos de página. Um destino está vazio, foi removido ou é incompatível.')
   }
-  const escaped = (typeof window !== 'undefined' && window.CSS && CSS.escape) ? CSS.escape(id) : id.replace(/["\\]/g, '\\$&')
+  // Escape de string CSS, inclusive quebras de linha, sem depender de CSS.escape global.
+  // eslint-disable-next-line no-control-regex -- controles precisam ser escapados em strings CSS.
+  const escaped = id.replace(/[\0-\x1f\x7f"\\]/g, (char) => `\\${char.codePointAt(0).toString(16)} `)
   return `[data-block-id="${escaped}"]`
 }
 
@@ -663,7 +885,7 @@ javascriptGenerator.forBlock.site_on_start = (block, generator) => {
 }
 
 javascriptGenerator.forBlock.site_click_element = (block, generator) =>
-  `document.addEventListener('click', (event) => {\nif (event.target.closest(${JSON.stringify(targetSelector(block))})) {\n__uebitLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}\n});\n`
+  `document.addEventListener('click', (event) => {\nif (event.target?.closest?.(${JSON.stringify(targetSelector(block))})) {\n__uebitLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}\n});\n`
 
 javascriptGenerator.forBlock.site_mouse_enter = (block, generator) =>
   `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => {\nnode.addEventListener('mouseenter', () => {\n__uebitLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n});\n});\n`
@@ -705,12 +927,44 @@ javascriptGenerator.forBlock.site_input_set_value = (block, generator) => {
 javascriptGenerator.forBlock.site_input_get_value = (block) =>
   [`(document.querySelector(${JSON.stringify(targetSelector(block))})?.value || '')`, Order.MEMBER]
 
-javascriptGenerator.forBlock.site_show_hide_element = (block) => {
-  const act = block.getFieldValue('ACTION')
-  const sel = JSON.stringify(targetSelector(block))
-  if (act === 'show') return `document.querySelectorAll(${sel}).forEach(node => { node.style.display = ''; });\n`
-  if (act === 'hide') return `document.querySelectorAll(${sel}).forEach(node => { node.style.display = 'none'; });\n`
-  return `document.querySelectorAll(${sel}).forEach(node => { node.style.display = (node.style.display === 'none' || getComputedStyle(node).display === 'none') ? '' : 'none'; });\n`
+javascriptGenerator.forBlock.site_show_hide_element = (block, generator) => {
+  const name = generator.provideFunction_('uebitSetVisible', `
+function ${generator.FUNCTION_NAME_PLACEHOLDER_}(node, action) {
+  const saved = ${generator.FUNCTION_NAME_PLACEHOLDER_}.displays ||= new WeakMap();
+  const hidden = node.hidden || getComputedStyle(node).display === 'none';
+  const show = action === 'show' || (action === 'toggle' && hidden);
+  if (!show) {
+    if (node.style.display !== 'none' && !saved.has(node)) {
+      saved.set(node, [node.style.display, node.style.getPropertyPriority('display')]);
+    }
+    node.style.setProperty('display', 'none', 'important');
+    return;
+  }
+  node.hidden = false;
+  if (!hidden && !saved.has(node)) return;
+  const previous = saved.get(node);
+  node.style.removeProperty('display');
+  if (previous && previous[0]) node.style.setProperty('display', previous[0], previous[1]);
+  saved.delete(node);
+  if (getComputedStyle(node).display === 'none') node.style.setProperty('display', 'block', 'important');
+}
+`)
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => { ${name}(node, ${JSON.stringify(block.getFieldValue('ACTION'))}); });\n`
+}
+
+javascriptGenerator.forBlock.site_is_visible = (block, generator) => {
+  const name = generator.provideFunction_('uebitIsVisible', `
+function ${generator.FUNCTION_NAME_PLACEHOLDER_}(node) {
+  if (!node) return false;
+  const visibility = getComputedStyle(node).visibility;
+  if (visibility === 'hidden' || visibility === 'collapse') return false;
+  for (let current = node; current; current = current.parentElement) {
+    if (current.hidden || getComputedStyle(current).display === 'none') return false;
+  }
+  return true;
+}
+`)
+  return [`${name}(document.querySelector(${JSON.stringify(targetSelector(block))}))`, Order.FUNCTION_CALL]
 }
 
 javascriptGenerator.forBlock.site_add_remove_class = (block, generator) => {
@@ -839,16 +1093,203 @@ javascriptGenerator.forBlock.site_play_tone = (block) => {
 
 javascriptGenerator.forBlock.site_wait_seconds = (block, generator) => {
   const sec = generator.valueToCode(block, 'SECONDS', Order.NONE) || '1'
-  return `setTimeout(() => {\n__uebitLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}, Math.max(0, Number(${sec}) * 1000));\n`
+  return `((window.__uebitTimeouts ||= []).push(setTimeout(() => {\n__uebitLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}, Math.max(0, Number(${sec}) * 1000))));\n`
 }
 
 javascriptGenerator.forBlock.site_repeat_every = (block, generator) => {
   const sec = generator.valueToCode(block, 'SECONDS', Order.NONE) || '1'
-  return `setInterval(() => {\n__uebitLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}, Math.max(100, Number(${sec}) * 1000));\n`
+  return `((window.__uebitIntervals ||= []).push(setInterval(() => {\n__uebitLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}, Math.max(100, Number(${sec}) * 1000))));\n`
+}
+
+javascriptGenerator.forBlock.site_stop_timers = () =>
+  `(window.__uebitIntervals || []).forEach(clearInterval); window.__uebitIntervals = []; (window.__uebitTimeouts || []).forEach(clearTimeout); window.__uebitTimeouts = [];\n`
+
+function provideNumberHelpers(generator) {
+  const readName = generator.provideFunction_('uebitReadNumber', `
+function ${generator.FUNCTION_NAME_PLACEHOLDER_}(node) {
+  if (!node) return 0;
+  const raw = ('value' in node && node.tagName === 'INPUT') ? String(node.value || '') : String(node.textContent || '');
+  const match = raw.match(/-?\\d+(?:[.,]\\d+)?/);
+  return match ? Number(match[0].replace(',', '.')) : 0;
+}
+`)
+  const writeName = generator.provideFunction_('uebitWriteNumber', `
+function ${generator.FUNCTION_NAME_PLACEHOLDER_}(node, value) {
+  if (!node) return;
+  const num = Number(value);
+  const clean = Number.isFinite(num) ? Math.round(num * 100) / 100 : 0;
+  if ('value' in node && node.tagName === 'INPUT') {
+    node.value = String(clean);
+    return;
+  }
+  const current = String(node.textContent || '');
+  if (/-?\\d+(?:[.,]\\d+)?/.test(current)) {
+    node.textContent = current.replace(/-?\\d+(?:[.,]\\d+)?/, String(clean));
+  } else {
+    node.textContent = current ? current + ' ' + clean : String(clean);
+  }
+}
+`)
+  return { readName, writeName }
+}
+
+javascriptGenerator.forBlock.site_add_number_element = (block, generator) => {
+  const { readName, writeName } = provideNumberHelpers(generator)
+  const amount = generator.valueToCode(block, 'AMOUNT', Order.NONE) || '1'
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => { ${writeName}(node, ${readName}(node) + (Number(${amount}) || 0)); });\n`
+}
+
+javascriptGenerator.forBlock.site_set_number_element = (block, generator) => {
+  const { writeName } = provideNumberHelpers(generator)
+  const val = generator.valueToCode(block, 'VALUE', Order.NONE) || '0'
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => { ${writeName}(node, ${val}); });\n`
+}
+
+javascriptGenerator.forBlock.site_get_number_element = (block, generator) => {
+  const { readName } = provideNumberHelpers(generator)
+  return [`${readName}(document.querySelector(${JSON.stringify(targetSelector(block))}))`, Order.FUNCTION_CALL]
+}
+
+function provideTransformHelper(generator) {
+  return generator.provideFunction_('uebitTransform', `
+function ${generator.FUNCTION_NAME_PLACEHOLDER_}(node, patch) {
+  if (!node) return;
+  const ds = (node.dataset ||= {});
+  const x = patch.x !== undefined ? patch.x : (Number(ds.uebitX) || 0) + (patch.dx || 0);
+  const y = patch.y !== undefined ? patch.y : (Number(ds.uebitY) || 0) + (patch.dy || 0);
+  const s = patch.scale !== undefined ? patch.scale : (Number(ds.uebitScale) || 100);
+  ds.uebitX = String(x);
+  ds.uebitY = String(y);
+  ds.uebitScale = String(s);
+  node.style.transition = 'transform 160ms ease-out';
+  node.style.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + (s / 100) + ')';
+}
+`)
+}
+
+javascriptGenerator.forBlock.site_move_element = (block, generator) => {
+  const fn = provideTransformHelper(generator)
+  const dir = block.getFieldValue('DIRECTION')
+  const px = generator.valueToCode(block, 'PIXELS', Order.NONE) || '20'
+  const delta = {
+    right: `{ dx: Number(${px}) || 0 }`,
+    left: `{ dx: -(Number(${px}) || 0) }`,
+    down: `{ dy: Number(${px}) || 0 }`,
+    up: `{ dy: -(Number(${px}) || 0) }`,
+  }[dir] || `{ dx: 0 }`
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => { ${fn}(node, ${delta}); });\n`
+}
+
+javascriptGenerator.forBlock.site_move_random = (block, generator) => {
+  const fn = provideTransformHelper(generator)
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => { ${fn}(node, { x: Math.floor(Math.random() * 221) - 110, y: Math.floor(Math.random() * 141) - 70 }); });\n`
+}
+
+javascriptGenerator.forBlock.site_scale_element = (block, generator) => {
+  const fn = provideTransformHelper(generator)
+  const scale = generator.valueToCode(block, 'SCALE', Order.NONE) || '100'
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => { ${fn}(node, { scale: Math.max(10, Math.min(400, Number(${scale}) || 100)) }); });\n`
+}
+
+javascriptGenerator.forBlock.site_reset_transform = (block, generator) => {
+  const fn = provideTransformHelper(generator)
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => { ${fn}(node, { x: 0, y: 0, scale: 100 }); });\n`
+}
+
+function targetSelectorByField(block, fieldName) {
+  const id = block.getFieldValue(fieldName)
+  const field = block.getField(fieldName)
+  const target = targetsFor(field).find((item) => item.id === id)
+  if (!target || !acceptsTarget(target, field?.filterType ?? 'all')) {
+    throw new Error('Escolha um elemento disponível nos blocos de página. Um destino está vazio, foi removido ou é incompatível.')
+  }
+  // eslint-disable-next-line no-control-regex -- controles precisam ser escapados em strings CSS.
+  const escaped = id.replace(/[\0-\x1f\x7f"\\]/g, (char) => `\\${char.codePointAt(0).toString(16)} `)
+  return `[data-block-id="${escaped}"]`
+}
+
+javascriptGenerator.forBlock.site_touching_elements = (block, generator) => {
+  const fn = generator.provideFunction_('uebitIsTouching', `
+function ${generator.FUNCTION_NAME_PLACEHOLDER_}(a, b) {
+  if (!a || !b || a === b || typeof a.getBoundingClientRect !== 'function' || typeof b.getBoundingClientRect !== 'function') return false;
+  const r1 = a.getBoundingClientRect();
+  const r2 = b.getBoundingClientRect();
+  if ((r1.width === 0 && r1.height === 0) || (r2.width === 0 && r2.height === 0)) return false;
+  return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+}
+`)
+  const selA = JSON.stringify(targetSelectorByField(block, 'TARGET_A'))
+  const selB = JSON.stringify(targetSelectorByField(block, 'TARGET_B'))
+  return [`${fn}(document.querySelector(${selA}), document.querySelector(${selB}))`, Order.FUNCTION_CALL]
+}
+
+javascriptGenerator.forBlock.site_confetti = (_, generator) => {
+  const fn = generator.provideFunction_('uebitConfetti', `
+function ${generator.FUNCTION_NAME_PLACEHOLDER_}() {
+  if (typeof document === 'undefined' || !document.body) return;
+  const colors = ['#7c3aed', '#10b981', '#f59e0b', '#ec4899', '#3b82f6', '#22c55e'];
+  for (let i = 0; i < 28; i++) {
+    const piece = document.createElement('div');
+    Object.assign(piece.style, {
+      position: 'fixed',
+      left: Math.random() * 100 + 'vw',
+      top: '-16px',
+      width: '10px',
+      height: '14px',
+      backgroundColor: colors[i % colors.length],
+      borderRadius: '3px',
+      zIndex: '99998',
+      pointerEvents: 'none',
+    });
+    document.body.append(piece);
+    const drift = (Math.random() - 0.5) * 180;
+    const anim = piece.animate?.([
+      { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+      { transform: 'translate(' + drift + 'px, 92vh) rotate(' + (Math.random() * 720) + 'deg)', opacity: 0 },
+    ], { duration: 1200 + Math.random() * 900, easing: 'cubic-bezier(0.2, 0.8, 0.3, 1)' });
+    if (anim) anim.onfinish = () => piece.remove();
+    else setTimeout(() => piece.remove(), 1800);
+  }
+}
+`)
+  return `${fn}();\n`
+}
+
+javascriptGenerator.forBlock.site_toggle_text_element = (block, generator) => {
+  const textA = generator.valueToCode(block, 'TEXT_A', Order.NONE) || "''"
+  const textB = generator.valueToCode(block, 'TEXT_B', Order.NONE) || "''"
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => { const a = String(${textA}); const b = String(${textB}); node.textContent = (node.textContent || '').trim() === a.trim() ? b : a; });\n`
+}
+
+javascriptGenerator.forBlock.site_append_element = (block, generator) => {
+  const text = generator.valueToCode(block, 'TEXT', Order.NONE) || "''"
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => {\nconst val = String(${text}).trim();\nif (!val) return;\nconst item = document.createElement(node.tagName === 'UL' || node.tagName === 'OL' ? 'li' : 'div');\nitem.textContent = val;\nitem.setAttribute('data-uebit-dynamic-item', 'true');\nObject.assign(item.style, { padding: '8px 12px', marginTop: '6px', borderRadius: '10px', backgroundColor: 'rgba(124, 58, 237, 0.08)', fontWeight: '600' });\nnode.append(item);\n});\n`
+}
+
+javascriptGenerator.forBlock.site_clear_element = (block) =>
+  `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => {\nconst dynamic = node.querySelectorAll?.('[data-uebit-dynamic-item]');\nif (dynamic && dynamic.length) dynamic.forEach(el => el.remove());\nelse node.textContent = '';\n});\n`
+
+javascriptGenerator.forBlock.site_random_background_element = (block) =>
+  `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => {\nconst palette = ['#2563eb', '#16a34a', '#f59e0b', '#e11d48', '#7c3aed', '#06b6d4', '#ec4899', '#84cc16'];\nnode.style.backgroundColor = palette[Math.floor(Math.random() * palette.length)];\n});\n`
+
+javascriptGenerator.forBlock.site_enable_disable_element = (block) => {
+  const disable = block.getFieldValue('ACTION') === 'disable'
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => {\nnode.disabled = ${disable};\nnode.style.pointerEvents = ${disable ? "'none'" : "''"};\nnode.style.opacity = ${disable ? "'0.5'" : "''"};\n});\n`
+}
+
+javascriptGenerator.forBlock.site_storage_save = (block, generator) => {
+  const val = generator.valueToCode(block, 'VALUE', Order.NONE) || "''"
+  const key = generator.valueToCode(block, 'KEY', Order.NONE) || "'recorde'"
+  return `try { localStorage.setItem('uebit_' + String(${key}), String(${val})); } catch {}\n`
+}
+
+javascriptGenerator.forBlock.site_storage_load = (block, generator) => {
+  const key = generator.valueToCode(block, 'KEY', Order.NONE) || "'recorde'"
+  return [`((() => { try { return localStorage.getItem('uebit_' + String(${key})) ?? ''; } catch { return ''; } })())`, Order.FUNCTION_CALL]
 }
 
 javascriptGenerator.forBlock.site_click = (block, generator) =>
-  `document.addEventListener('click', (event) => {\nif (event.target.closest(${JSON.stringify(block.getFieldValue('SELECTOR'))})) {\n__uebitLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}\n});\n`
+  `document.addEventListener('click', (event) => {\nif (event.target?.closest?.(${JSON.stringify(block.getFieldValue('SELECTOR'))})) {\n__uebitLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}\n});\n`
 
 javascriptGenerator.forBlock.site_text = (block, generator) =>
   `document.querySelectorAll(${JSON.stringify(block.getFieldValue('SELECTOR'))}).forEach(node => { node.textContent = ${generator.valueToCode(block, 'TEXT', Order.NONE) || "''"}; });\n`
@@ -875,17 +1316,52 @@ export const toolbox = {
       block('site_input_change'),
       block('site_key_press'),
     ]),
-    category('Minha página', 'uebit_page', '▦', [
+    category('Jogos & Placar', 'uebit_games', '🎮', [
+      block('site_add_number_element', { inputs: { AMOUNT: number(1) } }),
+      block('site_set_number_element', { inputs: { VALUE: number(0) } }),
+      block('site_get_number_element'),
+      block('site_move_element', { inputs: { PIXELS: number(25) } }),
+      block('site_move_random'),
+      block('site_scale_element', { inputs: { SCALE: number(120) } }),
+      block('site_reset_transform'),
+      block('site_touching_elements'),
+      block('site_confetti'),
+    ]),
+    category('Conteúdo', 'uebit_page', 'Aa', [
       block('site_text_element', { inputs: textInput('Novo texto') }),
+      block('site_toggle_text_element', {
+        inputs: {
+          TEXT_A: { shadow: { type: 'text', fields: { TEXT: 'Ligado ✅' } } },
+          TEXT_B: { shadow: { type: 'text', fields: { TEXT: 'Desligado 🌙' } } },
+        },
+      }),
       block('site_get_text_element'),
-      block('site_background_element'),
-      block('site_color_element'),
+      block('site_append_element', { inputs: textInput('Novo item da lista') }),
+      block('site_clear_element'),
       block('site_image_element', { inputs: { SRC: { shadow: { type: 'text', fields: { TEXT: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800' } } } } }),
-      block('site_input_set_value', { inputs: textInput('Texto digitado') }),
+      block('site_input_set_value', { inputs: { VALUE: { shadow: { type: 'text', fields: { TEXT: 'Texto digitado' } } } } }),
       block('site_input_get_value'),
+      block('site_storage_save', {
+        inputs: {
+          VALUE: { shadow: { type: 'text', fields: { TEXT: '100' } } },
+          KEY: { shadow: { type: 'text', fields: { TEXT: 'recorde' } } },
+        },
+      }),
+      block('site_storage_load', {
+        inputs: {
+          KEY: { shadow: { type: 'text', fields: { TEXT: 'recorde' } } },
+        },
+      }),
+    ]),
+    category('Aparência', 'uebit_page', '▦', [
+      block('site_background_element'),
+      block('site_random_background_element'),
+      block('site_color_element'),
       block('site_show_hide_element'),
-      block('site_add_remove_class', { inputs: { CLASS: { shadow: { type: 'text', fields: { TEXT: 'destaque' } } } } }),
+      block('site_is_visible'),
+      block('site_enable_disable_element'),
       block('site_animate_element'),
+      block('site_add_remove_class', { inputs: { CLASS: { shadow: { type: 'text', fields: { TEXT: 'destaque' } } } } }),
       block('site_scroll_to_element'),
       block('site_open_url', { inputs: { URL: { shadow: { type: 'text', fields: { TEXT: 'https://google.com' } } } } }),
       block('site_message', { inputs: textInput('Parabéns! Você clicou no botão! 🎉') }),
@@ -896,7 +1372,8 @@ export const toolbox = {
     ]),
     category('Tempo & Espera', 'uebit_time', '⏱', [
       block('site_wait_seconds', { inputs: { SECONDS: number(1) } }),
-      block('site_repeat_every', { inputs: { SECONDS: number(2) } }),
+      block('site_repeat_every', { inputs: { SECONDS: number(1) } }),
+      block('site_stop_timers'),
     ]),
     category('Lógica', 'uebit_logic', '⇄', [
       block('controls_if'),
@@ -978,6 +1455,216 @@ export const workspaceConfiguration = {
   move: { scrollbars: true, drag: true, wheel: true },
   zoom: { controls: true, wheel: true, startScale: 0.9, maxScale: 2, minScale: 0.4, scaleSpeed: 1.15 },
   grid: { spacing: 20, length: 1, colour: '#ecf0f1', snap: true },
+}
+
+export const MAGIC_RECIPES = [
+  {
+    id: 'click_score',
+    label: '🎮 Jogo de Clicar (+1 Ponto)',
+    description: 'Cada clique no botão soma 1 ponto no placar, toca som de moeda e faz pular!',
+  },
+  {
+    id: 'fleeing_target',
+    label: '🎯 Alvo Fujão (Pega-Pega)',
+    description: 'Quando clicar no alvo, ele foge para uma posição aleatória e soma 1 ponto!',
+  },
+  {
+    id: 'keyboard_move',
+    label: '🕹️ Controle pelas Setas',
+    description: 'Use as setas Direita e Esquerda do teclado para mover um personagem ou elemento.',
+  },
+  {
+    id: 'secret_reveal',
+    label: '✨ Mostrar / Esconder Secreto',
+    description: 'Transforma um botão em interruptor que mostra ou esconde outro bloco da página.',
+  },
+  {
+    id: 'todo_adder',
+    label: '📝 Adicionar Item da Caixa',
+    description: 'Ao clicar no botão, pega o que foi digitado no campo e adiciona na lista.',
+  },
+]
+
+export function insertMagicRecipe(workspace, recipeId) {
+  if (!workspace) return false
+  const targets = workspaceTargets.get(workspace?.targetWorkspace ?? workspace) ?? []
+  const buttonTarget = targets.find((t) => t.type === 'button')?.id || targets[0]?.id || ''
+  const textTarget =
+    targets.find((t) => ['badge', 'heading', 'paragraph'].includes(t.type))?.id ||
+    targets.find((t) => acceptsTarget(t, 'text'))?.id ||
+    buttonTarget
+  const boxTarget =
+    targets.find((t) => ['section', 'container', 'card', 'list'].includes(t.type))?.id ||
+    targets[targets.length - 1]?.id ||
+    textTarget
+  const inputTarget = targets.find((t) => t.type === 'input')?.id || ''
+  const spriteTarget =
+    targets.find((t) => ['image', 'video', 'button', 'badge'].includes(t.type))?.id ||
+    buttonTarget
+
+  const topBlocks = workspace.getTopBlocks(false)
+  let nextY = 40
+  for (const b of topBlocks) {
+    const pos = b.getRelativeToSurfaceXY()
+    const height = b.getHeightWidth?.()?.height || 90
+    if (pos.y + height + 36 > nextY) nextY = pos.y + height + 36
+  }
+
+  const numBlock = (val) => ({ block: { type: 'math_number', fields: { NUM: val } } })
+  let definitions = []
+
+  if (recipeId === 'click_score') {
+    definitions = [
+      {
+        type: 'site_click_element',
+        x: 40,
+        y: nextY,
+        fields: { TARGET: buttonTarget },
+        inputs: {
+          DO: {
+            block: {
+              type: 'site_add_number_element',
+              fields: { TARGET: textTarget },
+              inputs: { AMOUNT: numBlock(1) },
+              next: {
+                block: {
+                  type: 'site_play_sound',
+                  fields: { SOUND: 'moeda' },
+                  next: {
+                    block: {
+                      type: 'site_animate_element',
+                      fields: { EFFECT: 'bounce', TARGET: buttonTarget },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    ]
+  } else if (recipeId === 'fleeing_target') {
+    definitions = [
+      {
+        type: 'site_click_element',
+        x: 40,
+        y: nextY,
+        fields: { TARGET: spriteTarget },
+        inputs: {
+          DO: {
+            block: {
+              type: 'site_add_number_element',
+              fields: { TARGET: textTarget },
+              inputs: { AMOUNT: numBlock(1) },
+              next: {
+                block: {
+                  type: 'site_move_random',
+                  fields: { TARGET: spriteTarget },
+                  next: {
+                    block: {
+                      type: 'site_play_sound',
+                      fields: { SOUND: 'pulo' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    ]
+  } else if (recipeId === 'keyboard_move') {
+    definitions = [
+      {
+        type: 'site_key_press',
+        x: 40,
+        y: nextY,
+        fields: { KEY: 'ArrowRight' },
+        inputs: {
+          DO: {
+            block: {
+              type: 'site_move_element',
+              fields: { TARGET: spriteTarget, DIRECTION: 'right' },
+              inputs: { PIXELS: numBlock(25) },
+            },
+          },
+        },
+      },
+      {
+        type: 'site_key_press',
+        x: 40,
+        y: nextY + 130,
+        fields: { KEY: 'ArrowLeft' },
+        inputs: {
+          DO: {
+            block: {
+              type: 'site_move_element',
+              fields: { TARGET: spriteTarget, DIRECTION: 'left' },
+              inputs: { PIXELS: numBlock(25) },
+            },
+          },
+        },
+      },
+    ]
+  } else if (recipeId === 'secret_reveal') {
+    definitions = [
+      {
+        type: 'site_click_element',
+        x: 40,
+        y: nextY,
+        fields: { TARGET: buttonTarget },
+        inputs: {
+          DO: {
+            block: {
+              type: 'site_show_hide_element',
+              fields: { ACTION: 'toggle', TARGET: boxTarget },
+              next: {
+                block: {
+                  type: 'site_play_sound',
+                  fields: { SOUND: 'clique' },
+                },
+              },
+            },
+          },
+        },
+      },
+    ]
+  } else if (recipeId === 'todo_adder') {
+    const valueInput = inputTarget
+      ? { block: { type: 'site_input_get_value', fields: { TARGET: inputTarget } } }
+      : { block: { type: 'text', fields: { TEXT: 'Novo item ✨' } } }
+    definitions = [
+      {
+        type: 'site_click_element',
+        x: 40,
+        y: nextY,
+        fields: { TARGET: buttonTarget },
+        inputs: {
+          DO: {
+            block: {
+              type: 'site_append_element',
+              fields: { TARGET: boxTarget },
+              inputs: { TEXT: valueInput },
+              next: inputTarget
+                ? {
+                    block: {
+                      type: 'site_input_set_value',
+                      fields: { TARGET: inputTarget },
+                      inputs: { VALUE: { block: { type: 'text', fields: { TEXT: '' } } } },
+                    },
+                  }
+                : undefined,
+            },
+          },
+        },
+      },
+    ]
+  }
+
+  for (const def of definitions) {
+    Blockly.serialization.blocks.append(def, workspace)
+  }
+  return definitions.length > 0
 }
 
 export { Blockly, javascriptGenerator }

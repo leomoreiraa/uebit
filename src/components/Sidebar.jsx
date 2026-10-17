@@ -99,7 +99,7 @@ export default function Sidebar({ disabled, onAddElement }) {
   return (
     <aside
       aria-labelledby="elements-heading"
-      className="flex min-w-0 flex-col rounded-3xl border-2 border-purple-200 bg-white p-3.5 shadow-sm max-md:max-h-[520px] md:sticky md:top-3 md:h-[calc(100dvh-6rem)] md:max-h-[calc(100dvh-6rem)] overflow-hidden"
+      className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-3xl border-2 border-purple-200 bg-white p-3.5 shadow-sm"
     >
       <div className="flex shrink-0 items-center justify-between gap-2">
         <h2 id="elements-heading" className="flex items-center gap-2 text-base font-black text-slate-900">
