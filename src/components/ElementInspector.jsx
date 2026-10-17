@@ -46,14 +46,33 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
   }
 
   if (element !== prevElement) {
+    const sameElement = element.id === prevElement.id
     setPrevElement(element)
-    setContent((prev) => ({
-      ...prev,
-      ...element,
-      name: element.name ?? '',
-      htmlId: element.htmlId ?? '',
-      tagName: element.tagName ?? '',
-    }))
+    setContent((prev) => {
+      if (!sameElement) {
+        return {
+          ...prev,
+          ...element,
+          name: element.name ?? '',
+          htmlId: element.htmlId ?? '',
+          tagName: element.tagName ?? '',
+        }
+      }
+      const nextName = (prev.name ?? '').trim() === (element.name ?? '').trim() ? prev.name : (element.name ?? '')
+      const normLines = (val) => String(val ?? '').split('\n').map((s) => s.trim()).filter(Boolean).join('\n')
+      const keepDraftText =
+        ['list', 'ordered-list', 'select', 'table'].includes(element.type)
+          ? normLines(prev.text) === normLines(element.text)
+          : (prev.text ?? '') === (element.text ?? '')
+      return {
+        ...prev,
+        ...element,
+        name: nextName,
+        text: keepDraftText ? prev.text : (element.text ?? ''),
+        htmlId: element.htmlId ?? '',
+        tagName: element.tagName ?? '',
+      }
+    })
   }
   const [error, setError] = useState('')
   const [loadingImage, setLoadingImage] = useState(false)

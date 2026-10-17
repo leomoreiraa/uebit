@@ -71,10 +71,13 @@ export default function ColorPicker({
   const [hexDraft, setHexDraft] = useState(
     normalizedValue && normalizedValue !== 'transparent' ? normalizedValue.toUpperCase() : ''
   )
+  const [hexFocused, setHexFocused] = useState(false)
 
   if (normalizedValue !== prevNormalizedValue) {
     setPrevNormalizedValue(normalizedValue)
-    setHexDraft(normalizedValue && normalizedValue !== 'transparent' ? normalizedValue.toUpperCase() : '')
+    if (!hexFocused) {
+      setHexDraft(normalizedValue && normalizedValue !== 'transparent' ? normalizedValue.toUpperCase() : '')
+    }
     if (normalizedValue && normalizedValue !== 'transparent') {
       const rgb = hexToRgb(normalizedValue)
       if (rgb) {
@@ -641,7 +644,12 @@ export default function ColorPicker({
                           type="text"
                           aria-label="Código HEX"
                           placeholder="7145D6"
-                          value={isTransparent ? 'transparent' : hexDraft.replace(/^#/, '')}
+                          value={isTransparent && !hexFocused ? 'transparent' : hexDraft.replace(/^#/, '')}
+                          onFocus={() => setHexFocused(true)}
+                          onBlur={() => {
+                            setHexFocused(false)
+                            setHexDraft(normalizedValue && normalizedValue !== 'transparent' ? normalizedValue.toUpperCase() : '')
+                          }}
                           onChange={(e) => handleHexInputChange(e.target.value)}
                           className="w-full min-w-0 rounded-lg border border-purple-200 bg-white py-1.5 pl-6 pr-2 font-mono text-xs font-bold uppercase text-slate-800 focus:border-purple-500 focus:outline-hidden"
                         />

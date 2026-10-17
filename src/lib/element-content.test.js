@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { syncActionScript, validateContent, readContent } from './element-content.js'
 import { BASE_CSS, buildCssForHtml } from './code-engine.js'
+import { normalizeStyleValue, validateStyle } from './styles.js'
 
 test('button actions retain manually authored JavaScript without duplicate handlers', () => {
   const document = { querySelector: () => ({}) }
@@ -190,4 +191,19 @@ test('BASE_CSS is minimal and buildCssForHtml only outputs rules for used compon
   assert.equal(css.includes('.video {'), false)
   assert.equal(css.includes('.checkbox {'), false)
 })
+
+test('normalizeStyleValue appends px to bare numeric length values and preserves units', () => {
+  assert.equal(normalizeStyleValue('marginTop', '16'), '16px')
+  assert.equal(normalizeStyleValue('paddingLeft', '24'), '24px')
+  assert.equal(normalizeStyleValue('borderTopWidth', '2'), '2px')
+  assert.equal(normalizeStyleValue('borderTopLeftRadius', '12'), '12px')
+  assert.equal(normalizeStyleValue('fontSize', '18'), '18px')
+  assert.equal(normalizeStyleValue('marginTop', '1.5rem'), '1.5rem')
+  assert.equal(normalizeStyleValue('paddingBottom', '10%'), '10%')
+  assert.equal(normalizeStyleValue('lineHeight', '1.5'), '1.5')
+  assert.equal(normalizeStyleValue('zIndex', '50'), '50')
+  assert.doesNotThrow(() => validateStyle('marginTop', normalizeStyleValue('marginTop', '16')))
+  assert.doesNotThrow(() => validateStyle('paddingTop', normalizeStyleValue('paddingTop', '24')))
+})
+
 

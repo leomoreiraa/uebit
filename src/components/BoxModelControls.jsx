@@ -1,23 +1,30 @@
 import { useState } from 'react'
-import { CORNERS, SIDES, validateStyle } from '../lib/styles'
+import { CORNERS, normalizeStyleValue, SIDES, validateStyle } from '../lib/styles'
 
 const fieldClass = 'mt-1 min-h-9 w-full min-w-0 rounded-lg border border-purple-200 bg-white px-2 py-1 text-xs text-slate-800'
 const chipClass = 'flex-1 min-h-8 rounded-lg border text-xs font-bold transition-all'
 
-export function StyleField(props) {
-  return <StyleFieldInput key={props.value ?? ''} {...props} />
-}
-
-function StyleFieldInput({ label, property, value = '', onChange, options }) {
+export function StyleField({ label, property, value = '', onChange, options }) {
   const [draft, setDraft] = useState(value)
+  const [prevValue, setPrevValue] = useState(value)
+  const [isFocused, setIsFocused] = useState(false)
   const [error, setError] = useState('')
+
+  if (value !== prevValue) {
+    setPrevValue(value)
+    if (!isFocused) {
+      setDraft(value)
+      setError('')
+    }
+  }
 
   function apply(next) {
     try {
-      const trimmed = next.trim()
-      validateStyle(property, trimmed)
-      onChange(property, trimmed)
-      setDraft(trimmed)
+      const normalized = normalizeStyleValue(property, next)
+      validateStyle(property, normalized)
+      onChange(property, normalized)
+      setDraft(normalized)
+      setPrevValue(normalized)
       setError('')
     } catch (failure) {
       setError(failure.message)
@@ -46,18 +53,23 @@ function StyleFieldInput({ label, property, value = '', onChange, options }) {
           aria-invalid={Boolean(error)}
           value={draft}
           placeholder="ex: 16px"
+          onFocus={() => setIsFocused(true)}
           onChange={(event) => {
             const val = event.target.value
             setDraft(val)
             setError('')
             try {
-              validateStyle(property, val.trim())
-              onChange(property, val.trim())
+              const normalized = normalizeStyleValue(property, val)
+              validateStyle(property, normalized)
+              onChange(property, normalized)
             } catch {
               /* allow mid-typing */
             }
           }}
-          onBlur={() => apply(draft)}
+          onBlur={() => {
+            setIsFocused(false)
+            apply(draft)
+          }}
           onKeyDown={(event) => {
             if (event.key === 'Enter') {
               event.preventDefault()
@@ -86,41 +98,56 @@ export default function BoxModelControls({ values = {}, onChange }) {
   const currentRadius = values.borderTopLeftRadius || ''
 
   function setAll(prefix, val) {
+    const patch = {}
     SIDES.forEach(([side]) => {
       try {
         validateStyle(`${prefix}${side}`, val)
-        onChange(`${prefix}${side}`, val)
+        patch[`${prefix}${side}`] = val
       } catch {
         /* preserve */
       }
     })
+    if (Object.keys(patch).length > 0) onChange(patch)
   }
 
   function setRadiusAll(val) {
+    const patch = {}
     CORNERS.forEach(([corner]) => {
       try {
         validateStyle(`border${corner}Radius`, val)
-        onChange(`border${corner}Radius`, val)
+        patch[`border${corner}Radius`] = val
       } catch {
         /* preserve */
       }
     })
+    if (Object.keys(patch).length > 0) onChange(patch)
   }
 
   function setBorderStyleAll(style, width) {
+    const patch = {}
+    SIDES.forEach(([side]) => {
+      if (style !== undefined) patch[`border${side}Style`] = style
+      if (width !== undefined) patch[`border${side}Width`] = width
+      if (!values[`border${side}Color`]) patch[`border${side}Color`] = '#cbd5e1'
+    })
+    if (Object.keys(patch).length > 0) onChange(patch)
+  }
+
+  function setBorderPropAll(suffix, val) {
+    const patch = {}
     SIDES.forEach(([side]) => {
       try {
-        if (style !== undefined) onChange(`border${side}Style`, style)
-        if (width !== undefined) onChange(`border${side}Width`, width)
-        if (!values[`border${side}Color`]) onChange(`border${side}Color`, '#cbd5e1')
+        validateStyle(`border${side}${suffix}`, val)
+        patch[`border${side}${suffix}`] = val
       } catch {
         /* preserve */
       }
     })
+    if (Object.keys(patch).length > 0) onChange(patch)
   }
 
-  const field = (property, label, options) => (
-    <StyleField key={property} property={property} label={label} value={values[property]} onChange={onChange} options={options} />
+  const field = (property, label, options, customChange = onChange) => (
+    <StyleField key={property} property={property} label={label} value={values[property]} onChange={customChange} options={options} />
   )
 
   return (
@@ -286,11 +313,11 @@ export default function BoxModelControls({ values = {}, onChange }) {
           <fieldset>
             <legend className="mb-1 text-[11px] font-bold text-purple-900">Bordas detalhadas</legend>
             <div className="grid grid-cols-2 gap-1.5">
-              {field('borderTopWidth', 'Largura da borda')}
-              {field('borderTopColor', 'Cor da borda')}
+              {field('borderTopWidth', 'Largura da borda', undefined, (_, val) => setBorderPropAll('Width', val))}
+              {field('borderTopColor', 'Cor da borda', undefined, (_, val) => setBorderPropAll('Color', val))}
             </div>
             <div className="mt-1">
-              {field('borderTopStyle', 'Estilo', borderStyles)}
+              {field('borderTopStyle', 'Estilo', borderStyles, (_, val) => setBorderPropAll('Style', val))}
             </div>
           </fieldset>
         </div>
