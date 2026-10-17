@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { syncActionScript, validateContent, readContent } from './element-content.js'
+import { BASE_CSS, buildCssForHtml } from './code-engine.js'
 
 test('button actions retain manually authored JavaScript without duplicate handlers', () => {
   const document = { querySelector: () => ({}) }
@@ -173,5 +174,20 @@ test('readContent and validateContent support new HTML tags including break, lin
     textContent: '',
   }
   assert.equal(readContent(br).tagName, 'br')
+})
+
+test('BASE_CSS is minimal and buildCssForHtml only outputs rules for used component classes', () => {
+  assert.equal(BASE_CSS.includes('.table'), false)
+  assert.equal(BASE_CSS.includes('.video'), false)
+  assert.equal(BASE_CSS.includes('.quote'), false)
+
+  const html = '<main class="site"><h1 class="site-block heading">Olá</h1><button class="site-block button">Clique</button></main>'
+  const css = buildCssForHtml(html)
+  assert.ok(css.includes('.heading {'))
+  assert.ok(css.includes('.button {'))
+  assert.equal(css.includes('.table {'), false)
+  assert.equal(css.includes('.quote {'), false)
+  assert.equal(css.includes('.video {'), false)
+  assert.equal(css.includes('.checkbox {'), false)
 })
 

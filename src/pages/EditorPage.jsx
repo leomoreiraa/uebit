@@ -250,6 +250,33 @@ export default function EditorPage() {
     acceptCode(updateElementAppearance(code, id, property, value))
   }
 
+  const handleInlineTextEdit = useCallback((id, text) => {
+    setCode((currentCode) => {
+      try {
+        const next = updateElementContent(currentCode, id, { text })
+        setDraft(next)
+        setElements(readCode(next))
+        return next
+      } catch {
+        return currentCode
+      }
+    })
+  }, [])
+
+  function handleCodeChange(fileKey, value) {
+    const nextDraft = { ...draft, [fileKey]: value }
+    setDraft(nextDraft)
+    try {
+      const nextCode = identifyCodeElements(nextDraft)
+      const parsed = readCode(nextCode)
+      setElements(parsed)
+      setCode(nextCode)
+      setCodeError('')
+    } catch (error) {
+      setCodeError(error.message || 'Erro de sintaxe no código.')
+    }
+  }
+
   function handleBlockProjectChange(changes) {
     if (changes.generated !== undefined && changes.generated !== blockProject.appliedGenerated && !codeError) {
       try {
@@ -436,7 +463,17 @@ export default function EditorPage() {
         {projectError && <p role="alert" className="bg-red-50 px-6 py-3 text-sm text-red-800">{projectError}</p>}
         {exportError && <p role="alert" className="bg-red-50 px-6 py-3 text-sm text-red-800">{exportError}</p>}
         </div>
-        {stageOpen && <Stage key={`stage-${projectRevision}`} code={code} codeError={codeError} device={device} viewportWidth={viewportWidth} />}
+        {stageOpen && (
+          <Stage
+            key={`stage-${projectRevision}`}
+            code={code}
+            codeError={codeError}
+            device={device}
+            viewportWidth={viewportWidth}
+            onDeviceChange={setDevice}
+            onMobileWidthChange={setMobileWidth}
+          />
+        )}
         <div key={projectRevision} className={`${stageOpen ? 'hidden' : 'flex'} min-h-0 min-w-0 flex-1 overflow-hidden p-2 sm:p-3 ${view === 'visual' && !stageOpen ? 'xl:grid xl:grid-cols-[248px_minmax(0,1fr)_288px] xl:gap-3' : ''}`}>
             {panelOpen && <div aria-hidden="true" onClick={closeMobilePanel} className="fixed inset-0 z-20 bg-slate-950/40 xl:hidden" />}
             {view === 'visual' && <EditorPanel id="editor-palette" label="Paleta de elementos" side="left" open={panelOpen === 'palette'} onClose={closeMobilePanel} triggerRef={panelTriggerRef}>
@@ -452,6 +489,7 @@ export default function EditorPage() {
               elements={visibleElements}
               selectedId={selectedId}
               onSelect={setSelectedId}
+              onEditText={handleInlineTextEdit}
               dropPreview={dropPreview}
               message={message}
               device={device}
@@ -460,6 +498,8 @@ export default function EditorPage() {
               onMobileWidthChange={setMobileWidth}
               onResetMobile={() => commitElements((current) => mapTree(current, (element) => ({ ...element, mobileCustomized: false })))}
               code={code}
+              draft={draft}
+              onCodeChange={handleCodeChange}
               codeError={codeError}
               onRestoreCode={() => { acceptCode(code); setCodeError('') }}
               isDragging={Boolean(draggedType)}

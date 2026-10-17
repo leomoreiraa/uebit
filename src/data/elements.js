@@ -1,4 +1,4 @@
-import { DEFAULT_LAYOUT } from '../lib/tree'
+import { defaultLayoutForType } from '../lib/code-engine'
 
 export const elementTypes = [
   // Texto
@@ -94,19 +94,15 @@ export function createElement(type) {
   if (!Object.hasOwn(defaults, type)) return null
 
   const isContainerType = type === 'container' || SEMANTIC_CONTAINERS.includes(type)
+  const resolvedType = isContainerType ? 'container' : type
 
   return {
     id: crypto.randomUUID(),
-    type: isContainerType ? 'container' : type,
+    type: resolvedType,
     name: defaults[type]?.name || '',
     htmlId: '',
     ...defaults[type],
     children: [],
-    layout: {
-      ...DEFAULT_LAYOUT,
-      minHeight: isContainerType ? '120px' : '0px',
-      ...(type === 'break' ? { width: '100%', height: '16px' } : {}),
-      ...(type === 'table' ? { width: '100%' } : {}),
-    },
+    layout: defaultLayoutForType(resolvedType),
   }
 }

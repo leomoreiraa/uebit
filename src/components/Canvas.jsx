@@ -29,7 +29,7 @@ function FlowElement({ element, parentRect, rects, selectedId, onSelect, dropPre
   </div>
 }
 
-export default function Canvas({ elements, selectedId, onSelect, dropPreview, message, device, onDeviceChange, viewportWidth, onMobileWidthChange, onResetMobile, onUpdateLayout, code, isDragging, disabled }) {
+export default function Canvas({ elements, selectedId, onSelect, onEditText, dropPreview, message, device, onDeviceChange, viewportWidth, onMobileWidthChange, onResetMobile, onUpdateLayout, code, isDragging, disabled }) {
   const { setNodeRef } = useDroppable({ id: 'canvas', disabled })
   const frameRef = useRef(null)
   const [availableWidth, setAvailableWidth] = useState(viewportWidth)
@@ -118,7 +118,7 @@ export default function Canvas({ elements, selectedId, onSelect, dropPreview, me
     <div ref={frameRef} className="uebit-dot-backdrop min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4">
       <div className="mx-auto" style={{ width: viewportWidth * scale, height: (height + 80) * scale }}>
         <div ref={setNodeRef} aria-label="Página: solte os elementos aqui" data-device={device} className="relative bg-white shadow-xs" style={{ width: viewportWidth, height: height + 80, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
-          <SitePreview code={code} resizePreview={resizePreview} onLayout={receiveLayout} onSelect={onSelect} onError={setRuntimeError} interactive={!isDragging && !resizePreview} editing={!testMode} className="absolute inset-x-0 top-0 w-full bg-white" style={{ height }} />
+          <SitePreview code={code} resizePreview={resizePreview} onLayout={receiveLayout} onSelect={onSelect} onEditText={onEditText} onError={setRuntimeError} interactive={!isDragging && !resizePreview} editing={!testMode} className="absolute inset-x-0 top-0 w-full bg-white" style={{ height }} />
           {!testMode && <>
             <SortableContext items={elements.map((element) => element.id)} strategy={rectSortingStrategy}>
               {elements.map((element) => <FlowElement key={element.id} element={element} rects={previewLayout?.blocks ?? []} selectedId={selectedId} onSelect={onSelect} dropPreview={dropPreview} disabled={disabled || Boolean(resizePreview)} />)}

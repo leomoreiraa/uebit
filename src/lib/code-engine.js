@@ -8,42 +8,112 @@ export const BASE_CSS = `/* Os elementos fluem em Flexbox; containers podem cont
 body { margin: 0; font-family: system-ui, sans-serif; color: #1e293b; background: #fff; }
 .site { display: flex; flex-direction: column; gap: 16px; padding: 24px; min-height: 480px; }
 .site-block { min-width: 0; max-width: 100%; margin: 0; overflow-wrap: anywhere; }
-.heading { padding: 12px; font-size: 36px; line-height: 1.25; }
-.paragraph { padding: 12px; font-size: 16px; line-height: 1.7; }
-.quote { padding: 16px 20px; border-left: 4px solid #6366f1; background: #f8fafc; font-style: italic; font-size: 18px; line-height: 1.6; }
-.list { padding: 12px 28px; line-height: 1.7; font-size: 16px; margin: 0; list-style-type: disc; }
-.list li { margin-bottom: 6px; }
-.ordered-list { padding: 12px 28px; line-height: 1.7; font-size: 16px; margin: 0; list-style-type: decimal; }
-.ordered-list li { margin-bottom: 6px; }
-.break { display: block; width: 100%; height: 16px; margin: 2px 0; border: none; }
-.link { color: #4f46e5; text-decoration: underline; font-size: 16px; padding: 4px 8px; font-weight: 600; cursor: pointer; }
-.link:hover { color: #3730a3; }
-.strong { font-weight: 800; font-size: 16px; padding: 4px 8px; }
-.em { font-style: italic; font-size: 16px; padding: 4px 8px; }
-.code { font-family: ui-monospace, monospace; background: #f1f5f9; color: #0f172a; padding: 4px 8px; font-size: 14px; }
-.span { font-size: 16px; padding: 4px 8px; }
-.image { width: 100%; height: auto; max-height: 400px; object-fit: cover; }
-.video { width: 100%; max-height: 380px; object-fit: contain; background: #0f172a; }
-.audio { width: 100%; }
-.iframe { width: 100%; min-height: 320px; border: 1px solid #cbd5e1; }
-.button { border: 0; padding: 12px 16px; background: #4f46e5; color: white; font: inherit; cursor: pointer; }
-.input { width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; font-size: 16px; font-family: inherit; background: #fff; }
-.textarea { width: 100%; min-height: 100px; padding: 12px 16px; border: 1px solid #cbd5e1; font-size: 16px; font-family: inherit; background: #fff; resize: vertical; }
-.select { width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; font-size: 16px; font-family: inherit; background: #fff; cursor: pointer; }
-.checkbox { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; cursor: pointer; padding: 8px; }
-.checkbox input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
-.container { display: flex; flex-direction: column; flex-wrap: wrap; gap: 16px; padding: 24px; min-height: 120px; border: 1px solid #e2e8f0; background: transparent; }
-.table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 8px 0; }
-.table th, .table td { border: 1px solid #cbd5e1; padding: 10px 14px; text-align: left; }
-.table th { background: #f8fafc; font-weight: bold; }
-.table tr:nth-child(even) { background: #f8fafc; }
-.divider { width: 100%; border: 0; border-top: 2px solid #e2e8f0; margin: 12px 0; }
-@media (max-width: 767px) {
-  .heading { font-size: 28px; }
-  .container { flex-direction: column; }
-  .site-block { max-width: 100%; }
-}
 `
+
+export const COMPONENT_CSS_RULES = {
+  heading: [['.heading', { padding: '12px', 'font-size': '36px', 'line-height': '1.25' }]],
+  paragraph: [['.paragraph', { padding: '12px', 'font-size': '16px', 'line-height': '1.7' }]],
+  quote: [['.quote', { padding: '16px 20px', 'border-left': '4px solid #6366f1', background: '#f8fafc', 'font-style': 'italic', 'font-size': '18px', 'line-height': '1.6' }]],
+  list: [
+    ['.list', { padding: '12px 28px', 'line-height': '1.7', 'font-size': '16px', margin: '0', 'list-style-type': 'disc' }],
+    ['.list li', { 'margin-bottom': '6px' }],
+  ],
+  'ordered-list': [
+    ['.ordered-list', { padding: '12px 28px', 'line-height': '1.7', 'font-size': '16px', margin: '0', 'list-style-type': 'decimal' }],
+    ['.ordered-list li', { 'margin-bottom': '6px' }],
+  ],
+  break: [['.break', { display: 'block', width: '100%', height: '16px', margin: '2px 0', border: 'none' }]],
+  link: [
+    ['.link', { color: '#4f46e5', 'text-decoration': 'underline', 'font-size': '16px', padding: '4px 8px', 'font-weight': '600', cursor: 'pointer' }],
+    ['.link:hover', { color: '#3730a3' }],
+  ],
+  strong: [['.strong', { 'font-weight': '800', 'font-size': '16px', padding: '4px 8px' }]],
+  em: [['.em', { 'font-style': 'italic', 'font-size': '16px', padding: '4px 8px' }]],
+  code: [['.code', { 'font-family': 'ui-monospace, monospace', background: '#f1f5f9', color: '#0f172a', padding: '4px 8px', 'font-size': '14px' }]],
+  span: [['.span', { 'font-size': '16px', padding: '4px 8px' }]],
+  image: [['.image', { width: '100%', height: 'auto', 'max-height': '400px', 'object-fit': 'cover' }]],
+  video: [['.video', { width: '100%', 'max-height': '380px', 'object-fit': 'contain', background: '#0f172a' }]],
+  audio: [['.audio', { width: '100%' }]],
+  iframe: [['.iframe', { width: '100%', 'min-height': '320px', border: '1px solid #cbd5e1' }]],
+  button: [['.button', { border: '0', padding: '12px 16px', background: '#4f46e5', color: 'white', font: 'inherit', cursor: 'pointer' }]],
+  input: [['.input', { width: '100%', padding: '12px 16px', border: '1px solid #cbd5e1', 'font-size': '16px', 'font-family': 'inherit', background: '#fff' }]],
+  textarea: [['.textarea', { width: '100%', 'min-height': '100px', padding: '12px 16px', border: '1px solid #cbd5e1', 'font-size': '16px', 'font-family': 'inherit', background: '#fff', resize: 'vertical' }]],
+  select: [['.select', { width: '100%', padding: '12px 16px', border: '1px solid #cbd5e1', 'font-size': '16px', 'font-family': 'inherit', background: '#fff', cursor: 'pointer' }]],
+  checkbox: [
+    ['.checkbox', { display: 'inline-flex', 'align-items': 'center', gap: '8px', 'font-size': '16px', cursor: 'pointer', padding: '8px' }],
+    ['.checkbox input[type="checkbox"]', { width: '18px', height: '18px', cursor: 'pointer' }],
+  ],
+  container: [['.container', { display: 'flex', 'flex-direction': 'column', 'flex-wrap': 'wrap', gap: '16px', padding: '24px', 'min-height': '120px', border: '1px solid #e2e8f0', background: 'transparent' }]],
+  table: [
+    ['.table', { width: '100%', 'border-collapse': 'collapse', 'font-size': '15px', margin: '8px 0' }],
+    ['.table th, .table td', { border: '1px solid #cbd5e1', padding: '10px 14px', 'text-align': 'left' }],
+    ['.table th', { background: '#f8fafc', 'font-weight': 'bold' }],
+    ['.table tr:nth-child(even)', { background: '#f8fafc' }],
+  ],
+  divider: [['.divider', { width: '100%', border: '0', 'border-top': '2px solid #e2e8f0', margin: '12px 0' }]],
+}
+
+export const COMPONENT_MOBILE_RULES = {
+  heading: [['.heading', { 'font-size': '28px' }]],
+  container: [['.container', { 'flex-direction': 'column' }]],
+}
+
+export function defaultLayoutForType(type) {
+  switch (type) {
+    case 'container':
+      return { ...DEFAULT_LAYOUT, gap: '16px', minHeight: '120px' }
+    case 'image':
+      return { ...DEFAULT_LAYOUT, width: '100%', maxHeight: '400px' }
+    case 'video':
+      return { ...DEFAULT_LAYOUT, width: '100%', maxHeight: '380px' }
+    case 'iframe':
+      return { ...DEFAULT_LAYOUT, width: '100%', minHeight: '320px' }
+    case 'textarea':
+      return { ...DEFAULT_LAYOUT, width: '100%', minHeight: '100px' }
+    case 'audio':
+    case 'input':
+    case 'select':
+    case 'table':
+    case 'divider':
+      return { ...DEFAULT_LAYOUT, width: '100%' }
+    case 'break':
+      return { ...DEFAULT_LAYOUT, width: '100%', height: '16px' }
+    case 'checkbox':
+      return { ...DEFAULT_LAYOUT, align: 'center', gap: '8px' }
+    default:
+      return { ...DEFAULT_LAYOUT }
+  }
+}
+
+export function buildCssForHtml(html = '', extraCss = '') {
+  const classes = new Set()
+  for (const match of html.matchAll(/class="([^"]+)"/g)) {
+    for (const token of match[1].split(/\s+/)) classes.add(token)
+  }
+  const rules = []
+  const mobileRules = []
+  for (const [type, list] of Object.entries(COMPONENT_CSS_RULES)) {
+    if (classes.has(type)) {
+      for (const [sel, decls] of list) {
+        const body = Object.entries(decls).map(([k, v]) => `${k}: ${v};`).join(' ')
+        rules.push(`${sel} { ${body} }`)
+      }
+    }
+  }
+  for (const [type, list] of Object.entries(COMPONENT_MOBILE_RULES)) {
+    if (classes.has(type)) {
+      for (const [sel, decls] of list) {
+        const body = Object.entries(decls).map(([k, v]) => `${k}: ${v};`).join(' ')
+        mobileRules.push(`  ${sel} { ${body} }`)
+      }
+    }
+  }
+  let out = BASE_CSS.trimEnd()
+  if (rules.length) out += '\n' + rules.join('\n')
+  if (mobileRules.length) out += `\n@media (max-width: 767px) {\n${mobileRules.join('\n')}\n}`
+  if (extraCss) out += '\n' + extraCss.trim()
+  return out + '\n'
+}
 
 export function createInitialCode() {
   return {
@@ -278,12 +348,29 @@ function createNode(document, element) {
 }
 
 const properties = { direction: 'flex-direction', justify: 'justify-content', align: 'align-items', gap: 'gap', width: 'width', height: 'height', minHeight: 'min-height', maxHeight: 'max-height', flexShrink: 'flex-shrink' }
-function updateRule(parent, selector, declarations) {
+const managedLayoutProps = new Set([...Object.values(properties), 'min-width', 'max-width', 'flex-wrap'])
+
+function syncLayoutRule(parent, selector, declarations) {
   let rule = parent.nodes?.find((node) => node.type === 'rule' && node.selector === selector)
-  if (!rule) { rule = postcss.rule({ selector }); parent.append(rule) }
-  for (const [prop, value] of Object.entries(declarations)) {
-    rule.walkDecls(prop, (decl) => decl.remove())
-    rule.append({ prop, value })
+  if (rule) {
+    rule.walkDecls((decl) => {
+      if (managedLayoutProps.has(decl.prop) || (decl.prop === 'display' && decl.value === 'flex')) {
+        decl.remove()
+      }
+    })
+  }
+  const entries = Object.entries(declarations)
+  if (entries.length > 0) {
+    if (!rule) {
+      rule = postcss.rule({ selector })
+      parent.append(rule)
+    }
+    for (const [prop, value] of entries) {
+      rule.walkDecls(prop, (decl) => decl.remove())
+      rule.append({ prop, value })
+    }
+  } else if (rule && rule.nodes.length === 0) {
+    rule.remove()
   }
 }
 
@@ -299,6 +386,7 @@ export function writeVisualCode(code, elements) {
   const existing = new Map(nodes.map((node, index) => [blockId(node, index), node]))
   const css = postcss.parse(code.css || BASE_CSS, { from: 'style.css' })
   const all = flattenTree(elements)
+  const usedTypes = new Set(all.map((element) => element.type))
   const retained = new Set(all.map((element) => element.id))
   const removedSelectors = new Set()
   for (const [id, node] of existing) if (!retained.has(id)) {
@@ -321,8 +409,64 @@ export function writeVisualCode(code, elements) {
   })
   let media = css.nodes.findLast((node) => node.type === 'atrule' && node.name === 'media' && node.params === '(max-width: 767px)')
   if (!media) { media = postcss.atRule({ name: 'media', params: '(max-width: 767px)' }); css.append(media) }
+
+  // Prune unused component rules and inject used component rules on demand
+  const unusedClassSelectors = new Set()
+  for (const [type, list] of Object.entries(COMPONENT_CSS_RULES)) {
+    if (!usedTypes.has(type)) {
+      for (const [sel] of list) unusedClassSelectors.add(sel)
+    }
+  }
+  const unusedMobileSelectors = new Set(['.site-block'])
+  for (const [type, list] of Object.entries(COMPONENT_MOBILE_RULES)) {
+    if (!usedTypes.has(type)) {
+      for (const [sel] of list) unusedMobileSelectors.add(sel)
+    }
+  }
+  css.nodes?.forEach((node) => {
+    if (node.type === 'rule' && (unusedClassSelectors.has(node.selector) || (node.selector === '[data-site-root]' && root.classList.contains('site')))) {
+      node.remove()
+    }
+  })
+  media.nodes?.forEach((node) => {
+    if (node.type === 'rule' && unusedMobileSelectors.has(node.selector)) {
+      node.remove()
+    }
+  })
+
+  const anchorNode = css.nodes?.find((node) =>
+    (node.type === 'rule' && (node.selector.startsWith('#') || node.selector.startsWith('[data-block-id'))) ||
+    (node.type === 'atrule' && node.name === 'media') ||
+    (node.type === 'comment' && node.text.startsWith('UEBIT-GLOBAL:'))
+  )
+  for (const [type, list] of Object.entries(COMPONENT_CSS_RULES)) {
+    if (!usedTypes.has(type)) continue
+    for (const [sel, decls] of list) {
+      const exists = css.nodes?.some((node) => node.type === 'rule' && node.selector === sel)
+      if (!exists) {
+        const rule = postcss.rule({ selector: sel })
+        for (const [prop, value] of Object.entries(decls)) rule.append({ prop, value })
+        if (anchorNode && anchorNode.parent === css) css.insertBefore(anchorNode, rule)
+        else css.append(rule)
+      }
+    }
+  }
+  for (const [type, list] of Object.entries(COMPONENT_MOBILE_RULES)) {
+    if (!usedTypes.has(type)) continue
+    for (const [sel, decls] of list) {
+      const exists = media.nodes?.some((node) => node.type === 'rule' && node.selector === sel)
+      if (!exists) {
+        const rule = postcss.rule({ selector: sel })
+        for (const [prop, value] of Object.entries(decls)) rule.append({ prop, value })
+        media.prepend(rule)
+      }
+    }
+  }
+
   for (const property of [...root.style]) if (property.startsWith('grid-') || property === 'display') root.style.removeProperty(property)
-  updateRule(css, '[data-site-root]', { display: 'flex', 'flex-direction': 'column', gap: '16px', 'min-height': '480px' })
+  if (!root.classList.contains('site')) {
+    syncLayoutRule(css, '[data-site-root]', { display: 'flex', 'flex-direction': 'column', gap: '16px', 'min-height': '480px' })
+  }
   const place = (siblings, parent) => {
     for (const element of siblings) {
       const node = existing.get(element.id) ?? createNode(document, element)
@@ -333,33 +477,54 @@ export function writeVisualCode(code, elements) {
       node.setAttribute('data-mobile-custom', String(Boolean(element.mobileCustomized)))
       parent.append(node)
       const selector = node.id ? `#${CSS.escape(node.id)}` : `[data-block-id="${CSS.escape(element.id)}"]`
+      if (node.id) {
+        const blockSelector = `[data-block-id="${CSS.escape(element.id)}"]`
+        css.walkRules((rule) => { if (rule.selector === blockSelector) rule.remove() })
+      }
       for (const prop of [...node.style]) if (prop.startsWith('grid-') || Object.values(properties).includes(prop) || (element.type === 'container' && prop === 'display' && node.style.display !== 'none')) node.style.removeProperty(prop)
-      const declarations = (layout) => Object.fromEntries(Object.entries(properties).map(([key, prop]) => [prop, layout[key] ?? DEFAULT_LAYOUT[key]]))
-      updateRule(css, selector, { ...declarations(element.layout), 'min-width': '0', 'max-width': '100%', ...(element.type === 'container' ? { display: 'flex', 'flex-wrap': 'wrap' } : {}) })
-      updateRule(media, selector, declarations(mobileLayout(element)))
+      const baseLayout = defaultLayoutForType(element.type)
+      const desktopDecls = {}
+      for (const [key, prop] of Object.entries(properties)) {
+        const val = element.layout?.[key] ?? baseLayout[key]
+        if (val !== baseLayout[key]) desktopDecls[prop] = val
+      }
+      syncLayoutRule(css, selector, desktopDecls)
+
+      const mob = mobileLayout(element)
+      const mobileDecls = {}
+      for (const [key, prop] of Object.entries(properties)) {
+        const mobVal = mob[key] ?? baseLayout[key]
+        const inherited = element.type === 'container' && key === 'direction' && !desktopDecls[prop]
+          ? 'column'
+          : (element.layout?.[key] ?? baseLayout[key])
+        if (mobVal !== inherited) mobileDecls[prop] = mobVal
+      }
+      syncLayoutRule(media, selector, mobileDecls)
       if (element.type === 'container') place(element.children, node)
     }
   }
   place(elements, root)
-  media.remove(); css.append(media)
+  media.remove()
+  if (media.nodes && media.nodes.length > 0) css.append(media)
   return { html: '<!doctype html>\n' + document.documentElement.outerHTML, css: css.toString(), js: syncActionScript(code.js, document) }
 }
 
-export function updateElementContent(code, id, content) {
+export function updateElementContent(code, id, patch) {
   const { document, nodes } = parseHTML(code.html)
   let node = nodes.find((candidate, index) => blockId(candidate, index) === id)
   if (!node) throw new Error('Selecione um elemento da página para editar.')
   const element = findNode(readCode(code), id)
+  const content = { ...element, ...patch }
   validateContent(element.type, content)
 
-  if (content.name !== undefined) {
-    const trimmedName = (content.name || '').trim()
+  if (patch.name !== undefined) {
+    const trimmedName = (patch.name || '').trim()
     if (trimmedName) node.setAttribute('data-name', trimmedName)
     else node.removeAttribute('data-name')
   }
 
   let cssText = code.css
-  const requestedId = (content.htmlId !== undefined ? content.htmlId : content.id)?.trim()
+  const requestedId = (patch.htmlId !== undefined ? patch.htmlId : patch.id)?.trim()
   if (requestedId !== undefined) {
     const oldNodeId = node.id || ''
     const oldBlockId = node.getAttribute('data-block-id') || id
