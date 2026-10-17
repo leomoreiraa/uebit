@@ -11,6 +11,13 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
     tagName: element.tagName ?? '',
     text: '',
     src: '',
+    poster: '',
+    controls: true,
+    autoplay: false,
+    loop: false,
+    muted: false,
+    playsInline: true,
+    hidden: false,
     alt: '',
     placeholder: '',
     href: '',
@@ -54,7 +61,8 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
 
   // Aplica as alterações em TEMPO REAL imediatamente
   const change = (key, value) => {
-    const next = { ...content, [key]: value }
+    const patch = typeof key === 'object' && key !== null ? key : { [key]: value }
+    const next = { ...content, ...patch }
     setContent(next)
     try {
       onUpdate(element.id, next)
@@ -98,7 +106,7 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
     change('htmlId', trimmed)
   }
 
-  async function loadImage(event) {
+  async function loadImage(event, targetField = 'src') {
     const file = event.target.files?.[0]
     if (!file) return
     if (!/^image\/(png|jpe?g|gif|webp|avif|svg\+xml)$/.test(file.type)) {
@@ -111,6 +119,35 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
         const reader = new FileReader()
         reader.onload = () => resolve(reader.result)
         reader.onerror = () => reject(new Error('Não foi possível abrir essa imagem.'))
+        reader.readAsDataURL(file)
+      })
+      change(targetField, src)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoadingImage(false)
+    }
+  }
+
+  async function loadMediaFile(event, mediaType) {
+    const file = event.target.files?.[0]
+    if (!file) return
+    const validVideo = /^video\/(mp4|webm|ogg|quicktime)$/i.test(file.type)
+    const validAudio = /^audio\/(mpeg|mp3|wav|x-wav|ogg|webm|aac|mp4|flac)$/i.test(file.type)
+    if (mediaType === 'video' && !validVideo) {
+      setError('Escolha um arquivo de vídeo MP4, WebM ou OGG.')
+      return
+    }
+    if (mediaType === 'audio' && !validAudio) {
+      setError('Escolha um arquivo de áudio MP3, WAV, OGG ou AAC.')
+      return
+    }
+    setLoadingImage(true)
+    try {
+      const src = await new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = () => reject(new Error('Não foi possível carregar o arquivo de mídia.'))
         reader.readAsDataURL(file)
       })
       change('src', src)
@@ -204,6 +241,16 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
                 Enter ou clique fora para salvar
               </span>
             )}
+          </label>
+          <label className="flex cursor-pointer items-center justify-between gap-2 rounded-xl border border-purple-200 bg-purple-50/70 px-3 py-2 text-xs font-bold text-purple-950">
+            <span>Iniciar camada oculta (exibir via JS/Blocos)</span>
+            <input
+              type="checkbox"
+              aria-label="Iniciar camada oculta"
+              checked={Boolean(content.hidden)}
+              onChange={(event) => change('hidden', event.target.checked)}
+              className="size-4 rounded accent-purple-600"
+            />
           </label>
         </div>
 
@@ -356,15 +403,199 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
           </label>
         )}
 
-        {['video', 'audio', 'iframe'].includes(element.type) && (
+        {element.type === 'video' && (
+          <div className="space-y-3 rounded-xl border border-purple-100 bg-purple-50/40 p-3">
+            <label className="block text-xs font-bold text-slate-700">
+              Endereço do vídeo (URL)
+              <input
+                type="text"
+                aria-label="Endereço do vídeo"
+                value={(content.src ?? '').startsWith('data:') ? '' : (content.src ?? '')}
+                onChange={(event) => change('src', event.target.value)}
+                placeholder={(content.src ?? '').startsWith('data:') ? 'Vídeo enviado do computador' : 'https://... (.mp4, .webm)'}
+                className={`${fieldClass} mt-1`}
+              />
+            </label>
+            <label className="block text-xs font-bold text-slate-700">
+              Enviar vídeo do computador
+              <input
+                type="file"
+                accept="video/mp4,video/webm,video/ogg"
+                onChange={(event) => loadMediaFile(event, 'video')}
+                className="mt-1.5 block w-full text-xs text-slate-500 file:mr-2 file:cursor-pointer file:rounded-lg file:border-0 file:bg-purple-100 file:px-3 file:py-1.5 file:font-bold file:text-purple-800 hover:file:bg-purple-200"
+              />
+            </label>
+            <label className="block text-xs font-bold text-slate-700">
+              Imagem de capa (Poster · opcional)
+              <div className="mt-1 flex gap-1.5">
+                <input
+                  type="text"
+                  aria-label="Imagem de capa do vídeo"
+                  value={(content.poster ?? '').startsWith('data:') ? '' : (content.poster ?? '')}
+                  onChange={(event) => change('poster', event.target.value)}
+                  placeholder={(content.poster ?? '').startsWith('data:') ? 'Capa enviada do computador' : 'https://... (.jpg, .png)'}
+                  className={fieldClass}
+                />
+                {content.poster && (
+                  <button
+                    type="button"
+                    onClick={() => change('poster', '')}
+                    className="shrink-0 rounded-lg border border-slate-200 bg-white px-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100"
+                  >
+                    Limpar
+                  </button>
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/svg+xml"
+                onChange={(event) => loadImage(event, 'poster')}
+                className="mt-1.5 block w-full text-xs text-slate-500 file:mr-2 file:cursor-pointer file:rounded-lg file:border-0 file:bg-indigo-50 file:px-2.5 file:py-1 file:font-semibold file:text-indigo-700"
+              />
+            </label>
+            <label className="block text-xs font-bold text-slate-700">
+              Ajuste do quadro de vídeo
+              <select
+                aria-label="Ajuste do vídeo"
+                value={content.fit || 'cover'}
+                onChange={(event) => change('fit', event.target.value)}
+                className={`${fieldClass} mt-1`}
+              >
+                <option value="cover">Preencher área (cover)</option>
+                <option value="contain">Mostrar vídeo inteiro (contain)</option>
+              </select>
+            </label>
+            <div className="space-y-2 border-t border-purple-100 pt-2.5">
+              <span className="block text-xs font-black uppercase tracking-wider text-purple-900">
+                Opções do Player de Vídeo
+              </span>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={content.controls !== false}
+                  onChange={(event) => change('controls', event.target.checked)}
+                  className="size-4 rounded accent-purple-600"
+                />
+                Mostrar barra de controles (play, volume, tela cheia)
+              </label>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={Boolean(content.autoplay)}
+                  onChange={(event) => {
+                    const autoplay = event.target.checked
+                    change(autoplay ? { autoplay: true, muted: true } : { autoplay: false })
+                  }}
+                  className="size-4 rounded accent-purple-600"
+                />
+                Reproduzir automaticamente (autoplay · ativa mudo)
+              </label>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={Boolean(content.loop)}
+                  onChange={(event) => change('loop', event.target.checked)}
+                  className="size-4 rounded accent-purple-600"
+                />
+                Repetir vídeo continuamente (loop)
+              </label>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={Boolean(content.muted)}
+                  onChange={(event) => change('muted', event.target.checked)}
+                  className="size-4 rounded accent-purple-600"
+                />
+                Iniciar sem som (mudo)
+              </label>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={content.playsInline !== false}
+                  onChange={(event) => change('playsInline', event.target.checked)}
+                  className="size-4 rounded accent-purple-600"
+                />
+                Tocar direto na página no celular (playsinline)
+              </label>
+            </div>
+          </div>
+        )}
+
+        {element.type === 'audio' && (
+          <div className="space-y-3 rounded-xl border border-purple-100 bg-purple-50/40 p-3">
+            <label className="block text-xs font-bold text-slate-700">
+              Endereço do áudio (URL)
+              <input
+                type="text"
+                aria-label="Endereço do áudio"
+                value={(content.src ?? '').startsWith('data:') ? '' : (content.src ?? '')}
+                onChange={(event) => change('src', event.target.value)}
+                placeholder={(content.src ?? '').startsWith('data:') ? 'Áudio enviado do computador' : 'https://... (.mp3, .wav, .ogg)'}
+                className={`${fieldClass} mt-1`}
+              />
+            </label>
+            <label className="block text-xs font-bold text-slate-700">
+              Enviar áudio do computador
+              <input
+                type="file"
+                accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/aac,audio/webm,audio/mp4"
+                onChange={(event) => loadMediaFile(event, 'audio')}
+                className="mt-1.5 block w-full text-xs text-slate-500 file:mr-2 file:cursor-pointer file:rounded-lg file:border-0 file:bg-purple-100 file:px-3 file:py-1.5 file:font-bold file:text-purple-800 hover:file:bg-purple-200"
+              />
+            </label>
+            <div className="space-y-2 border-t border-purple-100 pt-2.5">
+              <span className="block text-xs font-black uppercase tracking-wider text-purple-900">
+                Opções do Player de Áudio
+              </span>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={content.controls !== false}
+                  onChange={(event) => change('controls', event.target.checked)}
+                  className="size-4 rounded accent-purple-600"
+                />
+                Mostrar player de controles na página
+              </label>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={Boolean(content.autoplay)}
+                  onChange={(event) => change('autoplay', event.target.checked)}
+                  className="size-4 rounded accent-purple-600"
+                />
+                Tocar automaticamente ao abrir (autoplay)
+              </label>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={Boolean(content.loop)}
+                  onChange={(event) => change('loop', event.target.checked)}
+                  className="size-4 rounded accent-purple-600"
+                />
+                Repetir música/áudio em loop infinito
+              </label>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={Boolean(content.muted)}
+                  onChange={(event) => change('muted', event.target.checked)}
+                  className="size-4 rounded accent-purple-600"
+                />
+                Iniciar silenciado (mudo)
+              </label>
+            </div>
+          </div>
+        )}
+
+        {element.type === 'iframe' && (
           <label className="block text-xs font-medium text-slate-600">
-            {element.type === 'video' ? 'Endereço do vídeo (URL)' : element.type === 'audio' ? 'Endereço do áudio (URL)' : 'Endereço do iframe incorporado (URL)'}
+            Endereço do iframe incorporado (URL)
             <input
               type="text"
-              aria-label={element.type === 'video' ? 'Endereço do vídeo' : element.type === 'audio' ? 'Endereço do áudio' : 'Endereço da página'}
+              aria-label="Endereço da página"
               value={content.src ?? ''}
               onChange={(event) => change('src', event.target.value)}
-              placeholder={element.type === 'video' ? 'https://... (.mp4, WebM)' : element.type === 'audio' ? 'https://... (.mp3, OGG, WAV)' : 'https://exemplo.com'}
+              placeholder="https://exemplo.com"
               className={`${fieldClass} mt-1`}
             />
           </label>

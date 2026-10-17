@@ -28,6 +28,13 @@ export function readContent(node) {
         ? (node.value ?? node.textContent ?? '')
         : (node.textContent ?? '')
 
+  const hasAttr = (attr) => (
+    typeof node.hasAttribute === 'function'
+      ? node.hasAttribute(attr)
+      : Boolean(typeof node.getAttribute === 'function' && node.getAttribute(attr) !== null)
+  )
+  const isMedia = node.tagName === 'VIDEO' || node.tagName === 'AUDIO'
+
   return {
     tagName: node.tagName?.toLowerCase() ?? 'div',
     name: (typeof node.getAttribute === 'function' ? node.getAttribute('data-name') : null) ?? '',
@@ -35,13 +42,36 @@ export function readContent(node) {
     text,
     headingLevel: /^H[1-6]$/.test(node.tagName) ? node.tagName.toLowerCase() : 'h1',
     src: (typeof node.getAttribute === 'function' ? node.getAttribute('src') : null) ?? '',
+    poster: (typeof node.getAttribute === 'function' ? node.getAttribute('poster') : null) ?? '',
+    controls: isMedia ? hasAttr('controls') : true,
+    autoplay: isMedia ? hasAttr('autoplay') : false,
+    loop: isMedia ? hasAttr('loop') : false,
+    muted: isMedia ? hasAttr('muted') : false,
+    playsInline: node.tagName === 'VIDEO' ? hasAttr('playsinline') : true,
+    hidden: Boolean(hasAttr('hidden') || node.style?.display === 'none'),
     alt: (typeof node.getAttribute === 'function' ? node.getAttribute('alt') : null) ?? '',
     placeholder: (typeof node.getAttribute === 'function' ? node.getAttribute('placeholder') : null) ?? '',
     href: (typeof node.getAttribute === 'function' ? node.getAttribute('href') : null) ?? '',
     checked: isCheckbox ? Boolean(node.querySelector('input[type="checkbox"]')?.hasAttribute?.('checked') || node.querySelector('input[type="checkbox"]')?.checked) : false,
-    fit: node.style?.objectFit || 'cover',
-    appearance: { color: node.style?.color, backgroundColor: node.style?.backgroundColor, fontSize: node.style?.fontSize,
-      ...Object.fromEntries(BOX_PROPERTIES.filter((property) => node.style?.[property]).map((property) => [property, node.style[property]])) },
+    fit: node.style?.objectFit || (node.tagName === 'VIDEO' ? 'contain' : 'cover'),
+    appearance: {
+      color: node.style?.color,
+      backgroundColor: node.style?.backgroundColor,
+      backgroundImage: node.style?.backgroundImage,
+      backgroundSize: node.style?.backgroundSize,
+      backgroundPosition: node.style?.backgroundPosition,
+      backgroundRepeat: node.style?.backgroundRepeat,
+      position: node.style?.position,
+      top: node.style?.top,
+      bottom: node.style?.bottom,
+      left: node.style?.left,
+      right: node.style?.right,
+      zIndex: node.style?.zIndex,
+      display: node.style?.display,
+      opacity: node.style?.opacity,
+      fontSize: node.style?.fontSize,
+      ...Object.fromEntries(BOX_PROPERTIES.filter((property) => node.style?.[property]).map((property) => [property, node.style[property]])),
+    },
     action: (typeof node.getAttribute === 'function' ? node.getAttribute('data-site-action') : null) ?? (node.tagName === 'A' ? 'link' : 'none'),
     actionValue: (typeof node.getAttribute === 'function' ? (node.getAttribute('data-site-value') ?? node.getAttribute('href')) : null) ?? '',
     newTab: (typeof node.getAttribute === 'function' ? (node.getAttribute('data-site-new-tab') === 'true' || node.getAttribute('target') === '_blank') : false),
@@ -66,7 +96,30 @@ export function validateContent(type, content) {
       throw new Error('Use uma imagem enviada do computador ou um endereço http/https.')
     }
   }
-  if (['video', 'audio', 'iframe'].includes(type)) {
+  if (type === 'video') {
+    if (!content.src || !content.src.trim()) throw new Error('Informe o endereço do arquivo ou página.')
+    const source = content.src.trim()
+    const protocol = urlProtocol(source)
+    if (!['http:', 'https:'].includes(protocol) && !/^data:video\/(mp4|webm|ogg|quicktime)[;,]/i.test(source)) {
+      throw new Error('Use um vídeo enviado do computador (.mp4, .webm, .ogg) ou um endereço http/https.')
+    }
+    if (content.poster && content.poster.trim()) {
+      const poster = content.poster.trim()
+      const posterProtocol = urlProtocol(poster)
+      if (!['http:', 'https:'].includes(posterProtocol) && !/^data:image\/(png|jpe?g|gif|webp|avif|svg\+xml)[;,]/i.test(poster)) {
+        throw new Error('Use uma imagem de capa válida (http/https ou enviada do computador).')
+      }
+    }
+  }
+  if (type === 'audio') {
+    if (!content.src || !content.src.trim()) throw new Error('Informe o endereço do arquivo ou página.')
+    const source = content.src.trim()
+    const protocol = urlProtocol(source)
+    if (!['http:', 'https:'].includes(protocol) && !/^data:audio\/(mpeg|mp3|wav|x-wav|ogg|webm|aac|mp4|flac)[;,]/i.test(source)) {
+      throw new Error('Use um áudio enviado do computador (.mp3, .wav, .ogg) ou um endereço http/https.')
+    }
+  }
+  if (type === 'iframe') {
     if (!content.src || !content.src.trim()) throw new Error('Informe o endereço do arquivo ou página.')
   }
   if (type === 'link') {

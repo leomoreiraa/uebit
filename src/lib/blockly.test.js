@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { registerHooks } from 'node:module'
 import vm from 'node:vm'
 import { applyBlockCode } from './block-code.js'
+import { TEMPLATES } from '../data/templates.js'
 
 // Blockly's Node entry requires optional jsdom. Its browser entry supports
 // headless workspaces without installing or mocking the Blockly implementation.
@@ -289,3 +290,57 @@ test('toggle text, enable/disable and magic recipes generate valid executable co
   }
   assert.match(generated(ws), /uebitWriteNumber/)
 })
+
+test('menu pinning, layer z-index, background image, opacity and media control blocks execute cleanly', (t) => {
+  const ws = workspace(t)
+  const pin = block(ws, 'site_pin_element', { TARGET: 'panel-id', POSITION: 'sticky-top' })
+  const layer = block(ws, 'site_layer_order', { TARGET: 'panel-id', LAYER: '999' })
+  pin.nextConnection.connect(layer.previousConnection)
+  const bg = block(ws, 'site_bg_image_element', { TARGET: 'panel-id' })
+  connect(bg, 'URL', text(ws, 'https://example.com/hero.jpg'))
+  layer.nextConnection.connect(bg.previousConnection)
+  const op = block(ws, 'site_opacity_element', { TARGET: 'panel-id' })
+  connect(op, 'OPACITY', block(ws, 'math_number', { NUM: 80 }))
+  bg.nextConnection.connect(op.previousConnection)
+  const media = block(ws, 'site_media_control', { TARGET: 'button-id', ACTION: 'play' })
+  op.nextConnection.connect(media.previousConnection)
+
+  const env = dom()
+  const panel = env.node('panel-id')
+  const videoNode = env.node('button-id')
+  videoNode.tagName = 'VIDEO'
+  let played = false
+  videoNode.play = () => { played = true; return Promise.resolve() }
+
+  vm.runInContext(generated(ws), env.context)
+  assert.equal(panel.style.position, 'sticky')
+  assert.equal(panel.style.top, '0px')
+  assert.equal(panel.style.zIndex, '999')
+  assert.equal(panel.style.backgroundImage, 'url("https://example.com/hero.jpg")')
+  assert.equal(panel.style.backgroundSize, 'cover')
+  assert.equal(panel.style.opacity, '0.8')
+  assert.equal(played, true)
+})
+
+test('all built-in templates deserialize cleanly in Blockly with valid HTML targets', (t) => {
+  for (const tpl of TEMPLATES) {
+    if (!tpl.blockProject?.workspace) continue
+    const targets = []
+    const tagRegex = /<([a-zA-Z0-9-]+)\s+([^>]+)>/g
+    let match
+    while ((match = tagRegex.exec(tpl.code.html)) !== null) {
+      const attrs = match[2]
+      const idMatch = attrs.match(/data-block-id="([^"]+)"/)
+      if (!idMatch) continue
+      const classes = (attrs.match(/class="([^"]+)"/)?.[1] || '').split(/\s+/)
+      const type = classes.find((c) => c !== 'site-block') || 'container'
+      targets.push({ id: idMatch[1], type, label: idMatch[1] })
+    }
+    const ws = workspace(t, targets)
+    Blockly.serialization.workspaces.load(tpl.blockProject.workspace, ws)
+    const code = javascriptGenerator.workspaceToCode(ws)
+    assert.ok(!code.includes('__none__'), `Template ${tpl.id} has unresolved target`)
+    assert.equal(code, tpl.blockProject.generated)
+  }
+})
+

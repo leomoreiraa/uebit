@@ -428,6 +428,26 @@ Blockly.defineBlocksWithJsonArray([
     style: 'uebit_events',
     tooltip: 'Executa ações quando uma tecla específica do teclado for pressionada.',
   },
+  {
+    type: 'site_on_scroll',
+    message0: 'quando rolar a página %1 faça %2',
+    args0: [
+      {
+        type: 'field_dropdown',
+        name: 'DIRECTION',
+        options: [
+          ['para baixo ⬇️', 'down'],
+          ['para cima ⬆️', 'up'],
+          ['após descer 100px 📌', 'past100'],
+          ['de volta ao topo 🏠', 'top'],
+          ['em qualquer direção ↕️', 'any'],
+        ],
+      },
+      { type: 'input_statement', name: 'DO' },
+    ],
+    style: 'uebit_events',
+    tooltip: 'Executa ações quando o visitante rolar a página (ideal para fixar menus ou exibir botões).',
+  },
 
   // Minha página (DOM & Estilo)
   {
@@ -786,6 +806,98 @@ Blockly.defineBlocksWithJsonArray([
     tooltip: 'Ativa ou desativa um botão ou campo para impedir ou liberar cliques.',
   },
   {
+    type: 'site_bg_image_element',
+    message0: 'mudar imagem de fundo de %1 para URL %2',
+    args0: [
+      { type: 'field_site_target', name: 'TARGET' },
+      { type: 'input_value', name: 'URL', check: 'String' },
+    ],
+    inputsInline: true,
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_page',
+    tooltip: 'Define uma imagem de fundo (background-image) preenchendo o bloco ou container.',
+  },
+  {
+    type: 'site_pin_element',
+    message0: 'fixar %1 %2',
+    args0: [
+      { type: 'field_site_target', name: 'TARGET' },
+      {
+        type: 'field_dropdown',
+        name: 'POSITION',
+        options: [
+          ['no topo ao rolar (menu fixo) 📌', 'sticky-top'],
+          ['flutuando no topo da tela ⬆️', 'fixed-top'],
+          ['flutuando na base da tela ⬇️', 'fixed-bottom'],
+          ['no canto inferior direito 💬', 'fixed-corner'],
+          ['soltar na posição normal 🔓', 'static'],
+        ],
+      },
+    ],
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_page',
+    tooltip: 'Fixa menus no topo durante a rolagem, cria barras flutuantes ou solta o elemento.',
+  },
+  {
+    type: 'site_layer_order',
+    message0: 'colocar camada de %1 %2',
+    args0: [
+      { type: 'field_site_target', name: 'TARGET' },
+      {
+        type: 'field_dropdown',
+        name: 'LAYER',
+        options: [
+          ['na frente de tudo (topo) ⬆️', '999'],
+          ['acima das outras 🔼', '50'],
+          ['na posição normal ⏹️', ''],
+          ['atrás das outras 🔽', '-1'],
+        ],
+      },
+    ],
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_page',
+    tooltip: 'Controla qual camada fica por cima ou por baixo das outras (z-index).',
+  },
+  {
+    type: 'site_opacity_element',
+    message0: 'mudar opacidade de %1 para %2 %%',
+    args0: [
+      { type: 'field_site_target', name: 'TARGET' },
+      { type: 'input_value', name: 'OPACITY', check: 'Number' },
+    ],
+    inputsInline: true,
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_page',
+    tooltip: 'Ajusta a transparência da camada entre 0% (invisível) e 100% (totalmente visível).',
+  },
+  {
+    type: 'site_media_control',
+    message0: '%1 mídia (vídeo ou áudio) %2',
+    args0: [
+      {
+        type: 'field_dropdown',
+        name: 'ACTION',
+        options: [
+          ['reproduzir (play) ▶️', 'play'],
+          ['pausar ⏸️', 'pause'],
+          ['alternar play/pausa ⏯️', 'toggle'],
+          ['reiniciar do começo ⏮️', 'restart'],
+          ['silenciar (mudo) 🔇', 'mute'],
+          ['ativar som 🔊', 'unmute'],
+        ],
+      },
+      { type: 'field_site_target', name: 'TARGET' },
+    ],
+    previousStatement: null,
+    nextStatement: null,
+    style: 'uebit_sound',
+    tooltip: 'Controla a reprodução de elementos de vídeo (<video>) ou áudio (<audio>) da página.',
+  },
+  {
     type: 'site_storage_save',
     message0: 'salvar %1 na memória como %2',
     args0: [
@@ -900,6 +1012,19 @@ javascriptGenerator.forBlock.site_key_press = (block, generator) => {
   const key = block.getFieldValue('KEY')
   const condition = key === 'ANY' ? 'true' : `event.key === ${JSON.stringify(key)}`
   return `document.addEventListener('keydown', (event) => {\nif (${condition}) {\n__uebitLoopBudget = 10000;\n${generator.statementToCode(block, 'DO')}\n}\n});\n`
+}
+
+javascriptGenerator.forBlock.site_on_scroll = (block, generator) => {
+  const dir = block.getFieldValue('DIRECTION')
+  const body = generator.statementToCode(block, 'DO')
+  const cond = {
+    down: 'currentY > lastY',
+    up: 'currentY < lastY',
+    past100: 'currentY > 100',
+    top: 'currentY <= 10',
+    any: 'true',
+  }[dir] || 'true'
+  return `(() => {\nlet lastY = window.scrollY || 0;\nwindow.addEventListener('scroll', () => {\nconst currentY = window.scrollY || document.documentElement.scrollTop || 0;\nif (${cond}) {\n__uebitLoopBudget = 10000;\n${body}}\nlastY = currentY;\n}, { passive: true });\n})();\n`
 }
 
 javascriptGenerator.forBlock.site_text_element = (block, generator) =>
@@ -1277,6 +1402,38 @@ javascriptGenerator.forBlock.site_enable_disable_element = (block) => {
   return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => {\nnode.disabled = ${disable};\nnode.style.pointerEvents = ${disable ? "'none'" : "''"};\nnode.style.opacity = ${disable ? "'0.5'" : "''"};\n});\n`
 }
 
+javascriptGenerator.forBlock.site_bg_image_element = (block, generator) => {
+  const url = generator.valueToCode(block, 'URL', Order.NONE) || "''"
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => {\nconst u = String(${url}).trim();\nif (u) {\nnode.style.backgroundImage = 'url("' + u.replace(/"/g, '%22') + '")';\nnode.style.backgroundSize = node.style.backgroundSize || 'cover';\nnode.style.backgroundPosition = node.style.backgroundPosition || 'center';\nnode.style.backgroundRepeat = node.style.backgroundRepeat || 'no-repeat';\n} else {\nnode.style.backgroundImage = '';\n}\n});\n`
+}
+
+javascriptGenerator.forBlock.site_pin_element = (block) => {
+  const pos = block.getFieldValue('POSITION')
+  const styles = {
+    'sticky-top': `{ position: 'sticky', top: '0px', bottom: '', left: '', right: '', zIndex: '50' }`,
+    'fixed-top': `{ position: 'fixed', top: '0px', bottom: '', left: '0px', right: '0px', zIndex: '50' }`,
+    'fixed-bottom': `{ position: 'fixed', bottom: '0px', top: '', left: '0px', right: '0px', zIndex: '50' }`,
+    'fixed-corner': `{ position: 'fixed', bottom: '20px', right: '20px', top: '', left: '', zIndex: '60' }`,
+    static: `{ position: '', top: '', bottom: '', left: '', right: '' }`,
+  }[pos] || `{ position: '' }`
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => { Object.assign(node.style, ${styles}); });\n`
+}
+
+javascriptGenerator.forBlock.site_layer_order = (block) => {
+  const z = block.getFieldValue('LAYER')
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => {\nnode.style.zIndex = ${JSON.stringify(z)};\nif (${JSON.stringify(z)} && (!node.style.position || node.style.position === 'static')) node.style.position = 'relative';\n});\n`
+}
+
+javascriptGenerator.forBlock.site_opacity_element = (block, generator) => {
+  const val = generator.valueToCode(block, 'OPACITY', Order.NONE) || '100'
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => { node.style.opacity = String(Math.max(0, Math.min(100, Number(${val}) || 0)) / 100); });\n`
+}
+
+javascriptGenerator.forBlock.site_media_control = (block) => {
+  const action = block.getFieldValue('ACTION')
+  return `document.querySelectorAll(${JSON.stringify(targetSelector(block))}).forEach(node => {\nconst media = (node.tagName === 'VIDEO' || node.tagName === 'AUDIO') ? node : node.querySelector?.('video, audio');\nif (!media) return;\nswitch (${JSON.stringify(action)}) {\ncase 'play': media.play?.().catch?.(() => {}); break;\ncase 'pause': media.pause?.(); break;\ncase 'toggle': if (media.paused) media.play?.().catch?.(() => {}); else media.pause?.(); break;\ncase 'restart': media.currentTime = 0; media.play?.().catch?.(() => {}); break;\ncase 'mute': media.muted = true; break;\ncase 'unmute': media.muted = false; break;\n}\n});\n`
+}
+
 javascriptGenerator.forBlock.site_storage_save = (block, generator) => {
   const val = generator.valueToCode(block, 'VALUE', Order.NONE) || "''"
   const key = generator.valueToCode(block, 'KEY', Order.NONE) || "'recorde'"
@@ -1315,6 +1472,7 @@ export const toolbox = {
       block('site_mouse_leave'),
       block('site_input_change'),
       block('site_key_press'),
+      block('site_on_scroll'),
     ]),
     category('Jogos & Placar', 'uebit_games', '🎮', [
       block('site_add_number_element', { inputs: { AMOUNT: number(1) } }),
@@ -1355,10 +1513,14 @@ export const toolbox = {
     ]),
     category('Aparência', 'uebit_page', '▦', [
       block('site_background_element'),
+      block('site_bg_image_element', { inputs: { URL: { shadow: { type: 'text', fields: { TEXT: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1200' } } } } }),
       block('site_random_background_element'),
       block('site_color_element'),
       block('site_show_hide_element'),
       block('site_is_visible'),
+      block('site_pin_element'),
+      block('site_layer_order'),
+      block('site_opacity_element', { inputs: { OPACITY: number(100) } }),
       block('site_enable_disable_element'),
       block('site_animate_element'),
       block('site_add_remove_class', { inputs: { CLASS: { shadow: { type: 'text', fields: { TEXT: 'destaque' } } } } }),
@@ -1367,6 +1529,7 @@ export const toolbox = {
       block('site_message', { inputs: textInput('Parabéns! Você clicou no botão! 🎉') }),
     ]),
     category('Sons & Áudio', 'uebit_sound', '♫', [
+      block('site_media_control'),
       block('site_play_sound'),
       block('site_play_tone'),
     ]),

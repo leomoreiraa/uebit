@@ -189,10 +189,19 @@ function createNode(document, element) {
     node.setAttribute('alt', element.alt || '')
   } else if (element.type === 'video') {
     node.setAttribute('src', element.src || '')
-    node.setAttribute('controls', '')
+    if (element.controls !== false) node.setAttribute('controls', '')
+    if (element.autoplay) node.setAttribute('autoplay', '')
+    if (element.loop) node.setAttribute('loop', '')
+    if (element.muted) node.setAttribute('muted', '')
+    if (element.playsInline !== false) node.setAttribute('playsinline', '')
+    if (element.poster) node.setAttribute('poster', element.poster)
+    if (element.fit) node.style.objectFit = element.fit === 'contain' ? 'contain' : 'cover'
   } else if (element.type === 'audio') {
     node.setAttribute('src', element.src || '')
-    node.setAttribute('controls', '')
+    if (element.controls !== false) node.setAttribute('controls', '')
+    if (element.autoplay) node.setAttribute('autoplay', '')
+    if (element.loop) node.setAttribute('loop', '')
+    if (element.muted) node.setAttribute('muted', '')
   } else if (element.type === 'iframe') {
     node.setAttribute('src', element.src || 'https://example.com')
     node.setAttribute('loading', 'lazy')
@@ -324,7 +333,7 @@ export function writeVisualCode(code, elements) {
       node.setAttribute('data-mobile-custom', String(Boolean(element.mobileCustomized)))
       parent.append(node)
       const selector = node.id ? `#${CSS.escape(node.id)}` : `[data-block-id="${CSS.escape(element.id)}"]`
-      for (const prop of [...node.style]) if (prop.startsWith('grid-') || Object.values(properties).includes(prop) || (element.type === 'container' && prop === 'display')) node.style.removeProperty(prop)
+      for (const prop of [...node.style]) if (prop.startsWith('grid-') || Object.values(properties).includes(prop) || (element.type === 'container' && prop === 'display' && node.style.display !== 'none')) node.style.removeProperty(prop)
       const declarations = (layout) => Object.fromEntries(Object.entries(properties).map(([key, prop]) => [prop, layout[key] ?? DEFAULT_LAYOUT[key]]))
       updateRule(css, selector, { ...declarations(element.layout), 'min-width': '0', 'max-width': '100%', ...(element.type === 'container' ? { display: 'flex', 'flex-wrap': 'wrap' } : {}) })
       updateRule(media, selector, declarations(mobileLayout(element)))
@@ -481,8 +490,38 @@ export function updateElementContent(code, id, content) {
       node.append(tbody)
     }
   }
+  if (content.hidden !== undefined) {
+    if (content.hidden) {
+      node.style.display = 'none'
+    } else {
+      if (node.style.display === 'none') node.style.removeProperty('display')
+      node.removeAttribute('hidden')
+    }
+  }
   if (['video', 'audio', 'iframe'].includes(element.type)) {
     if (content.src !== undefined) node.setAttribute('src', content.src.trim())
+  }
+  if (['video', 'audio'].includes(element.type)) {
+    for (const [key, attr] of [['controls', 'controls'], ['autoplay', 'autoplay'], ['loop', 'loop'], ['muted', 'muted']]) {
+      if (content[key] !== undefined) {
+        if (content[key]) node.setAttribute(attr, '')
+        else node.removeAttribute(attr)
+      }
+    }
+  }
+  if (element.type === 'video') {
+    if (content.playsInline !== undefined) {
+      if (content.playsInline) node.setAttribute('playsinline', '')
+      else node.removeAttribute('playsinline')
+    }
+    if (content.poster !== undefined) {
+      const poster = content.poster.trim()
+      if (poster) node.setAttribute('poster', poster)
+      else node.removeAttribute('poster')
+    }
+    if (content.fit !== undefined) {
+      node.style.objectFit = content.fit === 'contain' ? 'contain' : 'cover'
+    }
   }
   if (element.type === 'image') {
     if (content.src !== undefined) node.setAttribute('src', content.src.trim())
@@ -507,11 +546,14 @@ export function updateElementContent(code, id, content) {
 }
 
 export function updateElementAppearance(code, id, property, value) {
-  validateStyle(property, value)
+  const entries = typeof property === 'object' && property !== null ? Object.entries(property) : [[property, value]]
+  for (const [prop, val] of entries) validateStyle(prop, val)
   const { document, nodes } = parseHTML(code.html)
   const node = nodes.find((candidate, index) => blockId(candidate, index) === id)
   if (!node) throw new Error('Selecione um elemento para personalizar.')
-  node.style[property] = value
+  for (const [prop, val] of entries) {
+    node.style[prop] = val
+  }
   return { ...code, html: '<!doctype html>\n' + document.documentElement.outerHTML }
 }
 
@@ -528,18 +570,22 @@ export function readGlobalStyles(code, selector) {
 
 export function updateGlobalStyle(code, selector, property, value) {
   if (!['body', '*'].includes(selector)) throw new Error('Seletor global inválido.')
-  validateStyle(property, value)
+  const entries = typeof property === 'object' && property !== null ? Object.entries(property) : [[property, value]]
+  for (const [prop, val] of entries) validateStyle(prop, val)
   const css = postcss.parse(code.css)
   const marker = `UEBIT-GLOBAL:${selector}`
   let rule = css.nodes.find((node) => node.type === 'rule' && node.selector === selector && node.prev()?.text === marker)
-  if (!rule && value) {
+  const hasAnyValue = entries.some(([, val]) => Boolean(val))
+  if (!rule && hasAnyValue) {
     css.append(postcss.comment({ text: marker }))
     rule = postcss.rule({ selector })
     css.append(rule)
   }
   if (rule) {
-    rule.walkDecls(cssProperty(property), (decl) => decl.remove())
-    if (value) rule.append({ prop: cssProperty(property), value })
+    for (const [prop, val] of entries) {
+      rule.walkDecls(cssProperty(prop), (decl) => decl.remove())
+      if (val) rule.append({ prop: cssProperty(prop), value: val })
+    }
     if (!rule.nodes.length) { rule.prev().remove(); rule.remove() }
   }
   return { ...code, css: css.toString() }

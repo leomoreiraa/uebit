@@ -46,11 +46,47 @@ test('element IDs are validated for valid HTML and CSS identifier format', () =>
   }
 })
 
-test('video and audio elements require a non-empty source', () => {
-  assert.doesNotThrow(() => validateContent('video', { src: 'https://example.com/video.mp4' }))
+test('video and audio elements require a non-empty source and support data URLs, posters, and playback attributes', () => {
+  assert.doesNotThrow(() => validateContent('video', { src: 'https://example.com/video.mp4', poster: 'https://example.com/poster.jpg' }))
+  assert.doesNotThrow(() => validateContent('video', { src: 'data:video/mp4;base64,AAAA', poster: 'data:image/png;base64,AA==' }))
   assert.doesNotThrow(() => validateContent('audio', { src: 'https://example.com/audio.mp3' }))
+  assert.doesNotThrow(() => validateContent('audio', { src: 'data:audio/mpeg;base64,AAAA' }))
   assert.throws(() => validateContent('video', { src: '' }))
+  assert.throws(() => validateContent('video', { src: 'javascript:alert(1)' }))
+  assert.throws(() => validateContent('video', { src: 'https://example.com/video.mp4', poster: 'javascript:alert(1)' }))
   assert.throws(() => validateContent('audio', { src: '   ' }))
+  assert.throws(() => validateContent('audio', { src: 'javascript:alert(1)' }))
+
+  const videoNode = {
+    tagName: 'VIDEO',
+    id: 'hero-video',
+    style: {
+      objectFit: 'cover',
+      backgroundImage: 'url("https://example.com/bg.jpg")',
+      backgroundSize: 'cover',
+      position: 'sticky',
+      top: '0px',
+      zIndex: '50',
+      display: 'none',
+    },
+    hasAttribute: (attr) => ['controls', 'autoplay', 'loop', 'muted', 'playsinline'].includes(attr),
+    getAttribute: (attr) => (attr === 'src' ? 'https://example.com/v.mp4' : attr === 'poster' ? 'https://example.com/p.jpg' : null),
+    querySelectorAll: () => [],
+    textContent: '',
+  }
+  const readVideo = readContent(videoNode)
+  assert.equal(readVideo.src, 'https://example.com/v.mp4')
+  assert.equal(readVideo.poster, 'https://example.com/p.jpg')
+  assert.equal(readVideo.controls, true)
+  assert.equal(readVideo.autoplay, true)
+  assert.equal(readVideo.loop, true)
+  assert.equal(readVideo.muted, true)
+  assert.equal(readVideo.playsInline, true)
+  assert.equal(readVideo.hidden, true)
+  assert.equal(readVideo.appearance.backgroundImage, 'url("https://example.com/bg.jpg")')
+  assert.equal(readVideo.appearance.position, 'sticky')
+  assert.equal(readVideo.appearance.zIndex, '50')
+  assert.equal(readVideo.appearance.display, 'none')
 })
 
 test('readContent extracts list items and input placeholders', () => {

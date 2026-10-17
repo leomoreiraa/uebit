@@ -3,6 +3,8 @@ import {
   SlidersHorizontal,
   Paintbrush,
   Layers,
+  Eye,
+  EyeOff,
 } from 'lucide-react'
 import ElementInspector from './ElementInspector'
 import AppearanceControls from './AppearanceControls'
@@ -122,28 +124,63 @@ export default function PropertiesPanel({
                     ? '□ Container'
                     : (node.text || node.alt || node.type).slice(0, 28)
                 const isCurrent = selected?.id === node.id
+                const isHidden = Boolean(node.hidden || node.appearance?.display === 'none')
+                const isPinned = node.appearance?.position === 'sticky' || node.appearance?.position === 'fixed'
                 return (
-                  <button
+                  <div
                     key={node.id}
-                    type="button"
-                    data-tree-id={node.id}
-                    aria-label={`Selecionar ${typeName} ${index + 1}`}
-                    aria-pressed={isCurrent}
-                    onClick={() => onSelect(node.id)}
-                    className={`block min-h-10 w-full rounded-xl py-1.5 pr-2 text-left text-xs font-bold transition-colors ${
+                    className={`flex min-h-10 w-full items-center gap-1 rounded-xl pr-1.5 transition-colors ${
                       isCurrent
                         ? 'border border-violet-300 bg-violet-600 text-white shadow-xs'
                         : 'text-slate-700 hover:bg-violet-100'
                     }`}
-                    style={{ paddingLeft: 8 + node.depth * 14 }}
                   >
-                    <span>{label}</span>
-                    {node.htmlId && (
-                      <span className={`ml-1 text-[10px] font-mono ${isCurrent ? 'text-amber-300' : 'text-violet-600'}`}>
-                        #{node.htmlId}
-                      </span>
-                    )}
-                  </button>
+                    <button
+                      type="button"
+                      data-tree-id={node.id}
+                      aria-label={`Selecionar ${typeName} ${index + 1}`}
+                      aria-pressed={isCurrent}
+                      onClick={() => onSelect(node.id)}
+                      className="min-h-10 min-w-0 flex-1 truncate py-1.5 text-left text-xs font-bold"
+                      style={{ paddingLeft: 8 + node.depth * 14 }}
+                    >
+                      <span className={isHidden ? 'line-through opacity-70' : ''}>{label}</span>
+                      {node.htmlId && (
+                        <span className={`ml-1 text-[10px] font-mono ${isCurrent ? 'text-amber-300' : 'text-violet-600'}`}>
+                          #{node.htmlId}
+                        </span>
+                      )}
+                      {isPinned && (
+                        <span className={`ml-1 rounded px-1 py-0.5 text-[9px] font-black uppercase ${isCurrent ? 'bg-violet-800 text-amber-200' : 'bg-amber-100 text-amber-800'}`}>
+                          Fixo
+                        </span>
+                      )}
+                      {isHidden && (
+                        <span className={`ml-1 rounded px-1 py-0.5 text-[9px] font-black uppercase ${isCurrent ? 'bg-violet-800 text-purple-200' : 'bg-slate-200 text-slate-600'}`}>
+                          Oculto
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={disabled}
+                      aria-label={isHidden ? `Exibir camada ${node.name || typeName}` : `Ocultar camada ${node.name || typeName}`}
+                      title={isHidden ? 'Camada oculta (clique para exibir)' : 'Camada visível (clique para ocultar para JS)'}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        onAppearanceChange(node.id, 'display', isHidden ? '' : 'none')
+                      }}
+                      className={`grid size-7 shrink-0 place-items-center rounded-lg transition-colors ${
+                        isCurrent
+                          ? 'text-violet-100 hover:bg-violet-700 hover:text-white'
+                          : isHidden
+                            ? 'text-slate-400 hover:bg-violet-200 hover:text-violet-900'
+                            : 'text-slate-500 hover:bg-violet-200 hover:text-violet-900'
+                      }`}
+                    >
+                      {isHidden ? <EyeOff size={14} aria-hidden="true" /> : <Eye size={14} aria-hidden="true" />}
+                    </button>
+                  </div>
                 )
               })}
             </nav>
