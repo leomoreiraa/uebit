@@ -389,7 +389,7 @@ export const LESSONS = [
         "view": "code",
         "check": {
           "kind": "css",
-          "value": "(?:font-size|line-height)\\s*:"
+          "value": "h1\\s*\\{[^}]*font-size\\s*:"
         }
       }
     ],
