@@ -11,7 +11,7 @@ import {
   CodeXml,
   Boxes,
 } from '../components/BrandIcon'
-import { UtensilsCrossed } from 'lucide-react'
+import { UtensilsCrossed, BookOpen } from 'lucide-react'
 import UebitLogo from '../components/UebitLogo'
 import BrandIcon from '../components/BrandIcon'
 import { brandAsset } from '../lib/brand-assets'
@@ -44,6 +44,7 @@ export default function LandingPage() {
           </Link>
 
           <nav aria-label="Navegação principal" className="flex shrink-0 items-center gap-3">
+            <Link to="/aulas" className="inline-flex min-h-11 items-center gap-1.5 rounded-full border-2 border-purple-300 bg-purple-50 px-3 py-2 text-xs font-black text-purple-900 hover:bg-purple-100 sm:px-4"><BookOpen size={16} /><span>Aulas</span></Link>
             <Link
               to="/editor"
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border-b-4 border-emerald-700 bg-emerald-500 px-3 py-2.5 sm:px-5 text-xs font-black text-white shadow-md transition-all hover:scale-105 hover:bg-emerald-400 active:scale-95 active:translate-y-0.5"
@@ -75,6 +76,8 @@ export default function LandingPage() {
           <p className="mx-auto mt-5 max-w-xl text-base sm:text-lg font-medium text-slate-600 leading-relaxed">
             Um pouco de web, um pouco de bit e um “ué-bit!” de descoberta. Crie páginas arrastando peças e programando suas ideias.
           </p>
+
+          <Link to="/aulas" className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl border-2 border-purple-300 bg-white px-4 py-2 text-sm font-black text-purple-800 hover:bg-purple-50"><BookOpen size={18} /> Aprender com 10 aulas guiadas</Link>
 
           {/* Giant Animated CTA Button - Verde Sapo com energia das 4 cores */}
           <div className="mt-7 flex flex-col items-center justify-center lg:items-start">

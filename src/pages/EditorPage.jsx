@@ -25,6 +25,8 @@ import Workspace from '../components/Workspace'
 import PropertiesPanel from '../components/PropertiesPanel'
 import Stage from '../components/Stage'
 import TemplatesModal from '../components/TemplatesModal'
+import LessonsPanel from '../components/LessonsPanel'
+import { lessonById } from '../data/lessons'
 import { getTemplate } from '../data/templates'
 import { applyBlockCode } from '../lib/block-code'
 import { buildBlockTargets } from '../lib/block-targets'
@@ -88,7 +90,9 @@ function EditorPanel({ id, label, side, open, onClose, triggerRef, children }) {
 }
 
 export default function EditorPage() {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [lessonId, setLessonId] = useState(() => lessonById(searchParams.get('lesson'))?.id ?? null)
+  const [lessonsOpen, setLessonsOpen] = useState(() => Boolean(lessonById(searchParams.get('lesson'))))
   const initialTemplateParam = searchParams.get('template')
   const initialTemplate = initialTemplateParam ? getTemplate(initialTemplateParam) : null
   const [templatesModalOpen, setTemplatesModalOpen] = useState(false)
@@ -457,12 +461,16 @@ export default function EditorPage() {
             setMobilePanel((current) => current === panel ? null : panel)
           }}
           onOpenTemplates={() => setTemplatesModalOpen(true)}
+          onOpenLessons={() => setLessonsOpen((current) => !current)}
+          lessonsOpen={lessonsOpen}
         />
         {exportMessage && <p role="status" className="bg-emerald-50 px-6 py-3 text-sm text-emerald-800">{exportMessage}</p>}
         {projectMessage && <p role="status" className="bg-emerald-50 px-6 py-3 text-sm text-emerald-800">{projectMessage}</p>}
         {projectError && <p role="alert" className="bg-red-50 px-6 py-3 text-sm text-red-800">{projectError}</p>}
         {exportError && <p role="alert" className="bg-red-50 px-6 py-3 text-sm text-red-800">{exportError}</p>}
         </div>
+        <div className="flex min-h-0 flex-1">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {stageOpen && (
           <Stage
             key={`stage-${projectRevision}`}
@@ -529,6 +537,33 @@ export default function EditorPage() {
               code={code}
             /></EditorPanel>}
           </div>
+          </div>
+          {lessonsOpen && (
+            <LessonsPanel
+              lessonId={lessonId}
+              onClose={() => setLessonsOpen(false)}
+              onSelectLesson={(id) => {
+                setLessonId(id)
+                setSearchParams((previous) => {
+                  const next = new URLSearchParams(previous)
+                  next.set('lesson', id)
+                  return next
+                }, { replace: true })
+                closeMobilePanel()
+                setStageOpen(false)
+              }}
+              onViewChange={(nextView) => {
+                closeMobilePanel()
+                setStageOpen(false)
+                setView(nextView)
+              }}
+              onFreshProject={() => {
+                if (window.confirm('Começar um projeto vazio? As alterações ainda não salvas serão perdidas. Salve seu arquivo .frog antes de continuar.')) loadTemplate('blank')
+              }}
+              editorState={{ elements, code, blockProject, device }}
+            />
+          )}
+        </div>
       </div>
       {view === 'visual' && !stageOpen && !panelOpen && (
         <TrashButton
