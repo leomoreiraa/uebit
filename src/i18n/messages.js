@@ -109,7 +109,20 @@ export const MESSAGES = {
     "tplStory": "História Espacial",
     "tplStore": "Pizzaria Delivery",
     "tplBlank": "Em Branco",
-    "goEditor": "Ir para o Editor"
+    "goEditor": "Ir para o Editor",
+    "palette": "Paleta de elementos",
+    "paletteHint": "Arraste ou clique para adicionar à página.",
+    "addElement": "Adicionar {name}",
+    "disabledAdd": "Resolva o rascunho inválido para adicionar elementos",
+    "dragAdd": "Arraste para a página ou clique para adicionar",
+    "modelsTitle": "Modelos de Projetos 🚀",
+    "modelsIntro": "Escolha um projeto pronto para começar ou solte a imaginação do zero!",
+    "modelsAction": "Usar este Modelo",
+    "modelsClose": "Fechar janela de modelos",
+    "blocksIntro": "Encaixe os blocos para dar vida ao seu site ou criar um jogo! 🎮",
+    "blocksTip": "Dica: Adicione elementos em Design Visual para escolhê-los nos blocos.",
+    "magicExamples": "Exemplos Mágicos ✨",
+    "visualLogic": "Lógica Visual"
   },
   "en": {
     "language": "Language",
@@ -221,7 +234,20 @@ export const MESSAGES = {
     "tplStory": "Space Story",
     "tplStore": "Pizza Delivery",
     "tplBlank": "Blank",
-    "goEditor": "Go to Editor"
+    "goEditor": "Go to Editor",
+    "palette": "Element palette",
+    "paletteHint": "Drag or click to add elements to your page.",
+    "addElement": "Add {name}",
+    "disabledAdd": "Fix the invalid code before adding elements",
+    "dragAdd": "Drag onto the page or click to add",
+    "modelsTitle": "Project Templates 🚀",
+    "modelsIntro": "Choose a starter project or build your own from scratch!",
+    "modelsAction": "Use this Template",
+    "modelsClose": "Close templates",
+    "blocksIntro": "Connect blocks to bring your site or game to life! 🎮",
+    "blocksTip": "Tip: Add elements in Visual Design so you can select them in blocks.",
+    "magicExamples": "Magic Examples ✨",
+    "visualLogic": "Visual Logic"
   },
   "th": {
     "language": "ภาษา",
@@ -333,7 +359,20 @@ export const MESSAGES = {
     "tplStory": "เรื่องราวอวกาศ",
     "tplStore": "ร้านพิซซ่า",
     "tplBlank": "โปรเจกต์เปล่า",
-    "goEditor": "ไปที่ตัวแก้ไข"
+    "goEditor": "ไปที่ตัวแก้ไข",
+    "palette": "ชุดองค์ประกอบ",
+    "paletteHint": "ลากหรือคลิกเพื่อเพิ่มองค์ประกอบในหน้าเว็บ",
+    "addElement": "เพิ่ม {name}",
+    "disabledAdd": "แก้โค้ดที่ผิดพลาดก่อนเพิ่มองค์ประกอบ",
+    "dragAdd": "ลากลงหน้าเว็บหรือคลิกเพื่อเพิ่ม",
+    "modelsTitle": "เทมเพลตโปรเจกต์ 🚀",
+    "modelsIntro": "เลือกโปรเจกต์ตัวอย่างเพื่อเริ่ม หรือสร้างใหม่จากศูนย์!",
+    "modelsAction": "ใช้เทมเพลตนี้",
+    "modelsClose": "ปิดรายการเทมเพลต",
+    "blocksIntro": "ต่อบล็อกเพื่อทำให้เว็บหรือเกมของคุณทำงาน! 🎮",
+    "blocksTip": "คำแนะนำ: เพิ่มองค์ประกอบในโหมดออกแบบ แล้วเลือกใช้งานในบล็อกได้",
+    "magicExamples": "ตัวอย่างมหัศจรรย์ ✨",
+    "visualLogic": "ตรรกะแบบภาพ"
   }
 }
 
