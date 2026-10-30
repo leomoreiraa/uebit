@@ -444,13 +444,13 @@ export const LESSONS_EN = [
         "heading": "The DOM is the page as objects",
         "text": "The browser turns your HTML into a tree of objects called the Document Object Model (DOM). document.getElementById finds an element by its id. Each id should be unique on the page.",
         "explain": "Set the HTML ID for an element in the Visual Design properties panel.",
-        "example": "const button = document.getElementById(\"my-button\");"
+        "example": "const button = document.getElementById(\"meu-botao\");"
       },
       {
         "heading": "Listening for clicks",
         "text": "addEventListener connects a function to an event. The example finds a button and changes a paragraph when the visitor clicks. Optional chaining and checking the target prevent errors if an id is missing.",
         "explain": "The function runs when someone clicks, not when it is defined.",
-        "example": "const button = document.getElementById(\"my-button\");\nconst output = document.getElementById(\"output\");\nbutton?.addEventListener(\"click\", () => {\n  if (output) output.textContent = \"It worked!\";\n});"
+        "example": "const button = document.getElementById(\"meu-botao\");\nconst output = document.getElementById(\"output\");\nbutton?.addEventListener(\"click\", () => {\n  if (output) output.textContent = \"It worked!\";\n});"
       },
       {
         "heading": "Try it in Play",
