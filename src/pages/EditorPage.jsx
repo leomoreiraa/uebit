@@ -27,6 +27,8 @@ import Stage from '../components/Stage'
 import TemplatesModal from '../components/TemplatesModal'
 import LessonsPanel from '../components/LessonsPanel'
 import { lessonById } from '../data/lessons'
+import { useLanguage } from '../i18n/language'
+import { message } from '../i18n/messages'
 import { getTemplate } from '../data/templates'
 import { applyBlockCode } from '../lib/block-code'
 import { buildBlockTargets } from '../lib/block-targets'
@@ -90,6 +92,8 @@ function EditorPanel({ id, label, side, open, onClose, triggerRef, children }) {
 }
 
 export default function EditorPage() {
+  const { language } = useLanguage()
+  const t = (key) => message(language, key)
   const [searchParams, setSearchParams] = useSearchParams()
   const [lessonId, setLessonId] = useState(() => lessonById(searchParams.get('lesson'))?.id ?? null)
   const [lessonsOpen, setLessonsOpen] = useState(() => Boolean(lessonById(searchParams.get('lesson'))))
@@ -484,7 +488,7 @@ export default function EditorPage() {
         )}
         <div key={projectRevision} className={`${stageOpen ? 'hidden' : 'flex'} min-h-0 min-w-0 flex-1 overflow-hidden p-2 sm:p-3 ${view === 'visual' && !stageOpen ? 'xl:grid xl:grid-cols-[248px_minmax(0,1fr)_288px] xl:gap-3' : ''}`}>
             {panelOpen && <div aria-hidden="true" onClick={closeMobilePanel} className="fixed inset-0 z-20 bg-slate-950/40 xl:hidden" />}
-            {view === 'visual' && <EditorPanel id="editor-palette" label="Paleta de elementos" side="left" open={panelOpen === 'palette'} onClose={closeMobilePanel} triggerRef={panelTriggerRef}>
+            {view === 'visual' && <EditorPanel id="editor-palette" label={t('palette')} side="left" open={panelOpen === 'palette'} onClose={closeMobilePanel} triggerRef={panelTriggerRef}>
               <Sidebar disabled={Boolean(codeError)} onAddElement={(...args) => { addElement(...args); closeMobilePanel() }} />
             </EditorPanel>}
             <div inert={panelOpen ? true : undefined} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
@@ -517,7 +521,7 @@ export default function EditorPage() {
               onApplyBlocks={applyBlocks}
             />
             </div>
-            {view === 'visual' && <EditorPanel id="editor-properties" label="Propriedades" side="right" open={panelOpen === 'properties'} onClose={closeMobilePanel} triggerRef={panelTriggerRef}><PropertiesPanel
+            {view === 'visual' && <EditorPanel id="editor-properties" label={t('properties')} side="right" open={panelOpen === 'properties'} onClose={closeMobilePanel} triggerRef={panelTriggerRef}><PropertiesPanel
               activeTab={panelTab}
               onTabChange={setPanelTab}
               selected={selectedElement}
@@ -558,7 +562,7 @@ export default function EditorPage() {
                 setView(nextView)
               }}
               onFreshProject={() => {
-                if (window.confirm('Começar um projeto vazio? As alterações ainda não salvas serão perdidas. Salve seu arquivo .frog antes de continuar.')) loadTemplate('blank')
+                if (window.confirm(t('freshConfirm'))) loadTemplate('blank')
               }}
               editorState={{ elements, code, blockProject, device }}
             />

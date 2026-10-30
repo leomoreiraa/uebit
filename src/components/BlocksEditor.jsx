@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useBlocklyWorkspace } from 'react-blockly'
 import {
   Blockly,
@@ -10,9 +10,16 @@ import {
   workspaceConfiguration,
 } from '../lib/blockly'
 import { Sparkles, Wand2 } from 'lucide-react'
+import { useLanguage } from '../i18n/language'
+import { message } from '../i18n/messages'
+import { localizedToolbox, localizedRecipes } from '../i18n/blockly'
 
 export default function BlocksEditor({ project, targets, onProjectChange, onApply: _onApply, disabled: _disabled, expanded = false, active = true }) {
   const ref = useRef(null)
+  const { language } = useLanguage()
+  const t = (key) => message(language, key)
+  const translatedToolbox = useMemo(() => localizedToolbox(toolbox, language), [language])
+  const translatedRecipes = useMemo(() => localizedRecipes(MAGIC_RECIPES, language), [language])
   const [initial] = useState(project.workspace)
   const callback = useRef(onProjectChange)
   const [generationError, setGenerationError] = useState('')
@@ -23,11 +30,16 @@ export default function BlocksEditor({ project, targets, onProjectChange, onAppl
   const { workspace } = useBlocklyWorkspace({
     ref,
     initialJson: initial,
-    toolboxConfiguration: toolbox,
+    toolboxConfiguration: translatedToolbox,
     workspaceConfiguration,
     onInject: (instance) => prepareWorkspace(instance, targets),
     onImportError: (failure) => setGenerationError(failure.message),
   })
+
+  useEffect(() => {
+    if (!workspace) return
+    workspace.updateToolbox(translatedToolbox)
+  }, [workspace, translatedToolbox])
 
   useEffect(() => {
     if (!workspace) return
@@ -85,11 +97,11 @@ export default function BlocksEditor({ project, targets, onProjectChange, onAppl
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="space-y-0.5">
             <p className="text-xs font-bold leading-relaxed text-purple-950">
-              Encaixe os blocos para dar vida ao seu site ou criar um jogo! 🎮
+              {t('blocksIntro')}
             </p>
             {targets.length === 0 && (
               <p className="text-[11px] font-bold text-purple-800">
-                Dica: Adicione elementos em Design Visual para escolhê-los nos blocos.
+                {t('blocksTip')}
               </p>
             )}
           </div>
@@ -101,11 +113,11 @@ export default function BlocksEditor({ project, targets, onProjectChange, onAppl
               className="inline-flex h-8 min-h-8 items-center gap-1.5 rounded-full border-b-2 border-amber-600 bg-amber-400 px-3 text-xs font-black text-amber-950 shadow-xs transition-all hover:bg-amber-300 active:translate-y-0.5"
             >
               <Wand2 size={14} aria-hidden="true" />
-              <span>Exemplos Mágicos ✨</span>
+              <span>{t('magicExamples')}</span>
             </button>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-100/80 px-3 py-1 text-xs font-bold text-purple-900 shadow-xs">
               <Sparkles size={13} className="text-purple-600" />
-              Lógica Visual
+              {t('visualLogic')}
             </span>
           </div>
         </div>
@@ -116,7 +128,7 @@ export default function BlocksEditor({ project, targets, onProjectChange, onAppl
             aria-label="Exemplos mágicos de blocos"
             className="grid grid-cols-1 gap-2 rounded-2xl border-2 border-amber-300 bg-amber-50/90 p-2.5 sm:grid-cols-2 lg:grid-cols-5"
           >
-            {MAGIC_RECIPES.map((recipe) => (
+            {translatedRecipes.map((recipe) => (
               <button
                 key={recipe.id}
                 type="button"

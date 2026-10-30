@@ -3,6 +3,9 @@ import { useDraggable } from '@dnd-kit/core'
 import { elementTypes } from '../data/elements'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import BrandIcon, { Boxes as Shapes } from './BrandIcon'
+import { useLanguage } from '../i18n/language'
+import { message } from '../i18n/messages'
+import { elementLabel, categoryLabel } from '../i18n/elements'
 
 // O esquema de 4 cores clássico: Amarelo (Texto), Roxo (Mídia), Vermelho (Interação) e Verde (Estrutura)
 const categories = [
@@ -52,7 +55,8 @@ const categories = [
   },
 ]
 
-function ElementCard({ element, category, disabled, onAddElement }) {
+function ElementCard({ element, category, disabled, onAddElement, language }) {
+  const t = (key, args) => message(language, key, args)
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `palette-${element.type}`,
     data: { type: element.type },
@@ -67,8 +71,8 @@ function ElementCard({ element, category, disabled, onAddElement }) {
       {...listeners}
       disabled={disabled}
       onClick={() => onAddElement(element.type)}
-      aria-label={`Adicionar ${element.name.toLowerCase()}`}
-      title={disabled ? 'Resolva o rascunho inválido para adicionar elementos' : 'Arraste para a página ou clique para adicionar'}
+      aria-label={t('addElement', { name: element.name })}
+      title={t(disabled ? 'disabledAdd' : 'dragAdd')}
       className={`group flex w-full touch-none select-none items-center gap-2.5 rounded-2xl p-2 text-left shadow-xs transition-colors enabled:cursor-grab enabled:hover:brightness-105 active:scale-98 disabled:cursor-not-allowed disabled:opacity-50 ${category.card} ${isDragging ? 'opacity-40' : ''}`}
     >
       <span className={`grid size-8 shrink-0 place-items-center rounded-xl ${category.icon} shadow-xs`}>
@@ -91,6 +95,8 @@ function ElementCard({ element, category, disabled, onAddElement }) {
 
 export default function Sidebar({ disabled, onAddElement }) {
   const [collapsed, setCollapsed] = useState({})
+  const { language } = useLanguage()
+  const t = (key) => message(language, key)
 
   const toggleSection = (id) => {
     setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -106,10 +112,10 @@ export default function Sidebar({ disabled, onAddElement }) {
           <span className="grid size-8 place-items-center rounded-xl bg-purple-100 text-purple-700 shadow-xs">
             <Shapes aria-hidden="true" size={18} />
           </span>
-          <span>Paleta de elementos</span>
+          <span>{t('palette')}</span>
         </h2>
       </div>
-      <p className="mt-1 shrink-0 text-xs font-medium text-slate-500">Arraste ou clique para adicionar à página.</p>
+      <p className="mt-1 shrink-0 text-xs font-medium text-slate-500">{t('paletteHint')}</p>
 
       {/* Conjuntos de elementos coloridos nas 4 cores */}
       <div className="mt-3 flex-1 min-h-0 space-y-3 overflow-y-auto overscroll-contain pr-1">
@@ -118,7 +124,7 @@ export default function Sidebar({ disabled, onAddElement }) {
           const items = elementTypes.filter((element) => category.types.includes(element.type))
 
           return (
-            <section key={category.id} aria-label={category.name} className={`rounded-2xl p-2.5 transition-colors ${category.sectionBorder}`}>
+            <section key={category.id} aria-label={categoryLabel(category, language)} className={`rounded-2xl p-2.5 transition-colors ${category.sectionBorder}`}>
               <button
                 type="button"
                 onClick={() => toggleSection(category.id)}
@@ -127,7 +133,7 @@ export default function Sidebar({ disabled, onAddElement }) {
               >
                 <span className={`flex items-center gap-2 text-xs font-black uppercase tracking-wide ${category.color}`}>
                   <span aria-hidden="true" className={`size-2.5 rounded-full ${category.dotColor}`} />
-                  {category.name}
+                  {categoryLabel(category, language)}
                 </span>
                 <span className={category.color}>
                   {isCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
@@ -139,7 +145,8 @@ export default function Sidebar({ disabled, onAddElement }) {
                   {items.map((element) => (
                     <ElementCard
                       key={element.type}
-                      element={element}
+                      element={elementLabel(element, language)}
+                      language={language}
                       category={category}
                       disabled={disabled}
                       onAddElement={onAddElement}

@@ -10,6 +10,9 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import { TEMPLATES } from '../data/templates'
+import { translateTemplate } from '../i18n/templates'
+import { useLanguage } from '../i18n/language'
+import { message } from '../i18n/messages'
 
 const iconMap = {
   Sparkles,
@@ -21,6 +24,8 @@ const iconMap = {
 }
 
 export default function TemplatesModal({ isOpen, onClose, onSelectTemplate }) {
+  const { language } = useLanguage()
+  const t = (key) => message(language, key)
   useEffect(() => {
     if (!isOpen) return
     const handleKeyDown = (e) => {
@@ -52,17 +57,17 @@ export default function TemplatesModal({ isOpen, onClose, onSelectTemplate }) {
             </span>
             <div>
               <h2 id="templates-title" className="text-2xl font-black text-slate-900">
-                Modelos de Projetos 🚀
+                {t('modelsTitle')}
               </h2>
               <p className="text-xs sm:text-sm font-semibold text-slate-500">
-                Escolha um projeto pronto para começar ou solte a imaginação do zero!
+                {t('modelsIntro')}
               </p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fechar janela de modelos"
+            aria-label={t('modelsClose')}
             className="grid size-10 place-items-center rounded-full border-2 border-slate-200 bg-slate-100 text-slate-700 transition-colors hover:bg-slate-200"
           >
             <X size={20} />
@@ -72,6 +77,7 @@ export default function TemplatesModal({ isOpen, onClose, onSelectTemplate }) {
         {/* Templates Grid */}
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6">
           {TEMPLATES.map((template) => {
+            const translated = translateTemplate(template, language)
             const Icon = iconMap[template.icon] ?? Sparkles
             return (
               <div
@@ -85,29 +91,29 @@ export default function TemplatesModal({ isOpen, onClose, onSelectTemplate }) {
                       <Icon className="size-6" />
                     </span>
                     <span className={`rounded-full border px-3 py-1 text-xs font-black ${template.tagColor}`}>
-                      {template.badge}
+                      {translated.badge}
                     </span>
                   </div>
 
                   <h3 className="mt-4 text-lg font-black text-slate-900">
-                    {template.name}
+                    {translated.name}
                   </h3>
                   <p className="mt-1.5 text-xs text-slate-500 leading-relaxed font-medium">
-                    {template.description}
+                    {translated.description}
                   </p>
                 </div>
 
                 <div className="mt-6 pt-3 border-t border-slate-100">
                   <button
                     type="button"
-                    aria-label={`Usar modelo ${template.name}`}
+                    aria-label={`${t('modelsAction')}: ${translated.name}`}
                     onClick={() => {
                       onSelectTemplate(template.id)
                       onClose()
                     }}
                     className={`flex w-full items-center justify-center gap-2 rounded-xl border-b-3 px-4 py-2.5 text-xs font-black text-white shadow-sm transition-all hover:scale-102 active:translate-y-0.5 ${template.buttonColor}`}
                   >
-                    <span>Usar este Modelo</span>
+                    <span>{t('modelsAction')}</span>
                     <ArrowRight size={14} />
                   </button>
                 </div>

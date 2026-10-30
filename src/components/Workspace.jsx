@@ -1,11 +1,15 @@
 import { lazy, Suspense } from 'react'
 import Canvas from './Canvas'
+import { useLanguage } from '../i18n/language'
+import { message } from '../i18n/messages'
 
 const CodeEditor = lazy(() => import('./CodeEditor'))
 const BlocksEditor = lazy(() => import('./BlocksEditor'))
 
 export default function Workspace({ active = true, codeTab, onCodeTabChange, view, elements, selectedId, onSelect, onEditText, dropPreview, message, code, draft, onCodeChange, codeError, onRestoreCode, blockProject, blockTargets, onBlockProjectChange, onApplyBlocks, ...viewportProps }) {
-  const label = view === 'visual' ? 'Design Visual' : view === 'programming' ? 'Programação' : 'Código Gerado'
+  const { language } = useLanguage()
+  const t = (key) => message(language, key)
+  const label = t(view === 'visual' ? 'visual' : view === 'programming' ? 'programming' : 'code')
   return (
     <main id="workspace" className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden" aria-label={label}>
       <h2 className="sr-only">{label}</h2>
