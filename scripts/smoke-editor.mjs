@@ -1,6 +1,5 @@
 import { spawn, spawnSync } from 'node:child_process'
 import { setTimeout as delay } from 'node:timers/promises'
-import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 function chromeBinary() {
@@ -24,6 +23,7 @@ try {
     await delay(250)
   }
   for (const [url, expected] of [
+    ['http://127.0.0.1:4173/#/editor?lesson=primeiros-passos', ['Paleta de elementos', 'Seu primeiro site']],
     ['http://127.0.0.1:4173/#/editor?lesson=primeiros-passos&lang=en', ['Element palette', 'Your first website']],
     ['http://127.0.0.1:4173/#/editor?lesson=primeiros-passos&lang=th', ['ชุดองค์ประกอบ', 'เว็บไซต์แรกของคุณ']],
   ]) {
