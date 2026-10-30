@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, Circle, Code2, ExternalLink, GraduationCap, Lightbulb, RotateCcw, X } from 'lucide-react'
 import { getLessons, getLesson } from '../data/localized-lessons'
 import { useLanguage, languagePath } from '../i18n/language'
-import { message } from '../i18n/messages'
+import { message as translateMessage } from '../i18n/messages'
 import { evaluateLesson, normalizeProgress, PROGRESS_KEY } from '../lib/lesson-checks'
 
 function initialProgress() {
@@ -13,7 +13,7 @@ function initialProgress() {
 
 export default function LessonsPanel({ lessonId, onSelectLesson, onClose, onViewChange, onFreshProject, editorState }) {
   const { language } = useLanguage()
-  const t = (key, args) => message(language, key, args)
+  const t = (key, args) => translateMessage(language, key, args)
   const lessons = getLessons(language)
   const [progress, setProgress] = useState(initialProgress)
   const [quizChoice, setQuizChoice] = useState(null)

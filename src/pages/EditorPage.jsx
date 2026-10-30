@@ -28,7 +28,7 @@ import TemplatesModal from '../components/TemplatesModal'
 import LessonsPanel from '../components/LessonsPanel'
 import { lessonById } from '../data/lessons'
 import { useLanguage } from '../i18n/language'
-import { message } from '../i18n/messages'
+import { message as translateMessage } from '../i18n/messages'
 import { getTemplate } from '../data/templates'
 import { applyBlockCode } from '../lib/block-code'
 import { buildBlockTargets } from '../lib/block-targets'
@@ -93,7 +93,7 @@ function EditorPanel({ id, label, side, open, onClose, triggerRef, children }) {
 
 export default function EditorPage() {
   const { language } = useLanguage()
-  const t = (key) => message(language, key)
+  const t = (key) => translateMessage(language, key)
   const [searchParams, setSearchParams] = useSearchParams()
   const [lessonId, setLessonId] = useState(() => lessonById(searchParams.get('lesson'))?.id ?? null)
   const [lessonsOpen, setLessonsOpen] = useState(() => Boolean(lessonById(searchParams.get('lesson'))))
