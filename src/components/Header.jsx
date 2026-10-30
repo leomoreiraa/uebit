@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useRef } from 'react'
-import { Menu, Settings } from 'lucide-react'
+import { Menu, Settings, BookOpen } from 'lucide-react'
 import { CodeXml, Download, LayoutTemplate, Play, Square, Save, Upload, Sparkles, Blocks } from './BrandIcon'
 import UebitLogo from './UebitLogo'
 
@@ -19,6 +19,8 @@ export default function Header({
   stageOpen,
   onToggleStage,
   onOpenTemplates,
+  onOpenLessons,
+  lessonsOpen,
   mobilePanel,
   onTogglePanel,
 }) {
@@ -61,6 +63,12 @@ export default function Header({
       </div>
 
       <div className="flex max-w-full min-w-0 items-center gap-2 overflow-x-auto overscroll-contain py-1 max-sm:w-full [&>button]:shrink-0 [&>div]:shrink-0 sm:flex-wrap sm:gap-2.5">
+        {onOpenLessons && (
+          <button type="button" aria-pressed={Boolean(lessonsOpen)} onClick={onOpenLessons} title="Abrir aulas guiadas no editor" className="flex h-10 items-center gap-1.5 rounded-full border-b-4 border-purple-800 bg-purple-600 px-3.5 text-xs font-black text-white shadow-md hover:bg-purple-500">
+            <BookOpen size={16} aria-hidden="true" />
+            <span>Aulas</span>
+          </button>
+        )}
         {onOpenTemplates && (
           <button
             type="button"
