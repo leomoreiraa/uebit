@@ -103,7 +103,13 @@ export const MESSAGES = {
     "storyAction": "Criar História",
     "footerSource": "Projeto 100% Open Source e Educacional",
     "footerText": "Aprenda a criar para a web sem rastreadores e sem cobranças.",
-    "footerBrand": "Conheça a identidade visual"
+    "footerBrand": "Conheça a identidade visual",
+    "tplGame": "Quiz & Jogo",
+    "tplPortfolio": "Portfólio",
+    "tplStory": "História Espacial",
+    "tplStore": "Pizzaria Delivery",
+    "tplBlank": "Em Branco",
+    "goEditor": "Ir para o Editor"
   },
   "en": {
     "language": "Language",
@@ -209,7 +215,13 @@ export const MESSAGES = {
     "storyAction": "Create Story",
     "footerSource": "100% Open Source & Educational",
     "footerText": "Learn web development without trackers or hidden fees.",
-    "footerBrand": "Explore the visual identity"
+    "footerBrand": "Explore the visual identity",
+    "tplGame": "Quiz & Game",
+    "tplPortfolio": "Portfolio",
+    "tplStory": "Space Story",
+    "tplStore": "Pizza Delivery",
+    "tplBlank": "Blank",
+    "goEditor": "Go to Editor"
   },
   "th": {
     "language": "ภาษา",
@@ -315,7 +327,13 @@ export const MESSAGES = {
     "storyAction": "สร้างเรื่องราว",
     "footerSource": "โปรเจกต์โอเพนซอร์สเพื่อการศึกษา 100%",
     "footerText": "เรียนสร้างเว็บได้โดยไม่มีระบบติดตามหรือค่าใช้จ่ายแอบแฝง",
-    "footerBrand": "รู้จักการออกแบบแบรนด์"
+    "footerBrand": "รู้จักการออกแบบแบรนด์",
+    "tplGame": "ควิซและเกม",
+    "tplPortfolio": "พอร์ตโฟลิโอ",
+    "tplStory": "เรื่องราวอวกาศ",
+    "tplStore": "ร้านพิซซ่า",
+    "tplBlank": "โปรเจกต์เปล่า",
+    "goEditor": "ไปที่ตัวแก้ไข"
   }
 }
 
