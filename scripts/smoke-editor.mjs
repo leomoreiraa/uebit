@@ -16,15 +16,15 @@ server.stderr.on('data', (data) => { serverErrors += String(data) })
 try {
   for (let attempt = 0; attempt < 50; attempt++) {
     try {
-      const r = await fetch('http://127.0.0.1:4173/uebit/')
+      const r = await fetch('http://127.0.0.1:4173/')
       if (r.ok) break
     } catch { /* not ready yet */ }
     if (attempt === 49) throw new Error('Preview server failed to start: ' + serverErrors)
     await delay(250)
   }
   for (const [url, expected] of [
-    ['http://127.0.0.1:4173/uebit/#/editor?lesson=primeiros-passos&lang=en', ['Element palette', 'Your first website']],
-    ['http://127.0.0.1:4173/uebit/#/editor?lesson=primeiros-passos&lang=th', ['ชุดองค์ประกอบ', 'เว็บไซต์แรกของคุณ']],
+    ['http://127.0.0.1:4173/#/editor?lesson=primeiros-passos&lang=en', ['Element palette', 'Your first website']],
+    ['http://127.0.0.1:4173/#/editor?lesson=primeiros-passos&lang=th', ['ชุดองค์ประกอบ', 'เว็บไซต์แรกของคุณ']],
   ]) {
     const result = spawnSync(chromeBinary(), [
       '--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu',
