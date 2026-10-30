@@ -39,10 +39,10 @@ try {
         console.error('Browser stderr:', result.stderr.slice(-5500))
         console.error('Rendered DOM excerpt:', result.stdout.slice(0, 1800))
         console.error('Rendered DOM tail:', result.stdout.slice(-6000))
-        const match = result.stdout.match(/assets\\/(index-[^:]+\\.js):(\\d+):(\\d+)/)
+        const match = result.stdout.match(new RegExp('assets/(index-[^:]+[.]js):([0-9]+):([0-9]+)'))
         if (match) {
           const [, file, row, col] = match
-          const source = readFileSync('dist/assets/' + file, 'utf8').split('\\n')[Number(row) - 1]
+          const source = readFileSync('dist/assets/' + file, 'utf8').split('\n')[Number(row) - 1]
           console.error('Bundled crash location:', source?.slice(Math.max(0, Number(col) - 400), Number(col) + 400))
         }
         throw new Error('Missing editor text: ' + text)
