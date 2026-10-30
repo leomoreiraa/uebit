@@ -3,11 +3,12 @@ import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
+import { LanguageProvider } from './i18n/language'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <HashRouter>
-      <App />
+      <LanguageProvider><App /></LanguageProvider>
     </HashRouter>
   </StrictMode>,
 )
