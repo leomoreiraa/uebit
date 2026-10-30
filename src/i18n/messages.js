@@ -339,5 +339,5 @@ export const MESSAGES = {
 
 export function message(language, key, parameters = {}) {
   const value = MESSAGES[language]?.[key] ?? MESSAGES['pt-BR'][key] ?? key
-  return value.replace(/\\{(\\w+)\\}/g, (_, name) => String(parameters[name] ?? ''))
+  return value.replace(/\{(\w+)\}/g, (_, name) => String(parameters[name] ?? ''))
 }
