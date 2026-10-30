@@ -1,6 +1,7 @@
 import { spawn, spawnSync } from 'node:child_process'
 import { setTimeout as delay } from 'node:timers/promises'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 
 function chromeBinary() {
   for (const binary of ['google-chrome', 'chromium', 'chromium-browser']) {
@@ -38,6 +39,12 @@ try {
         console.error('Browser stderr:', result.stderr.slice(-5500))
         console.error('Rendered DOM excerpt:', result.stdout.slice(0, 1800))
         console.error('Rendered DOM tail:', result.stdout.slice(-6000))
+        const match = result.stdout.match(/assets\\/(index-[^:]+\\.js):(\\d+):(\\d+)/)
+        if (match) {
+          const [, file, row, col] = match
+          const source = readFileSync('dist/assets/' + file, 'utf8').split('\\n')[Number(row) - 1]
+          console.error('Bundled crash location:', source?.slice(Math.max(0, Number(col) - 400), Number(col) + 400))
+        }
         throw new Error('Missing editor text: ' + text)
       }
     }
