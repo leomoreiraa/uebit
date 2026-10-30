@@ -37,6 +37,7 @@ try {
       if (!result.stdout.includes(text)) {
         console.error('Browser stderr:', result.stderr.slice(-5500))
         console.error('Rendered DOM excerpt:', result.stdout.slice(0, 1800))
+        console.error('Rendered DOM tail:', result.stdout.slice(-6000))
         throw new Error('Missing editor text: ' + text)
       }
     }
