@@ -49,12 +49,13 @@ export default function Canvas({ elements, selectedId, onSelect, onEditText, dro
   return <>
     <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-purple-100 bg-white px-3 py-2">
       <div className="flex items-center gap-2">
-        <div role="group" aria-label="Versão da página" className="flex gap-1 rounded-full bg-purple-50 p-1 border-2 border-purple-200">
+        <div role="group" data-tour="device-group" aria-label="Versão da página" className="flex gap-1 rounded-full bg-purple-50 p-1 border-2 border-purple-200">
           {['desktop', 'mobile'].map((mode) => (
             <button
               type="button"
               key={mode}
               aria-pressed={device === mode}
+              data-tour-device={mode}
               onClick={() => onDeviceChange(mode)}
               className={`rounded-full px-3.5 py-1 text-xs font-black transition-all ${
                 device === mode ? 'bg-purple-600 text-white shadow-xs' : 'text-purple-700 hover:text-purple-950'
@@ -117,7 +118,7 @@ export default function Canvas({ elements, selectedId, onSelect, onEditText, dro
 
     <div ref={frameRef} className="uebit-dot-backdrop min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4">
       <div className="mx-auto" style={{ width: viewportWidth * scale, height: (height + 80) * scale }}>
-        <div ref={setNodeRef} aria-label="Página: solte os elementos aqui" data-device={device} className="relative bg-white shadow-xs" style={{ width: viewportWidth, height: height + 80, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+        <div ref={setNodeRef} data-tour="canvas" aria-label="Página: solte os elementos aqui" data-device={device} className="relative bg-white shadow-xs" style={{ width: viewportWidth, height: height + 80, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
           <SitePreview code={code} resizePreview={resizePreview} onLayout={receiveLayout} onSelect={onSelect} onEditText={onEditText} onError={setRuntimeError} interactive={!isDragging && !resizePreview} editing={!testMode} className="absolute inset-x-0 top-0 w-full bg-white" style={{ height }} />
           {!testMode && <>
             <SortableContext items={elements.map((element) => element.id)} strategy={rectSortingStrategy}>
