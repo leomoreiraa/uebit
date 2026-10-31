@@ -330,7 +330,7 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
           <>
             <label className="block text-xs font-medium text-slate-600">
               Texto do link
-              <input type="text" value={content.text ?? ''} onChange={(event) => change('text', event.target.value)} placeholder="Clique aqui" className={`${fieldClass} mt-1`} />
+              <input type="text" data-tour-field="text" value={content.text ?? ''} onChange={(event) => change('text', event.target.value)} placeholder="Clique aqui" className={`${fieldClass} mt-1`} />
             </label>
             <label className="block text-xs font-medium text-slate-600">
               Endereço de destino (URL)
@@ -637,7 +637,7 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
           <>
             <label className="block text-xs font-medium text-slate-600">
               Endereço da imagem
-              <input type="text" value={content.src.startsWith('data:') ? '' : content.src} placeholder={content.src.startsWith('data:') ? 'Imagem enviada do computador' : 'https://...'} onChange={(event) => change('src', event.target.value)} className={`${fieldClass} mt-1`} />
+              <input type="text" data-tour-field="src" value={content.src.startsWith('data:') ? '' : content.src} placeholder={content.src.startsWith('data:') ? 'Imagem enviada do computador' : 'https://...'} onChange={(event) => change('src', event.target.value)} className={`${fieldClass} mt-1`} />
             </label>
             <label className="block text-xs font-medium text-slate-600">
               Enviar imagem
@@ -645,7 +645,7 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
             </label>
             <label className="block text-xs font-medium text-slate-600">
               Descrição da imagem
-              <input type="text" value={content.alt} onChange={(event) => change('alt', event.target.value)} className={`${fieldClass} mt-1`} />
+              <input type="text" data-tour-field="alt" value={content.alt} onChange={(event) => change('alt', event.target.value)} className={`${fieldClass} mt-1`} />
             </label>
             <label className="block text-xs font-medium text-slate-600">
               Ajuste da imagem
