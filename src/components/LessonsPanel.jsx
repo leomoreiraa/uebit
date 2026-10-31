@@ -125,7 +125,11 @@ export default function LessonsPanel({ lessonId, onSelectLesson, onClose, onView
               {lesson.theory.map((section, index) => (
                 <section key={section.heading} className="mt-4 border-b border-slate-100 pb-4">
                   <h4 className="text-sm font-black text-purple-950">{index + 1}. {section.heading}</h4>
-                  <p className="mt-2 whitespace-pre-line text-sm leading-7 text-slate-700">{section.text}</p>
+                  <p className="mt-2 whitespace-pre-line text-sm leading-7 text-slate-700">{section.simple ?? section.text}</p>
+                  <details className="mt-3 rounded-xl bg-slate-50 p-3">
+                    <summary className="min-h-8 cursor-pointer text-xs font-bold leading-6 text-purple-800">{t('deepDive')}</summary>
+                    <p className="mt-2 whitespace-pre-line text-sm leading-6 text-slate-700">{section.text}</p>
+                  </details>
                   {section.example && <pre className="mt-3 overflow-x-auto rounded-xl bg-slate-900 p-3 text-xs leading-5 text-emerald-200"><code>{section.example}</code></pre>}
                   {section.explain && <p className="mt-2 flex gap-2 text-xs leading-relaxed text-slate-600"><Lightbulb size={16} className="shrink-0 text-amber-600" /><span>{section.explain}</span></p>}
                 </section>
