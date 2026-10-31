@@ -86,7 +86,7 @@ try {
     document.querySelector('[data-testid="start-guided-tour-0"]').click();
     await new Promise(r => setTimeout(r, 700));
     const card = document.querySelector('[data-testid="spotlight-card"]');
-    return { active: !!card, target: card?.dataset.tourTarget, dimmers: document.querySelectorAll('[data-testid="lesson-spotlight"] .fixed.bg-slate-950\\/65').length };
+    return { active: !!card, target: card?.dataset.tourTarget, dimmers: document.querySelectorAll('[data-testid="lesson-spotlight"] > div[aria-hidden="true"]').length };
   `)
   assert.equal(current.active, true, 'Spotlight did not render')
   assert.equal(current.target, 'view-visual', 'Initial step points at wrong control')
