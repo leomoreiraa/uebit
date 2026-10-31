@@ -33,6 +33,7 @@ export default function LessonsPage() {
           <span className="inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-2 text-xs font-black uppercase tracking-wide text-purple-900"><GraduationCap size={17} /> {t('school')}</span>
           <h1 className="mt-5 text-4xl font-black leading-tight sm:text-5xl">{t('headline')}</h1>
           <p className="mt-5 text-base leading-7 text-slate-700">{t('intro')}</p>
+          <p className="mt-4 inline-flex rounded-xl bg-amber-100 px-3 py-2 text-sm font-bold text-amber-950">🐸 {t('ageAppropriate')}</p>
         </div>
         <section className="mt-8 grid gap-4 sm:grid-cols-3" aria-label={t('pathTitle')}>
           <div className="rounded-2xl border-2 border-purple-200 bg-white p-5"><BookOpen className="text-purple-600"/><p className="mt-3 text-3xl font-black">{lessons.length}</p><p className="text-sm font-semibold text-slate-600">{t('completedLessons')}</p></div>
