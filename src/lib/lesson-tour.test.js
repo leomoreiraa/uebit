@@ -26,7 +26,9 @@ test('guia é o mesmo nas versões português, inglês e tailandês', () => {
   for (const lang of ['en', 'th']) {
     const localized = getLessons(lang)
     for (const lesson of localized) {
-      lesson.tasks.forEach((task, i) => assert.equal(task.tutorial.steps.length, TOUR_TARGETS[lesson.id][i].length))
+      lesson.tasks.forEach((task, i) => task.tutorial.steps.forEach((_, j) => {
+        assert.ok(TOUR_SELECTORS[guideTarget(lesson.id, i, j)], lesson.id + ':' + i + ':' + j)
+      }))
     }
   }
 })
