@@ -109,6 +109,7 @@ export default function BlocksEditor({ project, targets, onProjectChange, onAppl
             <button
               type="button"
               onClick={() => setRecipesOpen((prev) => !prev)}
+              data-tour="blockly-recipes"
               aria-expanded={recipesOpen}
               className="inline-flex h-8 min-h-8 items-center gap-1.5 rounded-full border-b-2 border-amber-600 bg-amber-400 px-3 text-xs font-black text-amber-950 shadow-xs transition-all hover:bg-amber-300 active:translate-y-0.5"
             >
@@ -147,7 +148,7 @@ export default function BlocksEditor({ project, targets, onProjectChange, onAppl
           {generationError}
         </p>
       )}
-      <div ref={ref} aria-label="Workspace de blocos" className={`uebit-blocks w-full ${expanded ? 'min-h-0 flex-1' : 'h-140'}`} />
+      <div ref={ref} data-tour="blockly-workspace" aria-label="Workspace de blocos" className={`uebit-blocks w-full ${expanded ? 'min-h-0 flex-1' : 'h-140'}`} />
     </div>
   )
 }

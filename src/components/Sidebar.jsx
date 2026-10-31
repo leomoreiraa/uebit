@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { elementTypes } from '../data/elements'
 import { ChevronDown, ChevronRight } from 'lucide-react'
@@ -66,6 +66,7 @@ function ElementCard({ element, category, disabled, onAddElement, language }) {
   return (
     <button
       ref={setNodeRef}
+      data-tour-element={element.type}
       type="button"
       {...attributes}
       {...listeners}
@@ -98,6 +99,15 @@ export default function Sidebar({ disabled, onAddElement }) {
   const { language } = useLanguage()
   const t = (key) => message(language, key)
 
+  useEffect(() => {
+    const expandCategory = (event) => {
+      if (typeof event.detail !== 'string') return
+      setCollapsed((previous) => ({ ...previous, [event.detail]: false }))
+    }
+    window.addEventListener('uebit-tour-expand-category', expandCategory)
+    return () => window.removeEventListener('uebit-tour-expand-category', expandCategory)
+  }, [])
+
   const toggleSection = (id) => {
     setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }))
   }
@@ -105,6 +115,7 @@ export default function Sidebar({ disabled, onAddElement }) {
   return (
     <aside
       aria-labelledby="elements-heading"
+      data-tour="palette"
       className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-3xl border-2 border-purple-200 bg-white p-3.5 shadow-sm"
     >
       <div className="flex shrink-0 items-center justify-between gap-2">
@@ -128,6 +139,7 @@ export default function Sidebar({ disabled, onAddElement }) {
               <button
                 type="button"
                 onClick={() => toggleSection(category.id)}
+                data-tour-category={category.id}
                 aria-expanded={!isCollapsed}
                 className={`flex w-full items-center justify-between rounded-xl px-2 py-1 text-left transition-colors ${category.headerHover}`}
               >

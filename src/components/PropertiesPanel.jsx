@@ -44,6 +44,7 @@ export default function PropertiesPanel({
   return (
     <aside
       aria-labelledby="panel-tab-heading"
+      data-tour="inspector"
       className="flex w-full min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-hidden rounded-3xl border-2 border-purple-200 bg-white p-3 shadow-sm"
     >
       {/* Tab Navigation */}

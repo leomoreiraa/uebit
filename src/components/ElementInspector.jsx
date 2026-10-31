@@ -222,6 +222,7 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
               <input
                 type="text"
                 aria-label="ID do item"
+                data-tour-field="html-id"
                 placeholder="ex: meu-id"
                 value={idDraft}
                 onChange={(event) => {
@@ -316,6 +317,7 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
             {element.type === 'heading' ? 'Texto do título' : element.type === 'paragraph' ? 'Texto do parágrafo' : element.type === 'quote' ? 'Texto da citação' : element.type === 'strong' ? 'Texto em negrito' : element.type === 'em' ? 'Texto em itálico' : element.type === 'code' ? 'Trecho de código' : element.type === 'span' ? 'Texto em linha' : 'Texto do botão'}
             <textarea
               aria-label="Texto do elemento"
+              data-tour-field="text"
               rows={['heading', 'button', 'strong', 'em', 'code', 'span'].includes(element.type) ? 2 : 4}
               value={content.text ?? ''}
               onChange={(event) => change('text', event.target.value)}
@@ -328,11 +330,11 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
           <>
             <label className="block text-xs font-medium text-slate-600">
               Texto do link
-              <input type="text" value={content.text ?? ''} onChange={(event) => change('text', event.target.value)} placeholder="Clique aqui" className={`${fieldClass} mt-1`} />
+              <input type="text" data-tour-field="text" value={content.text ?? ''} onChange={(event) => change('text', event.target.value)} placeholder="Clique aqui" className={`${fieldClass} mt-1`} />
             </label>
             <label className="block text-xs font-medium text-slate-600">
               Endereço de destino (URL)
-              <input type="text" value={content.href ?? ''} onChange={(event) => change('href', event.target.value)} placeholder="https://exemplo.com ou #secao" className={`${fieldClass} mt-1`} />
+              <input type="text" data-tour-field="href" value={content.href ?? ''} onChange={(event) => change('href', event.target.value)} placeholder="https://exemplo.com ou #secao" className={`${fieldClass} mt-1`} />
             </label>
             <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
               <input type="checkbox" checked={Boolean(content.newTab)} onChange={(event) => change('newTab', event.target.checked)} className="size-4 rounded" />
@@ -346,6 +348,7 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
             {element.type === 'ordered-list' ? 'Itens da lista numerada (um por linha)' : 'Itens da lista com marcadores (um por linha)'}
             <textarea
               aria-label="Itens da lista"
+              data-tour-field="list"
               rows={5}
               value={content.text ?? ''}
               onChange={(event) => change('text', event.target.value)}
@@ -362,6 +365,7 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
               <input
                 type="text"
                 aria-label="Texto de exemplo"
+                data-tour-field="placeholder"
                 value={content.placeholder ?? ''}
                 onChange={(event) => change('placeholder', event.target.value)}
                 placeholder="ex: Digite sua resposta..."
@@ -633,7 +637,7 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
           <>
             <label className="block text-xs font-medium text-slate-600">
               Endereço da imagem
-              <input type="text" value={content.src.startsWith('data:') ? '' : content.src} placeholder={content.src.startsWith('data:') ? 'Imagem enviada do computador' : 'https://...'} onChange={(event) => change('src', event.target.value)} className={`${fieldClass} mt-1`} />
+              <input type="text" data-tour-field="src" value={content.src.startsWith('data:') ? '' : content.src} placeholder={content.src.startsWith('data:') ? 'Imagem enviada do computador' : 'https://...'} onChange={(event) => change('src', event.target.value)} className={`${fieldClass} mt-1`} />
             </label>
             <label className="block text-xs font-medium text-slate-600">
               Enviar imagem
@@ -641,7 +645,7 @@ export default function ElementInspector({ element, elements, onUpdate, onOpenPr
             </label>
             <label className="block text-xs font-medium text-slate-600">
               Descrição da imagem
-              <input type="text" value={content.alt} onChange={(event) => change('alt', event.target.value)} className={`${fieldClass} mt-1`} />
+              <input type="text" data-tour-field="alt" value={content.alt} onChange={(event) => change('alt', event.target.value)} className={`${fieldClass} mt-1`} />
             </label>
             <label className="block text-xs font-medium text-slate-600">
               Ajuste da imagem

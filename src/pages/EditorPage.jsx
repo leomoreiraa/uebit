@@ -27,6 +27,7 @@ import Stage from '../components/Stage'
 import TemplatesModal from '../components/TemplatesModal'
 import LessonsPanel from '../components/LessonsPanel'
 import { lessonById } from '../data/lessons'
+import { guideView } from '../lib/lesson-tour'
 import { useLanguage } from '../i18n/language'
 import { message as translateMessage } from '../i18n/messages'
 import { getTemplate } from '../data/templates'
@@ -45,6 +46,7 @@ function EditorPanel({ id, label, side, open, onClose, triggerRef, children }) {
     const visible = (element) => element.getClientRects().length > 0 && !element.closest('[inert]')
     panel.querySelector('button')?.focus()
     function onKeyDown(event) {
+      if (document.body.dataset.uebitTourActive === 'true') return
       // ColorPicker renders a dialog into document.body; let its Escape handler close it first.
       const popovers = [...document.querySelectorAll('body > [role="dialog"]')]
       if (event.key === 'Escape') {
@@ -560,6 +562,43 @@ export default function EditorPage() {
                 closeMobilePanel()
                 setStageOpen(false)
                 setView(nextView)
+              }}
+              onNavigateTour={(target, { lessonId: guidedLesson, activityIndex }) => {
+                const nextView = guideView(target)
+                setView(nextView)
+                setStageOpen(false)
+                if (target === 'code-tab-html') setCodeTab('html')
+                if (target === 'code-tab-css') setCodeTab('css')
+                if (target === 'code-tab-js') setCodeTab('js')
+                if (target.startsWith('field-') || target === 'inspector') {
+                  setPanelTab('styles')
+                  const types = {
+                    'primeiros-passos': ['heading', 'paragraph', 'heading'],
+                    'textos-links': ['list', 'link', 'strong'],
+                    'imagens-acessibilidade': ['image', 'image', 'paragraph'],
+                    'layout-flexbox': ['container', 'paragraph', 'container'],
+                    'css-cores': ['heading'],
+                    'responsivo': ['paragraph'],
+                    'formularios': ['container', 'input', 'button'],
+                    'javascript-eventos': ['button', 'paragraph'],
+                    'logica-blocos': ['button'],
+                    'projeto-final': ['paragraph', 'button'],
+                  }
+                  const requested = types[guidedLesson]?.[activityIndex]
+                  const found = requested && flattenTree(elements).filter((node) => node.type === requested).at(-1)
+                  if (found) setSelectedId(found.id)
+                }
+                const smallScreen = window.matchMedia('(max-width: 1279px)').matches
+                if (nextView === 'visual' && smallScreen) {
+                  if (target.startsWith('field-') || target === 'inspector') setMobilePanel('properties')
+                  else if (target === 'palette' || target.startsWith('category-') || target.startsWith('element-')) setMobilePanel('palette')
+                  else setMobilePanel(null)
+                } else setMobilePanel(null)
+                if (target.startsWith('element-')) {
+                  const type = target.slice('element-'.length)
+                  const category = ['heading', 'paragraph', 'link', 'strong', 'list'].includes(type) ? 'text' : ['image'].includes(type) ? 'media' : ['container'].includes(type) ? 'structure' : 'interaction'
+                  window.dispatchEvent(new CustomEvent('uebit-tour-expand-category', { detail: category }))
+                }
               }}
               onFreshProject={() => {
                 if (window.confirm(t('freshConfirm'))) loadTemplate('blank')

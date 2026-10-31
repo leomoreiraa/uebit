@@ -5,6 +5,7 @@ import { getLessons, getLesson } from '../data/localized-lessons'
 import { useLanguage, languagePath } from '../i18n/language'
 import { message as translateMessage } from '../i18n/messages'
 import { evaluateLesson, normalizeProgress, PROGRESS_KEY } from '../lib/lesson-checks'
+import LessonSpotlight from './LessonSpotlight'
 
 function GuideText({ children }) {
   const parts = String(children ?? '').split(/(\*\*[^*]+\*\*)/g)
@@ -18,12 +19,13 @@ function initialProgress() {
   catch { return normalizeProgress({}) }
 }
 
-export default function LessonsPanel({ lessonId, onSelectLesson, onClose, onViewChange, onFreshProject, editorState }) {
+export default function LessonsPanel({ lessonId, onSelectLesson, onClose, onViewChange, onFreshProject, editorState, onNavigateTour }) {
   const { language } = useLanguage()
   const t = (key, args) => translateMessage(language, key, args)
   const lessons = getLessons(language)
   const [progress, setProgress] = useState(initialProgress)
   const [quizChoice, setQuizChoice] = useState(null)
+  const [tour, setTour] = useState(null)
   const [showCatalog, setShowCatalog] = useState(!lessonId)
   const [message, setMessage] = useState('')
 
@@ -38,6 +40,7 @@ export default function LessonsPanel({ lessonId, onSelectLesson, onClose, onView
     setShowCatalog(!lessonId)
     setQuizChoice(null)
     setMessage('')
+    setTour(null)
   }, [lessonId])
 
   function completeLesson() {
@@ -55,8 +58,8 @@ export default function LessonsPanel({ lessonId, onSelectLesson, onClose, onView
 
   return (
     <>
-      <button type="button" aria-label={t('closeLessons')} className="fixed inset-0 z-40 bg-slate-950/50 2xl:hidden" onClick={onClose} />
-      <aside aria-label={t('lessons')} className="fixed inset-y-0 right-0 z-50 flex w-[min(430px,100vw)] min-w-0 flex-col overflow-hidden border-l-2 border-purple-200 bg-white shadow-2xl 2xl:static 2xl:z-auto 2xl:w-[380px] 2xl:shrink-0 2xl:shadow-none">
+      {!tour && <button type="button" aria-label={t('closeLessons')} className="fixed inset-0 z-40 bg-slate-950/50 2xl:hidden" onClick={onClose} />}
+      <aside aria-label={t('lessons')} className={`${tour ? 'hidden' : 'flex'} fixed inset-y-0 right-0 z-50 w-[min(430px,100vw)] min-w-0 flex-col overflow-hidden border-l-2 border-purple-200 bg-white shadow-2xl 2xl:static 2xl:z-auto 2xl:w-[380px] 2xl:shrink-0 2xl:shadow-none`}> 
         <div className="flex shrink-0 items-center justify-between gap-2 border-b-2 border-purple-100 bg-purple-50 p-3">
           <button type="button" onClick={() => setShowCatalog(true)} className="flex min-h-10 items-center gap-2 rounded-xl px-2 text-sm font-black text-purple-900 hover:bg-purple-100">
             <BookOpen size={18} aria-hidden="true" /> {t('lessons')}
@@ -150,10 +153,15 @@ export default function LessonsPanel({ lessonId, onSelectLesson, onClose, onView
                         <div className="min-w-0 flex-1">
                           <h4 className="text-sm font-black text-slate-900">{task.title}</h4>
                           <p className="mt-1 text-xs leading-relaxed text-slate-700">{task.description}</p>
-                          <details className="group mt-3 rounded-xl border-2 border-amber-300 bg-amber-50/70 p-3 text-sm text-slate-800 open:bg-white">
+                          <button type="button" data-testid={'start-guided-tour-' + index} onClick={() => setTour({ activityIndex: index, stepIndex: 0 })} className="mt-3 flex min-h-11 w-full items-center gap-2 rounded-xl border-2 border-amber-400 bg-amber-100 px-3 text-left text-sm font-black text-violet-900 shadow-sm hover:bg-amber-200">
+                            <Lightbulb size={19} className="shrink-0 text-amber-600" aria-hidden="true" />
+                            <span className="flex-1">{t('walkthrough')}</span>
+                            <ArrowRight size={17} />
+                          </button>
+                          <details className="group mt-2 rounded-xl border border-purple-200 bg-white p-3 text-sm text-slate-800 open:bg-white">
                             <summary className="flex min-h-9 cursor-pointer list-none items-center gap-2 font-black text-violet-800 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-violet-600">
                               <Lightbulb size={18} className="shrink-0 text-amber-600" aria-hidden="true" />
-                              <span className="flex-1">{t('walkthrough')}</span>
+                              <span className="flex-1">{t('spotlightWrittenHelp')}</span>
                               <span aria-hidden="true" className="shrink-0 text-xs group-open:rotate-180">▼</span>
                             </summary>
                             <div className="mt-3 border-t border-amber-200 pt-3">
@@ -213,6 +221,18 @@ export default function LessonsPanel({ lessonId, onSelectLesson, onClose, onView
           )}
         </div>
       </aside>
+      {tour && lesson && (
+        <LessonSpotlight
+          lessonId={lesson.id}
+          activityIndex={tour.activityIndex}
+          task={lesson.tasks[tour.activityIndex]}
+          stepIndex={tour.stepIndex}
+          onStepChange={(stepIndex) => setTour((old) => old ? { ...old, stepIndex } : null)}
+          onNavigate={onNavigateTour}
+          onClose={() => setTour(null)}
+          passed={Boolean(results[tour.activityIndex])}
+        />
+      )}
     </>
   )
 }
