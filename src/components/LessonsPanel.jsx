@@ -59,7 +59,7 @@ export default function LessonsPanel({ lessonId, onSelectLesson, onClose, onView
   return (
     <>
       {!tour && <button type="button" aria-label={t('closeLessons')} className="fixed inset-0 z-40 bg-slate-950/50 2xl:hidden" onClick={onClose} />}
-      <aside aria-label={t('lessons')} className={`${tour ? 'hidden' : 'flex'} fixed inset-y-0 right-0 z-50 w-[min(430px,100vw)] min-w-0 flex-col overflow-hidden border-l-2 border-purple-200 bg-white shadow-2xl 2xl:static 2xl:z-auto 2xl:w-[380px] 2xl:shrink-0 2xl:shadow-none">
+      <aside aria-label={t('lessons')} className={`${tour ? 'hidden' : 'flex'} fixed inset-y-0 right-0 z-50 w-[min(430px,100vw)] min-w-0 flex-col overflow-hidden border-l-2 border-purple-200 bg-white shadow-2xl 2xl:static 2xl:z-auto 2xl:w-[380px] 2xl:shrink-0 2xl:shadow-none`}> 
         <div className="flex shrink-0 items-center justify-between gap-2 border-b-2 border-purple-100 bg-purple-50 p-3">
           <button type="button" onClick={() => setShowCatalog(true)} className="flex min-h-10 items-center gap-2 rounded-xl px-2 text-sm font-black text-purple-900 hover:bg-purple-100">
             <BookOpen size={18} aria-hidden="true" /> {t('lessons')}
