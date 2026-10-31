@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [feature/trilha-10-aulas]
+    branches: [main, feature/trilha-10-aulas]
 
 permissions:
   contents: read
@@ -22,3 +22,4 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: node scripts/smoke-editor.mjs
+      - run: node scripts/smoke-lesson-spotlight.mjs
