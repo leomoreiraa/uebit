@@ -554,7 +554,7 @@ export const GUIDES_TH = {
         ],
         "success": "มีการเขียนโปรแกรมด้วยบล็อกหรือ JavaScript แล้ว ควรทดสอบให้ปุ่มทำงานจริงใน Play",
         "trouble": "ถ้าไม่มีอะไรเกิดขึ้น ตรวจว่าบล็อกชี้ไปที่ชิ้นงานที่มีอยู่ หรือ ID ใน JavaScript ตรงกับหน้าเว็บ",
-        "example": "button?.addEventListener(\"click\", () => {\n  alert(\"คุณเรียนจบหลักสูตรแล้ว!\");\n});"
+        "example": "const botaoFinal = document.querySelector(\"button\");\nbotaoFinal?.addEventListener(\"click\", () => {\n  alert(\"คุณเรียนจบหลักสูตรแล้ว!\");\n});"
       }
     ]
   }
