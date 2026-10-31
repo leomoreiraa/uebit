@@ -13,8 +13,7 @@ export const TOUR_TARGETS = {
       "category-text",
       "element-paragraph",
       "canvas",
-      "field-text",
-      "canvas"
+      "field-text"
     ],
     [
       "view-code",
@@ -39,8 +38,7 @@ export const TOUR_TARGETS = {
       "element-link",
       "canvas",
       "field-text",
-      "field-href",
-      "play"
+      "field-href"
     ],
     [
       "category-text",
@@ -56,8 +54,7 @@ export const TOUR_TARGETS = {
       "category-media",
       "element-image",
       "canvas",
-      "field-src",
-      "canvas"
+      "field-src"
     ],
     [
       "canvas",
@@ -101,8 +98,7 @@ export const TOUR_TARGETS = {
       "view-visual",
       "category-text",
       "element-heading",
-      "field-text",
-      "canvas"
+      "field-text"
     ],
     [
       "view-code",
@@ -193,8 +189,7 @@ export const TOUR_TARGETS = {
       "view-visual",
       "element-button",
       "field-text",
-      "element-paragraph",
-      "canvas"
+      "element-paragraph"
     ],
     [
       "view-programming",
