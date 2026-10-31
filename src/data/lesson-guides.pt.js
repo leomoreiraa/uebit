@@ -554,7 +554,7 @@ export const GUIDES_PT = {
         ],
         "success": "O projeto possui lógica em blocos ou JavaScript. Confira no Play se a interação realmente funciona.",
         "trouble": "Se clicar e nada acontecer, veja se os blocos apontam para uma peça que existe ou se os IDs usados no JavaScript estão corretos.",
-        "example": "botao?.addEventListener(\"click\", () => {\n  alert(\"Você chegou ao final da trilha!\");\n});"
+        "example": "const botaoFinal = document.querySelector(\"button\");\nbotaoFinal?.addEventListener(\"click\", () => {\n  alert(\"Você chegou ao final da trilha!\");\n});"
       }
     ]
   }
