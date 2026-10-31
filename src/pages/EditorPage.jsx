@@ -46,6 +46,7 @@ function EditorPanel({ id, label, side, open, onClose, triggerRef, children }) {
     const visible = (element) => element.getClientRects().length > 0 && !element.closest('[inert]')
     panel.querySelector('button')?.focus()
     function onKeyDown(event) {
+      if (document.body.dataset.uebitTourActive === 'true') return
       // ColorPicker renders a dialog into document.body; let its Escape handler close it first.
       const popovers = [...document.querySelectorAll('body > [role="dialog"]')]
       if (event.key === 'Escape') {
