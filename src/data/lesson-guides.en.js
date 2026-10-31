@@ -554,7 +554,7 @@ export const GUIDES_EN = {
         ],
         "success": "Your project contains block logic or JavaScript. Test that the interaction actually works in Play.",
         "trouble": "If the button does nothing, check whether the blocks target the correct element or the IDs match your JavaScript.",
-        "example": "button?.addEventListener(\"click\", () => {\n  alert(\"You finished the course!\");\n});"
+        "example": "const botaoFinal = document.querySelector(\"button\");\nbotaoFinal?.addEventListener(\"click\", () => {\n  alert(\"You finished the course!\");\n});"
       }
     ]
   }
