@@ -124,12 +124,12 @@ export default function LessonSpotlight({ lessonId, activityIndex, task, stepInd
     <div data-testid="lesson-spotlight" aria-label={t('spotlightTitle')} role="region">
       {masks.map((style, index) => <div key={index} aria-hidden="true" className="fixed bg-slate-950/65" style={{ ...style, zIndex: 10000 }} />)}
       {rect && <div aria-hidden="true" className="pointer-events-none fixed rounded-xl border-4 border-amber-400 shadow-[0_0_0_3px_rgba(255,255,255,0.95),0_0_28px_7px_rgba(250,204,21,0.7)]" style={{ left: rect.left, top: rect.top, width: rect.width, height: rect.height, zIndex: 10001 }} />}
-      <section data-testid="spotlight-card" aria-live="polite" aria-label={t('spotlightTitle')} className="fixed flex max-h-[min(360px,54dvh)] flex-col overflow-hidden rounded-2xl border-2 border-amber-400 bg-white text-slate-900 shadow-2xl" style={{ ...cardPosition(rect), zIndex: 10002 }}>
+      <section data-testid="spotlight-card" data-tour-target={targetKey} aria-live="polite" aria-label={t('spotlightTitle')} className="fixed flex max-h-[min(360px,54dvh)] flex-col overflow-hidden rounded-2xl border-2 border-amber-400 bg-white text-slate-900 shadow-2xl" style={{ ...cardPosition(rect), zIndex: 10002 }}>
         <div className="flex shrink-0 items-center gap-2 bg-violet-700 px-4 py-3 text-white">
           <Lightbulb size={21} className="text-amber-300" />
           <strong className="min-w-0 flex-1 text-sm">{t('spotlightTitle')}</strong>
           <span className="rounded-full bg-white/20 px-2 py-1 text-xs font-bold">{stepIndex + 1}/{steps.length}</span>
-          <button type="button" onClick={onClose} aria-label={t('spotlightClose')} className="grid size-9 place-items-center rounded-lg hover:bg-white/20"><X size={19} /></button>
+          <button type="button" data-tour-action="close" onClick={onClose} aria-label={t('spotlightClose')} className="grid size-9 place-items-center rounded-lg hover:bg-white/20"><X size={19} /></button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
           <div className="mb-3 flex gap-1.5" aria-label={t('spotlightProgress', { current: stepIndex + 1, total: steps.length })}>
@@ -140,8 +140,8 @@ export default function LessonSpotlight({ lessonId, activityIndex, task, stepInd
           {passed && <p className="mt-3 flex items-center gap-2 text-xs font-black text-emerald-700"><CheckCircle2 size={15}/>{t('completedTask')}</p>}
         </div>
         <div className="flex shrink-0 items-center justify-between gap-2 border-t border-purple-100 bg-purple-50 px-3 py-3">
-          <button type="button" onClick={() => onStepChange(Math.max(0, stepIndex - 1))} disabled={stepIndex === 0} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-3 text-xs font-black text-purple-800 disabled:opacity-40"><ArrowLeft size={15}/>{t('spotlightPrevious')}</button>
-          <button type="button" onClick={() => last ? onClose() : onStepChange(stepIndex + 1)} className="inline-flex min-h-10 items-center gap-1 rounded-xl bg-emerald-600 px-4 text-xs font-black text-white hover:bg-emerald-500">
+          <button type="button" data-tour-action="previous" onClick={() => onStepChange(Math.max(0, stepIndex - 1))} disabled={stepIndex === 0} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-3 text-xs font-black text-purple-800 disabled:opacity-40"><ArrowLeft size={15}/>{t('spotlightPrevious')}</button>
+          <button type="button" data-tour-action="next" onClick={() => last ? onClose() : onStepChange(stepIndex + 1)} className="inline-flex min-h-10 items-center gap-1 rounded-xl bg-emerald-600 px-4 text-xs font-black text-white hover:bg-emerald-500">
             {last ? t('spotlightFinish') : t('spotlightNext')} {!last && <ArrowRight size={15}/>}
           </button>
         </div>
