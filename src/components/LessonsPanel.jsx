@@ -7,7 +7,7 @@ import { message as translateMessage } from '../i18n/messages'
 import { evaluateLesson, normalizeProgress, PROGRESS_KEY } from '../lib/lesson-checks'
 
 function GuideText({ children }) {
-  const parts = String(children ?? '').split(/(\\*\\*[^*]+\\*\\*)/g)
+  const parts = String(children ?? '').split(/(\*\*[^*]+\*\*)/g)
   return <>{parts.map((part, index) => part.startsWith('**') && part.endsWith('**')
     ? <strong key={index} className="font-black text-slate-950">{part.slice(2, -2)}</strong>
     : <span key={index}>{part}</span>)}</>
