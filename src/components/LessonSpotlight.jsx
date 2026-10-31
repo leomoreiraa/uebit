@@ -56,11 +56,13 @@ export default function LessonSpotlight({ lessonId, activityIndex, task, stepInd
   const [windowSize, setWindowSize] = useState(() => ({ width: window.innerWidth, height: window.innerHeight }))
   const lastScrolled = useRef('')
   const navigateRef = useRef(onNavigate)
+  const taskRef = useRef(task)
   navigateRef.current = onNavigate
+  taskRef.current = task
 
   useEffect(() => {
-    navigateRef.current?.(targetKey, { lessonId, activityIndex, task })
-  }, [targetKey, activityIndex, lessonId, task])
+    navigateRef.current?.(targetKey, { lessonId, activityIndex, task: taskRef.current })
+  }, [targetKey, activityIndex, lessonId])
 
   useEffect(() => {
     let running = true
