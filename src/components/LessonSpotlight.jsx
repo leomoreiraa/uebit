@@ -97,6 +97,11 @@ export default function LessonSpotlight({ lessonId, activityIndex, task, stepInd
   }, [targetKey, lessonId, activityIndex, stepIndex])
 
   useEffect(() => {
+    document.body.dataset.uebitTourActive = 'true'
+    return () => { delete document.body.dataset.uebitTourActive }
+  }, [])
+
+  useEffect(() => {
     const closeOnEscape = (event) => {
       if (event.key === 'Escape') { event.preventDefault(); onClose() }
     }
