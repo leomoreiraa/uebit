@@ -6,6 +6,13 @@ import { useLanguage, languagePath } from '../i18n/language'
 import { message as translateMessage } from '../i18n/messages'
 import { evaluateLesson, normalizeProgress, PROGRESS_KEY } from '../lib/lesson-checks'
 
+function GuideText({ children }) {
+  const parts = String(children ?? '').split(/(\*\*[^*]+\*\*)/g)
+  return <>{parts.map((part, index) => part.startsWith('**') && part.endsWith('**')
+    ? <strong key={index} className="font-black text-slate-950">{part.slice(2, -2)}</strong>
+    : <span key={index}>{part}</span>)}</>
+}
+
 function initialProgress() {
   try { return normalizeProgress(JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}')) }
   catch { return normalizeProgress({}) }
@@ -89,19 +96,48 @@ export default function LessonsPanel({ lessonId, onSelectLesson, onClose, onView
               <div className="flex flex-wrap items-center gap-2 text-xs font-black text-purple-700"><span className="rounded-full bg-purple-100 px-2 py-1">{t('lesson')} {lessonIndex + 1}/10</span><span>{lesson.tag}</span><span>·</span><span>{lesson.minutes} {t('minutes')}</span></div>
               <h2 className="mt-3 text-2xl font-black leading-tight text-slate-900">{lesson.title.replace(/^\d+\.\s*/, '')}</h2>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">{lesson.summary}</p>
+              <section className="mt-5 rounded-2xl border-2 border-violet-200 bg-violet-50 p-4">
+                <h3 className="text-base font-black text-violet-950">🚀 {t('mission')}</h3>
+                <p className="mt-2 text-sm font-semibold leading-6 text-slate-800">{lesson.guide?.mission}</p>
+                <div className="mt-3 rounded-xl bg-white p-3">
+                  <h4 className="text-sm font-black text-violet-800">💡 {t('story')}</h4>
+                  <p className="mt-1 text-sm leading-6 text-slate-700">{lesson.guide?.story}</p>
+                </div>
+                <h4 className="mt-3 text-sm font-black text-violet-900">🎨 {t('warmup')}</h4>
+                <p className="mt-1 text-sm leading-6 text-slate-700">{lesson.guide?.tryIt}</p>
+              </section>
               <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3">
                 <h3 className="text-sm font-black text-emerald-900">{t('objectives')}</h3>
                 <ul className="mt-2 list-inside list-disc space-y-1 text-xs leading-relaxed text-emerald-950">{lesson.goals.map((goal) => <li key={goal}>{goal}</li>)}</ul>
               </div>
+              <section className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-3">
+                <h3 className="text-sm font-black text-amber-950">📖 {t('wordBank')}</h3>
+                <dl className="mt-3 space-y-3">
+                  {(lesson.guide?.words ?? []).map(([term, explanation]) => (
+                    <div key={term} className="rounded-lg bg-white px-3 py-2">
+                      <dt className="text-sm font-black text-slate-900">{term}</dt>
+                      <dd className="mt-0.5 text-sm leading-6 text-slate-700">{explanation}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
               <h3 className="mt-6 text-base font-black text-slate-900">{t('concepts')}</h3>
               {lesson.theory.map((section, index) => (
                 <section key={section.heading} className="mt-4 border-b border-slate-100 pb-4">
                   <h4 className="text-sm font-black text-purple-950">{index + 1}. {section.heading}</h4>
-                  <p className="mt-2 whitespace-pre-line text-sm leading-6 text-slate-700">{section.text}</p>
+                  <p className="mt-2 whitespace-pre-line text-sm leading-7 text-slate-700">{section.simple ?? section.text}</p>
+                  <details className="mt-3 rounded-xl bg-slate-50 p-3">
+                    <summary className="min-h-8 cursor-pointer text-xs font-bold leading-6 text-purple-800">{t('deepDive')}</summary>
+                    <p className="mt-2 whitespace-pre-line text-sm leading-6 text-slate-700">{section.text}</p>
+                  </details>
                   {section.example && <pre className="mt-3 overflow-x-auto rounded-xl bg-slate-900 p-3 text-xs leading-5 text-emerald-200"><code>{section.example}</code></pre>}
                   {section.explain && <p className="mt-2 flex gap-2 text-xs leading-relaxed text-slate-600"><Lightbulb size={16} className="shrink-0 text-amber-600" /><span>{section.explain}</span></p>}
                 </section>
               ))}
+              <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-3">
+                <h3 className="text-sm font-black text-emerald-900">⭐ {t('ready')}</h3>
+                <p className="mt-1 text-sm leading-6 text-emerald-950">{lesson.guide?.outcome}</p>
+              </div>
               <div className="mt-6 rounded-2xl border-2 border-purple-200 bg-purple-50/50 p-3">
                 <h3 className="text-base font-black text-slate-900">{t('practice')}</h3>
                 <p role="status" className="mt-1 text-xs font-semibold text-purple-800">{passed} {t('tasksChecked', { total: lesson.tasks.length })}</p>
@@ -114,7 +150,41 @@ export default function LessonsPanel({ lessonId, onSelectLesson, onClose, onView
                         <div className="min-w-0 flex-1">
                           <h4 className="text-sm font-black text-slate-900">{task.title}</h4>
                           <p className="mt-1 text-xs leading-relaxed text-slate-700">{task.description}</p>
-                          <details className="mt-2 text-xs text-slate-600"><summary className="cursor-pointer font-bold text-purple-700">{t('hint')}</summary><p className="mt-1 leading-relaxed">{task.hint}</p></details>
+                          <details className="group mt-3 rounded-xl border-2 border-amber-300 bg-amber-50/70 p-3 text-sm text-slate-800 open:bg-white">
+                            <summary className="flex min-h-9 cursor-pointer list-none items-center gap-2 font-black text-violet-800 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-violet-600">
+                              <Lightbulb size={18} className="shrink-0 text-amber-600" aria-hidden="true" />
+                              <span className="flex-1">{t('walkthrough')}</span>
+                              <span aria-hidden="true" className="shrink-0 text-xs group-open:rotate-180">▼</span>
+                            </summary>
+                            <div className="mt-3 border-t border-amber-200 pt-3">
+                              <h5 className="text-sm font-black text-slate-950">{t('stepByStep')}</h5>
+                              <ol className="mt-3 space-y-3">
+                                {(task.tutorial?.steps ?? [task.hint]).map((step, stepIndex) => (
+                                  <li key={stepIndex} className="flex items-start gap-3">
+                                    <span className="grid size-7 shrink-0 place-items-center rounded-full bg-purple-600 text-xs font-black text-white">{stepIndex + 1}</span>
+                                    <p className="min-w-0 flex-1 pt-0.5 text-sm leading-6 text-slate-700"><GuideText>{step}</GuideText></p>
+                                  </li>
+                                ))}
+                              </ol>
+                              {task.tutorial?.example && (
+                                <div className="mt-4">
+                                  <h5 className="text-sm font-black text-slate-900">{t('exampleToCopy')}</h5>
+                                  <pre className="mt-2 overflow-x-auto rounded-lg bg-slate-900 p-3 text-xs leading-5 text-emerald-200"><code>{task.tutorial.example}</code></pre>
+                                </div>
+                              )}
+                              <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3">
+                                <h5 className="text-sm font-black text-emerald-900">✅ {t('whatToSee')}</h5>
+                                <p className="mt-1 text-sm leading-6 text-emerald-950">{task.tutorial?.success ?? task.description}</p>
+                              </div>
+                              <div className="mt-3 rounded-xl border border-orange-200 bg-orange-50 p-3">
+                                <h5 className="text-sm font-black text-orange-900">🛠️ {t('helpIfStuck')}</h5>
+                                <p className="mt-1 text-sm leading-6 text-orange-950">{task.tutorial?.trouble ?? task.hint}</p>
+                              </div>
+                              <p aria-live="polite" className={'mt-3 text-xs font-bold ' + (results[index] ? 'text-emerald-800' : 'text-slate-600')}>
+                                {results[index] ? t('completedTask') : t('pendingTask')}
+                              </p>
+                            </div>
+                          </details>
                           <button type="button" onClick={() => onViewChange(task.view)} className="mt-2 inline-flex min-h-9 items-center gap-1 rounded-lg bg-purple-100 px-3 text-xs font-black text-purple-900 hover:bg-purple-200"><Code2 size={14} /> {t('open')} {t(task.view === 'visual' ? 'visual' : task.view === 'programming' ? 'programming' : 'code')}</button>
                         </div>
                       </div>
@@ -130,7 +200,7 @@ export default function LessonsPanel({ lessonId, onSelectLesson, onClose, onView
                 </div>
                 {quizChoice !== null && <p role="status" className={'mt-3 text-xs font-bold leading-relaxed ' + (passedQuiz ? 'text-emerald-800' : 'text-rose-700')}>{passedQuiz ? t('correct') + ' ' + lesson.quiz.explain : t('tryAgain')}</p>}
               </section>
-              <section className="mt-5 rounded-2xl bg-slate-100 p-3"><h3 className="text-sm font-black text-slate-900">{t('extraChallenge')}</h3><p className="mt-1 text-xs leading-5 text-slate-700">{lesson.challenge}</p></section>
+              <section className="mt-5 rounded-2xl bg-slate-100 p-3"><h3 className="text-sm font-black text-slate-900">{t('quickChallenge')}</h3><p className="mt-1 text-xs leading-5 text-slate-700">{lesson.challenge}</p></section>
               <button type="button" disabled={!results.every(Boolean) || !passedQuiz || done} onClick={completeLesson} className="mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-sm font-black text-white enabled:hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"><CheckCircle2 size={18}/>{t(done ? 'finished' : 'finish')}</button>
               {!done && <p className="mt-2 text-center text-xs text-slate-500">{t('finishHelp')}</p>}
               {message && <p role="status" className="mt-2 text-xs text-amber-800">{message}</p>}

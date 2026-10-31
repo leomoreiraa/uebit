@@ -37,8 +37,8 @@ test('localized lessons preserve all checks, ids, answers and progress keys', ()
     }
   }
   assert.equal(getLesson('missing', 'th'), null)
-  assert.deepEqual(getLessons('pt-BR'), LESSONS)
-  assert.deepEqual(getLessons('no-locale'), LESSONS)
+  assert.deepEqual(getLessons('pt-BR').map(({ id }) => id), LESSONS.map(({ id }) => id))
+  assert.deepEqual(getLessons('no-locale').map(({ id }) => id), LESSONS.map(({ id }) => id))
 })
 
 test('interface strings have full translated key coverage', () => {
@@ -49,4 +49,27 @@ test('interface strings have full translated key coverage', () => {
   assert.equal(message('en', 'lesson'), 'Lesson')
   assert.equal(message('th', 'lesson'), 'บทเรียน')
   assert.match(message('en', 'tasksChecked', { total: 3 }), /3/)
+})
+
+test('child-friendly lessons include complete walkthroughs in all three languages', () => {
+  for (const language of ['pt-BR', 'en', 'th']) {
+    const lessons = getLessons(language)
+    assert.equal(lessons.length, 10)
+    for (const lesson of lessons) {
+      assert.ok(lesson.guide.mission.length > 30)
+      assert.ok(lesson.guide.story.length > 30)
+      assert.ok(lesson.guide.tryIt.length > 20)
+      assert.ok(lesson.guide.outcome.length > 20)
+      assert.ok(lesson.guide.words.length >= 3)
+      assert.equal(lesson.theory.length, 4)
+      lesson.theory.forEach((item) => assert.ok(item.simple.length > 80))
+      assert.equal(lesson.tasks.length, 3)
+      for (const task of lesson.tasks) {
+        assert.ok(task.tutorial.steps.length >= 4, lesson.id)
+        assert.ok(task.tutorial.steps.every((step) => step.length > 20), lesson.id)
+        assert.ok(task.tutorial.success.length > 20)
+        assert.ok(task.tutorial.trouble.length > 20)
+      }
+    }
+  }
 })
