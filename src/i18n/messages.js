@@ -139,7 +139,15 @@ export const MESSAGES = {
     "completedTask": "Muito bem! Esta atividade já foi reconhecida.",
     "pendingTask": "Ainda não reconhecida. Siga os passos e confira seu trabalho.",
     "quickChallenge": "Missão extra",
-    "ageAppropriate": "Criado para aprender passo a passo, mesmo sem experiência."
+    "ageAppropriate": "Criado para aprender passo a passo, mesmo sem experiência.",
+    "spotlightTitle": "🐸 Tutorial interativo",
+    "spotlightWrittenHelp": "Ou leia o passo a passo escrito",
+    "spotlightPrevious": "Anterior",
+    "spotlightNext": "Próximo",
+    "spotlightFinish": "Voltar para a aula",
+    "spotlightClose": "Sair do tutorial",
+    "spotlightMissing": "Este controle ainda não está visível. Siga a instrução e, se necessário, crie ou selecione o elemento no editor.",
+    "spotlightProgress": "Passo {current} de {total}"
   },
   "en": {
     "language": "Language",
@@ -281,7 +289,15 @@ export const MESSAGES = {
     "completedTask": "Great! This activity was detected.",
     "pendingTask": "Not detected yet. Follow the steps and check your work.",
     "quickChallenge": "Bonus mission",
-    "ageAppropriate": "Learn step by step, even if this is your first time."
+    "ageAppropriate": "Learn step by step, even if this is your first time.",
+    "spotlightTitle": "🐸 Interactive tutorial",
+    "spotlightWrittenHelp": "Or read the written instructions",
+    "spotlightPrevious": "Back",
+    "spotlightNext": "Next",
+    "spotlightFinish": "Back to lesson",
+    "spotlightClose": "Exit tutorial",
+    "spotlightMissing": "This control is not visible yet. Follow the instruction and create or select the element if needed.",
+    "spotlightProgress": "Step {current} of {total}"
   },
   "th": {
     "language": "ภาษา",
@@ -423,7 +439,15 @@ export const MESSAGES = {
     "completedTask": "เก่งมาก! ระบบตรวจพบว่าทำกิจกรรมนี้สำเร็จแล้ว",
     "pendingTask": "ระบบยังไม่ตรวจพบ ลองทำตามขั้นตอนแล้วตรวจผลงานอีกครั้ง",
     "quickChallenge": "ภารกิจโบนัส",
-    "ageAppropriate": "เรียนรู้ได้ทีละขั้น แม้ไม่เคยเขียนโปรแกรมมาก่อน"
+    "ageAppropriate": "เรียนรู้ได้ทีละขั้น แม้ไม่เคยเขียนโปรแกรมมาก่อน",
+    "spotlightTitle": "🐸 บทเรียนแบบโต้ตอบ",
+    "spotlightWrittenHelp": "หรืออ่านวิธีทำทีละขั้นตอน",
+    "spotlightPrevious": "ย้อนกลับ",
+    "spotlightNext": "ถัดไป",
+    "spotlightFinish": "กลับไปบทเรียน",
+    "spotlightClose": "ออกจากบทเรียนช่วยสอน",
+    "spotlightMissing": "ยังไม่เห็นเครื่องมือนี้ ลองทำตามคำแนะนำและสร้างหรือเลือกองค์ประกอบที่ต้องการในตัวแก้ไข",
+    "spotlightProgress": "ขั้นตอน {current} จาก {total}"
   }
 }
 
