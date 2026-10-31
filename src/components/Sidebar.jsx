@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { elementTypes } from '../data/elements'
 import { ChevronDown, ChevronRight } from 'lucide-react'
@@ -98,6 +98,15 @@ export default function Sidebar({ disabled, onAddElement }) {
   const [collapsed, setCollapsed] = useState({})
   const { language } = useLanguage()
   const t = (key) => message(language, key)
+
+  useEffect(() => {
+    const expandCategory = (event) => {
+      if (typeof event.detail !== 'string') return
+      setCollapsed((previous) => ({ ...previous, [event.detail]: false }))
+    }
+    window.addEventListener('uebit-tour-expand-category', expandCategory)
+    return () => window.removeEventListener('uebit-tour-expand-category', expandCategory)
+  }, [])
 
   const toggleSection = (id) => {
     setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }))
