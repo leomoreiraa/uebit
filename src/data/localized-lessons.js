@@ -4,6 +4,7 @@ import { LESSONS_TH } from './lessons.th.js'
 import { GUIDES_PT } from './lesson-guides.pt.js'
 import { GUIDES_EN } from './lesson-guides.en.js'
 import { GUIDES_TH } from './lesson-guides.th.js'
+import { KID_THEORY } from './lesson-kid-theory.js'
 
 // Overlay text only: ids, activity checks, answers and editor targets stay identical.
 const translations = { en: LESSONS_EN, th: LESSONS_TH }
@@ -15,6 +16,7 @@ function addGuide(lesson, language) {
   return {
     ...lesson,
     guide: { mission: guide.mission, story: guide.story, words: guide.words, tryIt: guide.tryIt, outcome: guide.outcome },
+    theory: lesson.theory.map((section, index) => ({ ...section, simple: KID_THEORY[language]?.[lesson.id]?.[index] ?? KID_THEORY['pt-BR']?.[lesson.id]?.[index] ?? section.text })),
     tasks: lesson.tasks.map((task, index) => ({ ...task, tutorial: guide.tasks[index] })),
   }
 }
