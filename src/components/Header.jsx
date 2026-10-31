@@ -35,7 +35,7 @@ export default function Header({
     <header className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-b-4 border-purple-300 bg-white/95 px-4 py-2.5 shadow-sm lg:px-6">
       <div className="flex min-w-0 items-center gap-2">
         {view === 'visual' && !stageOpen && (
-          <button type="button" onClick={(event) => onTogglePanel('palette', event.currentTarget)} aria-label={t('visualPalette')} aria-expanded={mobilePanel === 'palette'} aria-controls="editor-palette" aria-haspopup="dialog" className="grid size-11 shrink-0 place-items-center rounded-xl bg-purple-100 text-purple-900 focus-visible:outline-2 xl:hidden">
+          <button type="button" onClick={(event) => onTogglePanel('palette', event.currentTarget)} data-tour="open-palette" aria-label={t('visualPalette')} aria-expanded={mobilePanel === 'palette'} aria-controls="editor-palette" aria-haspopup="dialog" className="grid size-11 shrink-0 place-items-center rounded-xl bg-purple-100 text-purple-900 focus-visible:outline-2 xl:hidden">
             <Menu size={22} aria-hidden="true" />
           </button>
         )}
@@ -61,7 +61,7 @@ export default function Header({
           className="h-10 min-w-0 w-full max-w-44 rounded-full border-2 border-purple-200 bg-purple-50/50 px-4 text-xs font-black text-slate-800 transition-colors focus:border-purple-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-200 sm:w-56"
         />
         {view === 'visual' && !stageOpen && (
-          <button type="button" onClick={(event) => onTogglePanel('properties', event.currentTarget)} aria-label={t('properties')} aria-expanded={mobilePanel === 'properties'} aria-controls="editor-properties" aria-haspopup="dialog" className="grid size-11 shrink-0 place-items-center rounded-xl bg-purple-100 text-purple-900 focus-visible:outline-2 xl:hidden">
+          <button type="button" onClick={(event) => onTogglePanel('properties', event.currentTarget)} data-tour="open-properties" aria-label={t('properties')} aria-expanded={mobilePanel === 'properties'} aria-controls="editor-properties" aria-haspopup="dialog" className="grid size-11 shrink-0 place-items-center rounded-xl bg-purple-100 text-purple-900 focus-visible:outline-2 xl:hidden">
             <Settings size={22} aria-hidden="true" />
           </button>
         )}
@@ -92,6 +92,7 @@ export default function Header({
         <button
           type="button"
           onClick={onSaveProject}
+          data-tour="save-project"
           disabled={importing}
           title={t('saveProject')}
           aria-label={t('saveProject')}
@@ -137,6 +138,7 @@ export default function Header({
               <button
                 key={value}
                 type="button"
+                data-tour-view={value}
                 aria-pressed={view === value}
                 aria-controls="workspace"
                 onClick={() => onViewChange(value)}
@@ -157,6 +159,7 @@ export default function Header({
         <button
           type="button"
           onClick={onToggleStage}
+          data-tour="play"
           aria-pressed={stageOpen}
           aria-controls={stageOpen ? 'stage' : undefined}
           title={t(stageOpen ? 'backEditor' : 'stage')}
