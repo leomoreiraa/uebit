@@ -109,6 +109,7 @@ export default function CodeEditor({
               key={file.key}
               type="button"
               aria-pressed={active.key === file.key}
+              data-tour-code-tab={file.key}
               onClick={() => onCodeTabChange(file.key)}
               className={`min-h-10 rounded-xl px-4 text-xs font-black transition-all ${
                 active.key === file.key
@@ -162,7 +163,7 @@ export default function CodeEditor({
 
       {/* Main Split Area: Editor + Real-Time Preview */}
       <div className={`grid min-h-0 flex-1 overflow-hidden ${showPreview ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
-        <div className="flex min-h-0 min-w-0 flex-col overflow-hidden border-b border-slate-200 lg:border-r lg:border-b-0">
+        <div data-tour="code-editor" className="flex min-h-0 min-w-0 flex-col overflow-hidden border-b border-slate-200 lg:border-r lg:border-b-0">
           <Editor
             height="max(360px, calc(100dvh - 230px))"
             path={active.name}
